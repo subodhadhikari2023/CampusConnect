@@ -5,12 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0a84496-dc13-4c4c-a2cb-29ea03dafc55" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/controller/DemoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/controller/MyController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -19,6 +28,9 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2jkCdHDlEDGGo3NTfLC4pkQwJ2N" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
@@ -31,9 +43,9 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.ProjectApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "development",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/run/media/bitsunisage/Development/CampusConnect/Project",
+    "last_opened_file_path": "/mnt/6cc21b50-e05d-45fc-9ebd-cd4a690e73fc/03-dev-Spring-Boot/08-Spring-Boot-Spring-MVC-Security/01-Spring-Boot-Spring-MVC-Security",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -75,6 +87,7 @@
       <workItem from="1721926858405" duration="31000" />
       <workItem from="1721926926800" duration="19000" />
       <workItem from="1722149912060" duration="1564000" />
+      <workItem from="1722153615720" duration="491000" />
     </task>
     <servers />
   </component>

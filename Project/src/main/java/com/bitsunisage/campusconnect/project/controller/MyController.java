@@ -2,14 +2,15 @@ package com.bitsunisage.campusconnect.project.controller;
 
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class DemoController {
+@Controller
+public class MyController {
     @GetMapping("/hello")
-    public String hello(){
-        return "Hello you son of a gun";
+    public String hello(Model model) {
+
+        return "index";
     }
 }
