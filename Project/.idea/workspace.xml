@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0a84496-dc13-4c4c-a2cb-29ea03dafc55" name="Changes" comment="" />
+    <list default="true" id="a0a84496-dc13-4c4c-a2cb-29ea03dafc55" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,6 +24,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -71,7 +74,7 @@
       <workItem from="1721922772718" duration="326000" />
       <workItem from="1721926858405" duration="31000" />
       <workItem from="1721926926800" duration="19000" />
-      <workItem from="1722149912060" duration="932000" />
+      <workItem from="1722149912060" duration="1564000" />
     </task>
     <servers />
   </component>
