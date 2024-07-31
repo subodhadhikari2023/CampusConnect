@@ -6,15 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a0a84496-dc13-4c4c-a2cb-29ea03dafc55" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/controller/MyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/controller/MyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/securityConfig/SecurityConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/bitsunisage/campusconnect/project/securityConfig/SecurityConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/bitsunisage/campusconnect/project/controller/MyController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/bitsunisage/campusconnect/project/controller/MyController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/bitsunisage/campusconnect/project/securityConfig/SecurityConfiguration.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/bitsunisage/campusconnect/project/securityConfig/SecurityConfiguration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/templates/home.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/loginfile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/loginfile.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,6 +102,7 @@
       <workItem from="1722173150028" duration="188000" />
       <workItem from="1722188288551" duration="1336000" />
       <workItem from="1722190405530" duration="936000" />
+      <workItem from="1722418653226" duration="757000" />
     </task>
     <servers />
   </component>
