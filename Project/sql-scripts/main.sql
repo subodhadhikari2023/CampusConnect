@@ -1,4 +1,4 @@
-create user `campusConnect`@`localhost` identified by `Frpsxwhu2001@`;
+create user 'campusConnect'@'localhost' identified by 'Frpsxwhu2001@';
 create database if not exists `campusConnect`;
 USE `campusConnect`;
 
@@ -24,8 +24,8 @@ CREATE TABLE `members` (
 --
 -- Default passwords here are: test123
 --
-
-
+Show databases;
+grant all privileges on campusconnect.* to 'campusConnect'@'localhost';
 
 --
 -- Table structure for table `authorities`
