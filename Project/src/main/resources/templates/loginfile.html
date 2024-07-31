@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Login Page</title>
         <meta charset="utf-8" />
@@ -20,7 +20,7 @@
                         <div class="card-text">
 
                             <!-- Login Form -->
-                            <form action="" th:action="" method="" class="form-horizontal">
+                            <form action="#" th:action="@{/authenticateTheUser}" method="POST" class="form-horizontal">
 
                                 <!-- Place for messages: error, alert etc ... -->
                                 <div class="form-group">
