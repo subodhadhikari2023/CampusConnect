@@ -1,2 +1,7 @@
-/.idea
-/Project/.idea/
+# Ignore .idea directories
+.idea/
+Project/.idea/
+
+# Ignore target directories
+target/
+Project/target/
