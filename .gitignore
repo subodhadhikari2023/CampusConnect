@@ -3,5 +3,5 @@
 Project/.idea/
 
 # Ignore target directories
-target/
-Project/target/
+
+Project/target/*
