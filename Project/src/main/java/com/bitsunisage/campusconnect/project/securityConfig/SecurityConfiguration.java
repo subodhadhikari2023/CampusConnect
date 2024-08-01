@@ -19,7 +19,13 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(configurer -> configurer.anyRequest().authenticated()).formLogin(form -> form.loginPage("/login").loginProcessingUrl("/authenticateTheUser").permitAll().successHandler(authenticationSuccessHandler())
+        httpSecurity.authorizeHttpRequests(configurer -> configurer
+                .anyRequest().authenticated())
+                .formLogin(form -> form
+                                .loginPage("/")
+                                .loginProcessingUrl("/authenticateTheUser")
+                                .permitAll()
+                                .successHandler(authenticationSuccessHandler())
 
 //                ).logout(logout -> logout.permitAll()
         ).logout(LogoutConfigurer::permitAll);
@@ -34,7 +40,10 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer -> configurer.requestMatchers("/student/**").hasRole("STUDENT").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/admin/**").hasRole("ADMIN")
+        http.authorizeHttpRequests(configurer -> configurer
+                .requestMatchers("/student/**").hasRole("STUDENT")
+                .requestMatchers("/teacher/**").hasRole("TEACHER")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
 
 
         );
