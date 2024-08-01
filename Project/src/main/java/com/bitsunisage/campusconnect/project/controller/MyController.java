@@ -12,22 +12,22 @@ public class MyController {
 
     @GetMapping("/student")
     public String hello2(Model model) {
-        Student student = new Student();
-        model.addAttribute("student",student);
+//        Student student = new Student();
+//        model.addAttribute("student",student);
 
         return "indexstudent";
     }
     @GetMapping("/teacher")
     public String hello3(Model model) {
-        Student student = new Student();
+//        Student student = new Student();
 //        model.addAttribute("student",student);
 
         return "indexteacher";
     }
 @GetMapping("/login")
 public String hello(Model model){
-    Student student = new Student();
-    model.addAttribute("student",student);
-    return "/loginfile";
+//    Student student = new Student();
+//    model.addAttribute("student",student);
+    return "loginfile";
 }
 }
