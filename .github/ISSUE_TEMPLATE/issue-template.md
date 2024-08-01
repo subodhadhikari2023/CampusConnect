@@ -1,0 +1,28 @@
+---
+name: Issue template
+about: This template is for creating user stories
+title: ''
+labels: ''
+assignees: ''
+
+---
+
+### User Story
+
+**Title:** []
+
+**As a** _______
+
+**I want to** ____________
+
+**So that** _______
+
+**Acceptance Criteria:**
+
+- **Given** 
+  **When** 
+  **Then** 
+
+- **Given** 
+  **When** 
+  **Then**
