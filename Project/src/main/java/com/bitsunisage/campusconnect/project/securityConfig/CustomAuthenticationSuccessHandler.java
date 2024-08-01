@@ -30,6 +30,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }else
             redirectURL = "/student";
 
+        request.getSession().setAttribute("url_prior_login", redirectURL);
         response.sendRedirect(redirectURL);
     }
 }
