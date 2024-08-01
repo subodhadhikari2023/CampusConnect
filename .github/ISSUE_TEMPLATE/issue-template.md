@@ -1,15 +1,8 @@
----
-name: Issue template
-about: This template is for creating user stories
-title: ''
-labels: ''
-assignees: ''
 
----
 
 ### User Story
 
-**Title:** []
+**Title:** 
 
 **As a** _______
 
@@ -19,10 +12,10 @@ assignees: ''
 
 **Acceptance Criteria:**
 
-- **Given** 
-  **When** 
-  **Then** 
+- **Given**  
+  **When**   
+  **Then**   
 
-- **Given** 
-  **When** 
-  **Then**
+- **Given**   
+  **When**   
+  **Then**  
