@@ -24,7 +24,7 @@ public class MyController {
 
         return "indexteacher";
     }
-@GetMapping("/login")
+@GetMapping("/")
 public String hello(Model model){
 //    Student student = new Student();
 //    model.addAttribute("student",student);
