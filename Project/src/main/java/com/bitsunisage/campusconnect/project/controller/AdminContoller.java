@@ -6,16 +6,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
-@RequestMapping("/admin")
 public class AdminContoller {
 
-    @GetMapping
+    @GetMapping("/admin")
     public String getAdminPage(Model model) {
         // Add attributes to the model if needed
         return "admin";
     }
 
-    @PostMapping("/manage-users")
+  /*  @PostMapping("/manage-users")
     public String manageUsers(Model model) {
         // Implement user management logic
         model.addAttribute("message", "User management action performed");
@@ -34,5 +33,5 @@ public class AdminContoller {
         // Implement reports logic
         model.addAttribute("message", "Reports action performed");
         return "admin";
-    }
+    }*/
 }
