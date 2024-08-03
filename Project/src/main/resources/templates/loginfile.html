@@ -12,7 +12,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             margin: 0;
         }
         .content{
@@ -34,7 +33,7 @@
             margin-bottom: 30px;
             padding: 10px;
             font-size:3vw;
-            font-style:bold;
+            font-weight: bold;
         }
         #loginbox {
             width: 100%;
@@ -44,14 +43,14 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .card-header {
-            text-align: center;
-            font-size: 1.5em;
-            background-color: #00796b; /* Dark teal background color */
-            color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
+        /*.card-header {*/
+        /*    text-align: center;*/
+        /*    font-size: 1.5em;*/
+        /*    background-color: #00796b; !* Dark teal background color *!*/
+        /*    color: white;*/
+        /*    border-top-left-radius: 10px;*/
+        /*    border-top-right-radius: 10px;*/
+        /*}*/
         .input-group {
             margin-bottom: 15px;
         }
@@ -71,7 +70,9 @@
 
     <div class="content">
         <div>
-            <img th:src="@{static/main-logo-white.jpeg}">
+            <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo" >
+<!--            <img src="/images/main-logo-black-transparent.png" alt="Main Logo" >-->
+
         </div>
         <div class="signin-form">
             Sign In

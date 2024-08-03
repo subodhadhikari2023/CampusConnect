@@ -7,6 +7,11 @@
 </head>
 <body>
 Hello, this page is for teachers
+<div>
+    <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo" >
+    <!--            <img src="/images/main-logo-black-transparent.png" alt="Main Logo" >-->
+
+</div>
 <form action="#" th:action="@{/logout}" method="POST" onsubmit="showLogoutMessage()">
     <button type="submit" class="btn btn-info btn-success">Logout</button>
 </form>
