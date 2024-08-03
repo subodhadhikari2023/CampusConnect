@@ -2,30 +2,55 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Login Page</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"/>
     <style>
         body {
-            background: linear-gradient(to right, #00b4db, #0083b0); /* Gradient background */
+            height: 100vh;
+            background: rgb(230, 132, 11);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             margin: 0;
+        }
+        .content {
+            width: 600px;
+            color: rgb(233, 158, 68);
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2),
+            0 5px 5px 0 rgba(0, 0, 0, 0.24);
+            position: absolute;
+/*            top: 45%;*/
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 50px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            border-radius: 3%;
+        }
+        .headd {
+            text-align: center;
+            border-bottom: 2px solid #cd5907;
+            margin-bottom: 30px;
+            padding: 10px;
+            font-size: 3vw;
+            font-weight: bold;
         }
         #loginbox {
             width: 100%;
             max-width: 400px;
-            background-color: rgba(255, 255, 255, 0.9); /* White background with opacity */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center align the content */
         }
         .card-header {
             text-align: center;
             font-size: 1.5em;
-            background-color: #00796b; /* Dark teal background color */
+            background-color: #00796b;
             color: white;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
@@ -35,19 +60,28 @@
         }
         .btn-custom {
             width: 100%;
-            background-color: #00796b; /* Dark teal background color */
+            background-color: #00796b;
             color: white;
             border: none;
         }
         .btn-custom:hover {
-            background-color: #004d40; /* Darker teal for hover */
+            background-color: #004d40;
+        }
+        img {
+            max-width: 100%; /* Ensure the image fits within the container */
+            height: auto;
+            display: block;
+            margin: 0 auto 20px; /* Center the image and add some margin below */
         }
     </style>
 </head>
 <body>
 <div id="loginbox">
-    <div class="card border-info">
-        <div class="card-header">
+    <div>
+    <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo">
+        </div>
+    <div class="content">
+        <div class="signin-form headd">
             Sign In
         </div>
         <div class="card-body">
@@ -74,11 +108,11 @@
                     </div>
                     <!-- User name -->
                     <div class="input-group">
-                        <input type="text" name="username" placeholder="Username" class="form-control" />
+                        <input type="text" name="username" placeholder="Username" class="form-control"/>
                     </div>
                     <!-- Password -->
                     <div class="input-group">
-                        <input type="password" name="password" placeholder="Password" class="form-control" />
+                        <input type="password" name="password" placeholder="Password" class="form-control"/>
                     </div>
                     <!-- Login/Submit Button -->
                     <div class="form-group">
