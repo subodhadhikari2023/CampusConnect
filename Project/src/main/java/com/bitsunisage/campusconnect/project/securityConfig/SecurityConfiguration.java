@@ -19,7 +19,7 @@ public class SecurityConfiguration {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer(){
-        return (web) -> web.ignoring().requestMatchers("/images/main-logo-black-transparent.png");
+        return (web) -> web.ignoring().requestMatchers("/images/**");
     }
 
     @Bean
