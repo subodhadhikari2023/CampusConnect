@@ -80,6 +80,12 @@
         .sidebar .menu li a:hover {
             text-decoration: none;
         }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #f4f4f9;
+            margin-left: 250px;
+        }
     </style>
 </head>
 <body>
@@ -94,6 +100,22 @@
             <span><form action="#" th:action="@{/logout}" method="POST" onsubmit="showLogoutMessage()">
             <button type="submit" class="logout-btn">Logout</button>
             </form></span>
+        </li>
+    </ul>
+</div>
+<div class="main-content">
+    <h1>Admin Page</h1>
+    <ul th:each="usr : ${users}">
+        <li>
+            <span th:text="${usr.userId}">User ID</span> <br>
+            <span th:text="${usr.password}">Password</span>
+        </li>
+    </ul>
+    <ul th:each="rl : ${roles}">
+        <li>
+            <span th:text="${rl.role}">Role</span> <br>
+<!--            <span th:text="${role.userId}">Role</span> <br>-->
+
         </li>
     </ul>
 </div>

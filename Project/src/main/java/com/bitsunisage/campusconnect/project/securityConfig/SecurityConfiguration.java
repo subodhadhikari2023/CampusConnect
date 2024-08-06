@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 public class SecurityConfiguration {
 
     @Bean
-    WebSecurityCustomizer webSecurityCustomizer(){
+    WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/images/**");
     }
 
@@ -61,9 +61,9 @@ public class SecurityConfiguration {
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
         // Define query to fetch user from database for custom tables
-        jdbcUserDetailsManager.setUsersByUsernameQuery(" select user_id, pw, active from members where user_id=?");
+        jdbcUserDetailsManager.setUsersByUsernameQuery("SELECT user_id, pw, active FROM members WHERE user_id=?");
         //Define query to fetch roles by username
-        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select user_id, role from roles where user_id=?");
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("SELECT user_id,role from roles where USER_id=?");
 
 
         return jdbcUserDetailsManager;
