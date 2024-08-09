@@ -72,6 +72,16 @@
         .sidebar .menu li a:hover {
             text-decoration: none;
         }
+        .sidebar .menu li img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Stats box image size (already defined) */
+        .stats-box h4 img {
+            width: 24px;
+            height: 24px;
+        }
 
         .main-content {
             flex-grow: 1;
@@ -169,12 +179,11 @@
 <div class="sidebar" id="sidebar">
     <div class="logo"><img th:src="@{/images/main-logo-white-transparent.png}"></div>
     <ul class="menu">
-        <li><a href="/students" class="text-white"><img src="/static/images/javascript/user-graduate-solid.svg" > <span>Students</span></a></li>
-        <li><a href="/teachers" class="text-white"><img src="/static/images/javascript/chalkboard-user-solid.svg" > <span>Teachers</span></a></li>
-        <li><a href="/hod" class="text-white"><img src="/static/images/javascript/user-tie-solid.svg"> <span>HOD</span></a></li>
-        <li><a href="/requests" class="text-white"><i class="fa fa-envelope"></i> <span>Requests</span></a></li>
+        <li><a href="/students" class="text-white"><img th:src="@{images/javascript/user-graduate-solid.svg}" > <span>Students</span></a></li>
+        <li><a href="/teachers" class="text-white"><img th:src="@{images/javascript/chalkboard-user-solid.svg}" > <span>Teachers</span></a></li>
+        <li><a href="/hod" class="text-white"><img th:src="@{images/javascript/user-tie-solid.svg}"> <span>HOD</span></a></li>
+        <li><a href="/requests" class="text-white"><img th:src="@{images/javascript/gears-solid.svg}"> <span>Requests</span></a></li>
         <li>
-            <img src="/static/images/javascript/user-solid.svg" alt="Logout Icon">
             <span><form action="#" th:action="@{/logout}" method="POST" onsubmit="showLogoutMessage()">
             <button type="submit" class="logout-btn">Logout</button>
             </form></span>
@@ -188,19 +197,19 @@
     <div class="stats-container">
         <div class="stats-box">
             <h3 th:text="${totalUsers}">0</h3>
-            <h4><img src="/static/images/javascript/user-solid.svg" > Total Users</h4>
+            <h4><img th:src="@{images/javascript/user-solid.svg}" > Total Users</h4>
         </div>
         <div class="stats-box">
             <h3 th:text="${totalStudents}">0</h3>
-            <h4><img src="/static/images/javascript/user-graduate-solid.svg" > Total Students</h4>
+            <h4><img th:src="@{images/javascript/user-graduate-solid.svg}" > Total Students</h4>
         </div>
         <div class="stats-box">
             <h3 th:text="${totalTeachers}">0</h3>
-            <h4><img src="/static/images/javascript/chalkboard-user-solid.svg" > Total Teachers</h4>
+            <h4><img th:src="@{images/javascript/chalkboard-user-solid.svg}" > Total Teachers</h4>
         </div>
         <div class="stats-box">
             <h3 th:text="${totalHODs}">0</h3>
-            <h4><img src="/static/images/javascript/user-tie-solid.svg" > Total HODs</h4>
+            <h4><img th:src="@{images/javascript/user-tie-solid.svg}" > Total HODs</h4>
         </div>
     </div>
     <div class="action-buttons">
