@@ -10,7 +10,7 @@
 
 
 
-<br />
+<br/>
 <p style="text-align: center; font-weight: bold;">
    <h2 style="text-align:center"> Contributors</h2>
   </p>
@@ -119,9 +119,10 @@ This is an example of  list of things you need to use the software.
 
 1. Clone the repo into your local system
    
-bash
-   git clone https://github.com/subodhadhikari2023/CampusConnect.git
+```bash
 
+   git clone https://github.com/subodhadhikari2023/CampusConnect.git
+```
 2. 
 3. Open the CampusConnect/Project/sql-scripts on your MySQL Workbench and run it as the Root User.
 4. Or you can copy the sql script and run it from mysql server
@@ -146,9 +147,9 @@ Don't forget to give the project a star! Thanks again!
 1. Fork the Project
 2. Clone the repo into your local system
    
-bash
+```bash
    git clone https://github.com/your_user_name/CampusConnect.git
-
+```
 3. Create your Feature Branch (git branch <your_branch_name>)
 4. Change to your branch (git checkout <your_branch_name>)
 5. Make the changes you want and add it in the staging area (git add <your_file_name.extension>)>
