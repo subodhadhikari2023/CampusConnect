@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-
+    //      Setting up custom home page and also setting up the session when duplicate tab is opened with appropriate roles
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,   Authentication authentication) throws IOException, ServletException {
 
@@ -29,6 +29,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         }else
             redirectURL = "/student";
+
 
         request.getSession().setAttribute("url_prior_login", redirectURL);
         response.sendRedirect(redirectURL);
