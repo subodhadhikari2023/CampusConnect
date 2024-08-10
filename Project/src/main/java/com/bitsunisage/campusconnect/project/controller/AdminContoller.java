@@ -24,10 +24,13 @@ public class AdminContoller {
     public String getAdminPage(Model model) {
         List<User> users = userService.findAllUsers();
        List<Roles> roles = userService.findAllRoles();
+       Integer totalUsers =userService.totalUsers();
+
 
         // Add attributes to the model if needed
         model.addAttribute("users",users);
         model.addAttribute("roles",roles);
+        model.addAttribute("totalUsers",totalUsers);
         return "admin";
     }
 

@@ -29,31 +29,63 @@
     <div class="content-header">
         <h1>Welcome to Admin panel <span sec:authentication="principal.username"></span></h1>
     </div>
-    <table class="stats-container">
+    <div class="stats-container">
+    <table class="stats-box">
         <thead>
         <tr>
-            <td> Total Users</td>
+            <td>  <h4><img th:src="@{SVGs/user-solid.svg}"> Total Users</h4></td>
         </tr>
         </thead>
+        <tbody>
+        <tr>
+            <td th:text="${totalUsers}"> </td>
+        </tr>
+        </tbody>
     </table>
 
 
-    <div class="stats-box">
+        <table class="stats-box">
+            <thead>
+            <tr>
+                <td>  <h4><img th:src="@{SVGs/user-graduate-solid.svg}"> Total Students</h4></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td> Hello</td>
+            </tr>
+            </tbody>
+        </table>
 
-        <h4><img th:src="@{SVGs/user-solid.svg}"> Total Users</h4>
-    </div>
-    <div class="stats-box">
 
-        <h4><img th:src="@{SVGs/user-graduate-solid.svg}"> Total Students</h4>
-    </div>
-    <div class="stats-box">
+        <table class="stats-box">
+            <thead>
+            <tr>
+                <td>  <h4><img th:src="@{SVGs/chalkboard-user-solid.svg}"> Total Teachers</h4></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td> Hello</td>
+            </tr>
+            </tbody>
+        </table>
 
-        <h4><img th:src="@{SVGs/chalkboard-user-solid.svg}"> Total Teachers</h4>
-    </div>
-    <div class="stats-box">
 
-        <h4><img th:src="@{SVGs/user-tie-solid.svg}"> Total HODs</h4>
+        <table class="stats-box">
+            <thead>
+            <tr>
+                <td> <h4><img th:src="@{SVGs/user-tie-solid.svg}"> Total HODs</h4></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td> Hello</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+
 
     <div class="action-buttons">
         <a href="/add-user" class="text-white">
