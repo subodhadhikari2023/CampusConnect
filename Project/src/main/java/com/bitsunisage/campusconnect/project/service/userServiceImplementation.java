@@ -52,5 +52,16 @@ public class userServiceImplementation implements UserService {
         return users.size();
     }
 
+    @Override
+    public Integer totalStudents(String role) {
+        List<Roles> roles = roleDAO.readRolesByRole(role);
+        return roles.size();
+    }
+
+    @Override
+    public Integer totalTeachers() {
+        return 0;
+    }
+
 
 }
