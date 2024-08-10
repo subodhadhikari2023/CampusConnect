@@ -45,4 +45,12 @@ public class userServiceImplementation implements UserService {
     public void deleteUser(int userId) {
 
     }
+
+    @Override
+    public Integer totalUsers() {
+        List<User> users = userDAO.findAll();
+        return users.size();
+    }
+
+
 }

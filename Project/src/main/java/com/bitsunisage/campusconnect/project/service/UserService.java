@@ -14,4 +14,6 @@ public interface UserService {
     User save(User user);
 
     void deleteUser(int userId);
+
+    Integer totalUsers();
 }

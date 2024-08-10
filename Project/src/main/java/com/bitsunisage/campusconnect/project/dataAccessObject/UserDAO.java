@@ -7,4 +7,5 @@ public interface UserDAO extends JpaRepository<User, String> {
 //    While using the JpaRepository no need to define queries
 
 
+
 }

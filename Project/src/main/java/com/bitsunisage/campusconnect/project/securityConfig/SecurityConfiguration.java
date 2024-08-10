@@ -19,7 +19,7 @@ public class SecurityConfiguration {
 
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/images/**");
+        return (web) -> web.ignoring().requestMatchers("/loginResources/**");
     }
 
     @Bean
