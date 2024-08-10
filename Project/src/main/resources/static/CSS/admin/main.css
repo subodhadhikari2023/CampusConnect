@@ -3,7 +3,65 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
 }
+
+..content-header {
+    position: fixed; /* Keep the header fixed at the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Set a fixed height for the header */
+    background-color: #008080; /* Teal color */
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+
+.main-content {
+    margin-top: 60px; /* Adjust to be below the fixed header */
+    padding: 20px;
+    height: calc(100vh - 60px); /* Adjusted to be below the header */
+    overflow-y: auto; /* Allow vertical scrolling */
+    overflow-x: auto; /* Allow horizontal scrolling */
+    box-sizing: border-box;
+}
+
+.stats-container {
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%; /* Set the container to take up the full width */
+    padding-top: 20px; /* Space below the fixed header */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+}
+
+.stats-box {
+    width: 45%; /* Adjust the width to fit two boxes per row */
+    height: 150px;
+    background-color: #008080; /* Teal color */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+    margin-bottom: 20px; /* Add margin to create space between rows */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
 
 .sidebar {
     width: 250px;
@@ -165,3 +223,23 @@ body {
 .action-button:hover {
     background-color: #006666; /* Darker teal hover color */
 }
+/* Style for the 'Hello' text in each stats box */
+.stats-box tbody tr td {
+    font-size: 1.2em; /* Slightly smaller font size */
+    font-weight: bold; /* Keep the text bold */
+    color: #008080; /* Teal text color */
+    background-color: #e0f7fa; /* Light teal background */
+    padding: 8px; /* Slightly smaller padding */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center the text */
+    width: 100%; /* Ensure full width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+/* Hover effect to make the text interactive */
+.stats-box tbody tr td:hover {
+    background-color: #b2ebf2; /* Darker teal on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
