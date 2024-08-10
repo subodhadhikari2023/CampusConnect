@@ -8,4 +8,7 @@ import java.util.List;
 public interface RoleDAO extends JpaRepository<Roles, String> {
     //    While using the JpaRepository no need to define queries
 
+
+
+    List<Roles> readRolesByRole(String role);
 }

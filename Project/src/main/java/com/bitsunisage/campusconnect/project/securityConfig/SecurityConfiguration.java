@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
-
+//  Allowing to access the resources without authentication and authorization for login form
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/loginResources/**");
@@ -31,12 +31,12 @@ public class SecurityConfiguration {
 
         return httpSecurity.build();
     }
-
+//  Custom page handler after authentication
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new CustomAuthenticationSuccessHandler();
     }
-
+//    Role based access control of the resources
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> configurer.requestMatchers("/student/**").hasRole("STUDENT").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/admin/**").hasRole("ADMIN")
@@ -57,6 +57,7 @@ public class SecurityConfiguration {
 
 
     // Add support for JDBC ... no more hard coded users
+//    Query to fetch from custom tables
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);

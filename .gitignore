@@ -2,5 +2,5 @@
 .idea/
 Project/.idea/
 # Ignore target directories
-
+Project/Project.iml
 Project/target/
