@@ -18,7 +18,7 @@
 
   <div style="text-align: center; flex: 1; min-width: 150px; max-width: 45%;">
     <h2>Subodh Adhikari</h2>
-    <img src="./readmeImages/Subodh.jpeg" alt="Subodh" style="width: 100%; max-width: 150px; height: auto;">
+    <img src="./readmeImages/Subodh.jpeg" alt="Subodh" style="width: 150px; height: 150px;">
     <br>
     <a href="https://www.linkedin.com/in/subodh-adhikari-4b811a296/">
       <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Subodh" />
@@ -33,7 +33,7 @@
 
   <div style="text-align: center; flex: 1; min-width: 150px; max-width: 45%;">
     <h2>Manav Agarwal</h2>
-    <img src="./readmeImages/Manav.jpeg" alt="Manav" style="width: 100%; max-width: 150px; height: auto;">
+    <img src="./readmeImages/Manav.jpeg" alt="Manav" style="width: 150px; height: 150px;">
     <br>
     <a href="https://www.linkedin.com/in/manav-agarwal-8139b92b8/">
       <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Manav" />
@@ -47,6 +47,7 @@
   </div>
 
 </div>
+
 
 
 <br>
