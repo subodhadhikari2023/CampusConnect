@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StudentController {
     @GetMapping("/student")
-    public String hello2() {
+    public String getStudent() {
 
-        return "indexstudent";
+        return "studentViewPages/indexstudent";
     }
 }

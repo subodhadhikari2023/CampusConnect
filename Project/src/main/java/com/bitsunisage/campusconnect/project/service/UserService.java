@@ -18,10 +18,12 @@ public interface UserService {
     void deleteUser(int userId);
 //    Returns an integer value that stores the total number of users present irrespective of roles
     Integer totalUsers();
-//
-    Integer totalStudents(String role);
+// Fetches the total number of users based on the role passed
+    Integer totalUsers(String role);
+// Fetches the list of users based on the role passed
 
-    Integer totalTeachers();
+    List<Roles> findByRole(String role);
+
 
 
 }

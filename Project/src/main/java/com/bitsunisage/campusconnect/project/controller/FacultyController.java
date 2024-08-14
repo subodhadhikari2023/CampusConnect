@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FacultyController {
     @GetMapping("/teacher")
-    public String hello3() {
-        return "indexteacher";
+    public String getFacultyPage() {
+        return "teacherViewPages/indexteacher";
     }
 }
