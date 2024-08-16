@@ -14,6 +14,7 @@ public interface UserService {
     User findById(int userId);
 //    Allows to save the user
     User save(User user);
+    Roles save(Roles roles);
 //    Delete the user
     void deleteUser(int userId);
 //    Returns an integer value that stores the total number of users present irrespective of roles
