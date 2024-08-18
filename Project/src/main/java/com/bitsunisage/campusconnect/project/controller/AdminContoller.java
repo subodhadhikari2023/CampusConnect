@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -26,9 +28,9 @@ public class AdminContoller {
 //        Fetching the total users
         List<User> users = userService.findAllUsers();
 //        Fetching the total roles irrespective of the category
-       List<Roles> roles = userService.findAllRoles();
+        List<Roles> roles = userService.findAllRoles();
 //       Fetching the total number of users present in the system
-       Integer totalUsers =userService.totalUsers();
+        Integer totalUsers = userService.totalUsers();
 
 
         Integer totalStudents = userService.totalUsers("ROLE_STUDENT");
@@ -36,19 +38,40 @@ public class AdminContoller {
         Integer totalHods = userService.totalUsers("ROLE_HOD");
 
         // Add attributes to the model if needed
-        model.addAttribute("users",users);
-        model.addAttribute("roles",roles);
-        model.addAttribute("totalUsers",totalUsers);
+        model.addAttribute("users", users);
+        model.addAttribute("roles", roles);
+        model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("totalStudents", totalStudents);
         model.addAttribute("totalTeachers", totalTeachers);
         model.addAttribute("totalHods", totalHods);
         return "adminViewPages/admin";
     }
-    @GetMapping("admin/students")
-    public String getStudentsInfo(Model model){
+
+    @GetMapping("/admin/students")
+    public String getStudentsInfo(Model model) {
         List<Roles> students = userService.findByRole("ROLE_STUDENT");
-        model.addAttribute("students",students);
-      return "adminViewPages/getstudents";
+        model.addAttribute("students", students);
+        return "adminViewPages/getstudents";
+    }
+
+
+    @GetMapping("/admin/add-user")
+    public String addUser(Model model) {
+        User user = new User();
+        Roles roles = new Roles();
+        model.addAttribute("user", user);
+        model.addAttribute("roles", roles);
+        return "adminViewPages/add-user";
+    }
+
+    @PostMapping("/admin/save")
+    public String saveUser(@ModelAttribute("user") User user, @ModelAttribute("roles") Roles roles) {
+        user.setPassword("{noop}" + user.getPassword());
+        System.out.println(user);
+        System.out.println(roles);
+        userService.save(user);
+        userService.save(roles);
+        return "redirect:/admin";
     }
 
 

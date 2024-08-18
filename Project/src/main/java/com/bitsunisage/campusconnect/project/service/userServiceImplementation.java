@@ -38,7 +38,12 @@ public class userServiceImplementation implements UserService {
 
     @Override
     public User save(User user) {
-        return null;
+       return userDAO.save(user);
+    }
+
+    @Override
+    public Roles save(Roles roles) {
+        return roleDAO.save(roles);
     }
 
     @Override
