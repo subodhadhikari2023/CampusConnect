@@ -11,21 +11,25 @@
 <body>
 <div class="container">
     <h1>Add/Update User</h1>
-    <form action="#" th:action="@{/add}" th:object="${user}" method="post">
+    <form action="#" th:action="@{/admin/save}" th:object="${user}" method="POST">
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username"  required>
+            <label for="username"  class="form-label">Username</label>
+            <input type="text" th:field="*{userId}" class="form-control" id="username"  required>
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" required>
+            <label for="email"  class="form-label">Email</label>
+            <input type="email" th:field="*{email}" class="form-control" id="email" required>
         </div>
         <div class="mb-3">
-            <label for="role" class="form-label">Role</label>
-            <select class="form-select" id="role"  required>
-                <option value="STUDENT">Student</option>
-                <option value="TEACHER">Teacher</option>
-                <option value="HOD">HOD</option>
+            <label for="password"  class="form-label">Password</label>
+            <input type="password" th:field="*{password}" class="form-control" id="password" required>
+        </div>
+        <div class="mb-3">
+            <label for="role"   class="form-label">Role</label>
+            <select class="form-select" th:field="${roles.role}" id="role"  required>
+                <option value="ROLE_STUDENT">Student</option>
+                <option value="ROLE_TEACHER">Teacher</option>
+                <option value="ROLE_HOD">HOD</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>

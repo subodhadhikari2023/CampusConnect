@@ -1,37 +1,46 @@
 package com.bitsunisage.campusconnect.project.entities;
 
-import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "members")
 public class User {
+    @Id
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "pw")
+    private String password;
+    @Column(name = "active")
+    private boolean active;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Column(name = "email")
+    private String email;
+
     // No Argument Constructor
     public User() {
 
     }
 
-
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id")
-//    private int id;
-
-    @Id
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "pw")
-    private String password;
-
-    @Column(name = "active")
-    private boolean active;
-
-//    Setting up the Object Relational Mapping with the Roles table's object
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId")
-//    private List<Roles> roles;
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", active=" + active +
+                ", email='" + email + '\'' +
+                '}';
+    }
 
     public String getUserId() {
         return userId;
@@ -57,12 +66,4 @@ public class User {
         this.active = active;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", active=" + active +
-                '}';
-    }
 }

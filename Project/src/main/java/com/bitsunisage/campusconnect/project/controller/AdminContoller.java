@@ -47,7 +47,7 @@ public class AdminContoller {
         return "adminViewPages/admin";
     }
 
-    @GetMapping("admin/students")
+    @GetMapping("/admin/students")
     public String getStudentsInfo(Model model) {
         List<Roles> students = userService.findByRole("ROLE_STUDENT");
         model.addAttribute("students", students);
@@ -55,7 +55,7 @@ public class AdminContoller {
     }
 
 
-    @GetMapping("admin/add-user")
+    @GetMapping("/admin/add-user")
     public String addUser(Model model) {
         User user = new User();
         Roles roles = new Roles();
@@ -64,11 +64,14 @@ public class AdminContoller {
         return "adminViewPages/add-user";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/admin/save")
     public String saveUser(@ModelAttribute("user") User user, @ModelAttribute("roles") Roles roles) {
+        user.setPassword("{noop}" + user.getPassword());
+        System.out.println(user);
+        System.out.println(roles);
         userService.save(user);
         userService.save(roles);
-return  "redirect:/adminViewPages/admin";
+        return "redirect:/admin";
     }
 
 
