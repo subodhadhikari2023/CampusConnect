@@ -15,31 +15,12 @@ public class User {
     private String password;
     @Column(name = "active")
     private boolean active;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Column(name = "email")
     private String email;
 
     // No Argument Constructor
     public User() {
 
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", active=" + active +
-                ", email='" + email + '\'' +
-                '}';
     }
 
     public String getUserId() {
@@ -58,12 +39,29 @@ public class User {
         this.password = password;
     }
 
-    public boolean isActive() {
+    public boolean getActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", active=" + active +
+                ", email='" + email + '\'' +
+                '}';
     }
 
 }

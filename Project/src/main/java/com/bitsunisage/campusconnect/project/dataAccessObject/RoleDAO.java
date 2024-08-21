@@ -8,7 +8,8 @@ import java.util.List;
 public interface RoleDAO extends JpaRepository<Roles, String> {
     //    While using the JpaRepository no need to define queries
 
-
+    Roles findByUserId(String userId);
 
     List<Roles> readRolesByRole(String role);
+//    void deleteUserById(String userId);
 }

@@ -32,13 +32,19 @@ public class userServiceImplementation implements UserService {
     }
 
     @Override
-    public User findById(int userId) {
-        return null;
+    public User findUserByUserId(String userId) {
+        return userDAO.findByUserId(userId);
     }
 
     @Override
+    public Roles findRoleByUserId(String userId) {
+        return roleDAO.findByUserId(userId);
+    }
+
+
+    @Override
     public User save(User user) {
-       return userDAO.save(user);
+        return userDAO.save(user);
     }
 
     @Override
@@ -47,9 +53,15 @@ public class userServiceImplementation implements UserService {
     }
 
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUser(User user) {
+        userDAO.delete(user);
 
     }
+    @Override
+    public void deleteRole(Roles roles){
+        roleDAO.delete(roles);
+    }
+
 
     @Override
     public Integer totalUsers() {
