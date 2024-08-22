@@ -26,6 +26,9 @@
 
 <body>
 <div class="container">
+    <div class="text-center my-4">
+        <img th:src="@{/loginResources/images/main-logo-black-transparent.png}" alt="Main Logo" style="max-width: 150px;">
+    </div>
     <h1>Add/Update User</h1>
 
     <form action="#" method="POST" th:action="@{/admin/save}" th:object="${user}">
