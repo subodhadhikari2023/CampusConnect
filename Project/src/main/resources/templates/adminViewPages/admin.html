@@ -15,9 +15,8 @@
     <ul class="menu">
         <li><a class="text-white" th:href="@{admin/students}"><img th:src="@{SVGs/user-graduate-solid.svg}"> <span>Students</span></a>
         </li>
-        <li><a class="text-white" href="/teachers"><img th:src="@{SVGs/chalkboard-user-solid.svg}">
-            <span>Teachers</span></a></li>
-        <li><a class="text-white" href="/hod"><img th:src="@{SVGs/user-tie-solid.svg}"> <span>HOD</span></a></li>
+        <li><a class="text-white" th:href="@{admin/teachers}"><img th:src="@{SVGs/chalkboard-user-solid.svg}"><span>Teachers</span></a></li>
+        <li><a class="text-white" th:href="@{admin/hods}"><img th:src="@{SVGs/user-tie-solid.svg}"> <span>HOD</span></a></li>
         <li><a class="text-white" href="/requests"><img th:src="@{SVGs/gears-solid.svg}"> <span>Requests</span></a></li>
         <li>
             <span><form action="#" method="POST" th:action="@{/logout}">

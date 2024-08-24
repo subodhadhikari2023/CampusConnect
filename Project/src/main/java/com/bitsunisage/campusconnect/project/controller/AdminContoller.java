@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.management.relation.Role;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -54,8 +54,53 @@ public class AdminContoller {
     @GetMapping("/admin/students")
     public String getStudentsInfo(Model model) {
         List<Roles> students = userService.findByRole("ROLE_STUDENT");
-        model.addAttribute("students", students);
+        List<String> student = new ArrayList<>();
+        for (Roles stud : students) {
+            student.add(stud.getUserId());
+        }
+        List<User> users = new ArrayList<>();
+        for (String userId : student) {
+            users.add(userService.findUserByUserId(userId));
+        }
+//        model.addAttribute("students", students);
+        model.addAttribute("userStudents", users);
         return "adminViewPages/getstudents";
+    }
+
+    //    Mapping for the page to view the total lists of teachers
+    @GetMapping("/admin/teachers")
+    public String getTeachersInfo(Model model) {
+        List<Roles> teacherId = userService.findByRole("ROLE_TEACHER");
+        List<String> teachers = new ArrayList<>();
+        for (Roles stud : teacherId) {
+            teachers.add(stud.getUserId());
+        }
+        List<User> users = new ArrayList<>();
+        for (String userId : teachers) {
+            users.add(userService.findUserByUserId(userId));
+        }
+
+        model.addAttribute("userTeachers", users);
+
+        return "adminViewPages/getteachers";
+    }
+
+    //    Mapping for the page to view the total lists of students
+    @GetMapping("/admin/hods")
+    public String getHodsInfo(Model model) {
+        List<Roles> hodId = userService.findByRole("ROLE_HOD");
+        List<String> hods = new ArrayList<>();
+        for (Roles stud : hodId) {
+            hods.add(stud.getUserId());
+        }
+        List<User> users = new ArrayList<>();
+        for (String userId : hods) {
+            users.add(userService.findUserByUserId(userId));
+        }
+
+        model.addAttribute("userHODs", users);
+
+        return "adminViewPages/gethod";
     }
 
     // Mapping for the add user form

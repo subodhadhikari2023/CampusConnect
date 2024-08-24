@@ -9,17 +9,22 @@
     <link rel="stylesheet" th:href="@{/CSS/admin/getteacher.css}">
 </head>
 <body>
+<div th:replace="adminViewPages/navbar :: navbar"></div>
 <div class="container my-5">
     <h1 class="text-center mb-4">Teachers List</h1>
     <ul class="teacher-list">
-        <li th:each="teacher:${teachers}" class="teacher-item">
+        <li th:each="teacher:${userTeachers}" class="teacher-item">
             <div class="teacher-card">
                 <div class="teacher-avatar">
                     <img src="https://via.placeholder.com/50" alt="Avatar">
                 </div>
                 <div class="teacher-info">
-                    <h4 th:text="${teacher.userId}">Teacher Name</h4>
-                    <p>Additional Info Here</p>
+                    <label for="UserName">UserName</label>
+                    <h4 th:text="${teacher.userId}" id="UserName" >Teacher Name</h4>
+                    <label for="Email">Email</label>
+                    <h4 th:text="${teacher.email}" id="Email" >Teacher Name</h4>
+                    <label for="Active">Active Status</label>
+                    <h4 th:text="${teacher.active}" id="Active" >Teacher Name</h4>
                 </div>
             </div>
         </li>
