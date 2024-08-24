@@ -27,6 +27,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }else if (authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_ADMIN"))) {
             redirectURL="/admin";
 
+        }
+        else if (authentication.getAuthorities().stream().anyMatch(a->a.getAuthority().equals("ROLE_HOD"))) {
+            redirectURL="/hod";
+
         }else
             redirectURL = "/student";
 
