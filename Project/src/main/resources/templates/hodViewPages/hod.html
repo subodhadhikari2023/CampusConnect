@@ -9,28 +9,8 @@
     <link rel="stylesheet" th:href="@{/CSS/HOD/main.css}">
 </head>
 <body>
-<div class="sidebar" id="sidebar">
-    <div class="logo"><img th:src="@{/images/main-logo-white-transparent.png}"></div>
-    <ul class="menu">
-        <li><a class="text-white" th:href="@{hod/department-details}"><img th:src="@{SVGs/building-solid.svg}"> <span>Department Details</span></a>
-        </li>
-        <li><a class="text-white" href="/hod/faculty"><img th:src="@{SVGs/chalkboard-user-solid.svg}">
-            <span>Faculty</span></a></li>
-        <li><a class="text-white" href="/hod/students"><img th:src="@{SVGs/user-graduate-solid.svg}">
-            <span>Students</span></a></li>
-        <li><a class="text-white" href="/hod/requests"><img th:src="@{SVGs/gears-solid.svg}"> <span>Requests</span></a>
-        </li>
-        <li>
-            <span><form action="#" method="POST" th:action="@{/logout}">
-            <button class="logout-btn" type="submit">Logout</button>
-            </form></span>
-        </li>
-    </ul>
-</div>
+<div th:replace="hodViewPages/hodnavbar :: navbar"></div>
 <div class="main-content">
-    <div class="content-header">
-        <h1>Welcome to the HOD  Panel <span sec:authentication="principal.username"></span></h1>
-    </div>
     <div class="stats-container">
         <table class="stats-box">
             <thead>
