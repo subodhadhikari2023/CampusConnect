@@ -50,17 +50,18 @@ body {
 
 .stats-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
     gap: 20px;
     width: 100%;
     padding-top: 80px;
     margin-left: auto;
     margin-right: auto;
+    justify-content: center; /* Center the grid */
 }
 
 .stats-box {
     height: 150px;
-    background-color: #007a7a; /* Slightly darker teal to match header */
+    background-color: #007a7a;
     border: 1px solid #ddd;
     border-radius: 10px;
     display: flex;
