@@ -16,33 +16,31 @@ import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfiguration {
-//  Allowing to access the resources without authentication and authorization for login form
+    //  Allowing to access the resources without authentication and authorization for login form
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/loginResources/**");
     }
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(configurer -> configurer.anyRequest().authenticated()).formLogin(form -> form.loginPage("/").loginProcessingUrl("/authenticateTheUser").permitAll().successHandler(authenticationSuccessHandler())
 
-//                ).logout(logout -> logout.permitAll()
-        ).logout(LogoutConfigurer::permitAll);
-
-        return httpSecurity.build();
-    }
-//  Custom page handler after authentication
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
-    }
-//    Role based access control of the resources
+    //    Role based access control of the resources
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer -> configurer.requestMatchers("/student/**").hasRole("STUDENT").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/admin/**").hasRole("ADMIN")
+        http.authorizeHttpRequests(configurer -> configurer
+                        .requestMatchers("/student/**").hasRole("STUDENT")
+                        .requestMatchers("/teacher/**").hasRole("TEACHER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/hod/**").hasRole("HOD")
+                        .anyRequest()
+                        .authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/")
+                        .loginProcessingUrl("/authenticateTheUser")
+                        .permitAll()
+                        .successHandler(authenticationSuccessHandler())
 
-
-        );
+                ).logout(LogoutConfigurer::permitAll).exceptionHandling(configurer->configurer.accessDeniedPage("/access-denied"));
 //        use HTTP Basic Authentication
         http.httpBasic(Customizer.withDefaults());
 //        Disable CSRF
@@ -53,6 +51,11 @@ public class SecurityConfiguration {
 
         return http.build();
 
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 
 

@@ -6,33 +6,25 @@ body {
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
-    background-color: #f5f7fa; /* Soft blue-gray background color */
+    background-color: #F5CBA7; /* Light yellow/gold background */
 }
 
-.content-header {
-    background-color: #007a7a; /* Slightly darker teal to add contrast */
-    color: white;
-    padding: 15px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    animation: slide-in 1.5s ease-in-out;
-    position: fixed;
-    top: 0; /* Fixing the content header to the top */
-    left: 250px; /* Adjusted for the sidebar width */
-    width: calc(100% - 250px); /* Adjusted for the sidebar width */
-    z-index: 10;
+.custom-navbar {
+    background-color: #800020; /* Navbar background color */
 }
 
-@keyframes slide-in {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
+.search-input {
+    color: black;
+    width: 150px;
+}
+
+.search-btn {
+    color: black;
+}
+
+.custom-link, .notification-link {
+    color: black;
+    text-decoration: none;
 }
 
 .main-content {
@@ -43,7 +35,7 @@ body {
     box-sizing: border-box;
     margin-left: 250px;
     margin-top: 60px; /* Moved content below the header */
-    background-color: #f5f7fa; /* Soft blue-gray background color */
+    background-color: #F5CBA7; /* Soft peach background color */
 }
 
 .stats-container {
@@ -58,8 +50,9 @@ body {
 
 .stats-box {
     height: 150px;
-    background-color: #007a7a; /* Slightly darker teal to match header */
-    border: 1px solid #ddd;
+    background-color: white;
+    border: 1px solid black;
+    color: black;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -78,7 +71,7 @@ body {
 
 .stats-box h3, .stats-box h4 {
     margin: 0;
-    color: white;
+    color: black;
 }
 
 .stats-box h3 {
@@ -97,63 +90,6 @@ body {
     height: 28px;
 }
 
-.sidebar {
-    width: 250px;
-    background-color: rgb(205, 117, 10); /* Kept sidebar color */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-.sidebar .logo {
-    margin: 20px 0;
-    font-size: 26px;
-    font-weight: bold;
-}
-
-.sidebar .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
-
-.sidebar .menu li {
-    width: 100%;
-    text-align: center;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.sidebar .menu li:hover {
-    background-color: rgb(186, 61, 3); /* Hover color matches sidebar */
-}
-
-.sidebar .menu li a {
-    text-decoration: none;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sidebar .menu li i {
-    margin-right: 10px;
-    font-size: 1.5em;
-}
-
-.sidebar .menu li img {
-    width: 24px;
-    height: 24px;
-}
-
 .action-buttons {
     display: flex;
     justify-content: center;
@@ -167,7 +103,8 @@ body {
 }
 
 .action-button {
-    background-color: #007a7a; /* Slightly darker teal for buttons */
+    background-color: #800020; /* Match navbar color */
+    color: white;
     border: none;
     padding: 15px 30px;
     font-size: 16px;
@@ -177,15 +114,15 @@ body {
 }
 
 .action-button:hover {
-    background-color: #005d5d; /* Darker teal for hover */
+    background-color: #6D1B35; /* Darker red for hover */
 }
 
 /* Style for the stats box text */
 .stats-box tbody tr td {
     font-size: 1.2em;
     font-weight: bold;
-    color: #007a7a; /* Teal text color */
-    background-color: #d6e6e6; /* Lighter teal background */
+    color: #800020; /* Match navbar color */
+    background-color: #F5CBA7; /* Match main-content background */
     padding: 8px;
     border-radius: 5px;
     text-align: center;
@@ -196,6 +133,25 @@ body {
 
 /* Hover effect to make the text interactive */
 .stats-box tbody tr td:hover {
-    background-color: #b4d3d3; /* Slightly darker shade on hover */
+    background-color: #F4D03F; /* Slightly darker yellow on hover */
     transform: translateY(-2px);
+}
+
+.no-pointer {
+    cursor: default;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #FFD700; /* Gold color on hover */
+    text-decoration: underline;
+}
+
+.dropdown-menu {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #B56576;
+}
+
+.navbar-nav .nav-link.active {
+    background-color: #6D1B35;
+    border-bottom: 2px solid #FFD700; /* Gold bottom border */
 }
