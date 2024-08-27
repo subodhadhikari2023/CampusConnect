@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Controller
-public class MyController {
+public class MasterController {
 
     @GetMapping("/")
     public String hello(HttpServletRequest request) {
@@ -20,5 +20,9 @@ public class MyController {
         // If the attribute is not set, show the login page
 
         return "loginfile";
+    }
+    @GetMapping("access-denied")
+    public String accessDenied(){
+        return "securityViewPages/access-denied";
     }
 }
