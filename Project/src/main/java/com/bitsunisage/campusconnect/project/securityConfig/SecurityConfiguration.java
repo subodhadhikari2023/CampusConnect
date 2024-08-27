@@ -40,17 +40,22 @@ public class SecurityConfiguration {
                         .permitAll()
                         .successHandler(authenticationSuccessHandler())
 
-                ).logout(LogoutConfigurer::permitAll).exceptionHandling(configurer->configurer.accessDeniedPage("/access-denied"));
-//        use HTTP Basic Authentication
-        http.httpBasic(Customizer.withDefaults());
-//        Disable CSRF
-//        In general not required for stateless Rest apis that use POST,GET,PUT AND DELETE ...
-//        http.csrf(csrf -> csrf.disable()); old way to do the same thing
-        http.csrf(AbstractHttpConfigurer::disable);
+                ).logout(LogoutConfigurer::permitAll)
 
+                .exceptionHandling(configurer -> configurer
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Redirect to custom access denied page
+                            response.sendRedirect("/access-denied");
+                        })
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Redirect to custom error page for unauthorized access
+                            response.sendRedirect("/NoUrlFound");
+                        })
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
-
     }
 
     @Bean
