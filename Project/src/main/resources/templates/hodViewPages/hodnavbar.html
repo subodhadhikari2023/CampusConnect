@@ -11,8 +11,8 @@
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/admin}">
-                <img th:src="@{/loginResources/images/main-logo-black-transparent.png}" alt="Logo">
+            <a class="navbar-brand" th:href="@{/hod}">
+                <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="Logo" class="navbar-logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -41,17 +41,27 @@
                     </li>
                 </ul>
                 <form class="d-flex ms-auto">
-                    <select class="form-select">
-                        <option selected>Account Center</option>
-                        <option value="1">View Profile</option>
-                        <option value="2">Change Password</option>
-                        <option value="3">Option 3</option>
+                    <select class="form-select" id="accountCenterDropdown" onchange="handleDropdownChange()">
+                        <option selected disabled>Account Center</option>
+                        <option value="/profile">View Profile</option>
+                        <option value="/change-password">Change Password</option>
+                        <option value="/option-3">Option 3</option>
                     </select>
                 </form>
+                <script>
+                    function handleDropdownChange() {
+                        var dropdown = document.getElementById("accountCenterDropdown");
+                        var selectedValue = dropdown.value;
+                        if (selectedValue) {
+                            window.location.href = selectedValue;
+                        }
+                    }
+                </script>
             </div>
         </div>
     </nav>
 </div>
+
 
 <script th:src="@{'https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js'}" integrity="sha384-oBqDVmMz4fnFO9gyb3g4r8OOkI1pA4UAI7G4f2XP5JlA5Pb5xBxg6l6p0CV0cDMK" crossorigin="anonymous"></script>
 <script th:src="@{'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js'}" integrity="sha384-cuYeBG7AnHgVIh3An8NLOc5KPL2DE1yY9b/n5ZWBsmcQomIwO2aH27PF7RF6N3je" crossorigin="anonymous"></script>

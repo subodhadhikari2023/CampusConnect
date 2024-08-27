@@ -19,13 +19,18 @@ body {
 }
 
 .search-btn {
-    color: black;
+    color: white;
 }
 
 .custom-link, .notification-link {
-    color: black;
+    color: white;
     text-decoration: none;
 }
+.navbar-logo {
+    width: 150px; /* Adjust this value to the desired width */
+    /*height: auto; !* Keeps the aspect ratio of the logo *!*/
+}
+
 
 .main-content {
     padding: 20px;
