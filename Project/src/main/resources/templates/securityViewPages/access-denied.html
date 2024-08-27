@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org/">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Denied | Campus Connect</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .access-denied-container {
+      text-align: center;
+      background-color: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .access-denied-image {
+      width: 150px;
+      height: 150px;
+    }
+
+    .access-denied-title {
+      font-size: 36px;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .access-denied-message {
+      font-size: 18px;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .home-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .home-button:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+<div class="access-denied-container">
+  <img src="access-denied-image.svg" alt="Access Denied" class="access-denied-image">
+  <h1 class="access-denied-title">Access Denied</h1>
+  <p class="access-denied-message">You do not have permission to view this page.</p>
+  <a href="/home" class="home-button">Return to Home</a>
+</div>
+</body>
+</html>
