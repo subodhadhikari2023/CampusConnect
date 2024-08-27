@@ -12,7 +12,22 @@
   <img th:src="@{/images/access-denied.png}" alt="Access Denied" class="access-denied-image">
   <h1 class="access-denied-title">Access Denied</h1>
   <p class="access-denied-message">You do not have permission to view this page.</p>
-  <a href="/home" class="home-button">Return to Home</a>
+  <span th:if="${#authorization.expression('hasRole(''ROLE_HOD'')')}">
+    <a th:href="@{/hod}" class="home-button">Home</a>
+</span>
+  <span th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    <a th:href="@{/admin}" class="home-button">Home</a>
+</span>
+  <span th:if="${#authorization.expression('hasRole(''ROLE_TEACHER'')')}">
+    <a th:href="@{/teacher}" class="home-button">Home</a>
+</span>
+  <span th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
+    <a th:href="@{/student}" class="home-button">Home</a>
+</span>
+
+
+
+
 </div>
 </body>
 </html>
