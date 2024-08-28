@@ -1,11 +1,16 @@
 -- Creating the the user for this project -- 
 -- This user creation should be run by root user 
+
+
+
 create user 'campusConnect'@'localhost' identified by 'Frpsxwhu2001@';
 -- Giving all the privileges of the database to the user 
 grant all privileges on campusconnect.* to 'campusConnect'@'localhost';
 Flush privileges;
 
 -- Now after switching the user the following scripts can be executed
+
+
 
 create database if not exists `campusConnect`;
 USE `campusConnect`;

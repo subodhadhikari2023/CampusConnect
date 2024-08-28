@@ -56,12 +56,7 @@ public class User {
     }
 
     public String toString() {
-        return "User{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", active=" + active +
-                ", email='" + email + '\'' +
-                '}';
+        return "User{" + "userId='" + userId + '\'' + ", password='" + password + '\'' + ", active=" + active + ", email='" + email + '\'' + '}';
     }
 
 }
