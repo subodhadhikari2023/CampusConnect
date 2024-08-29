@@ -30,11 +30,16 @@
                         </form>
                     </li>
                     <li class="nav-item d-flex align-items-center me-3">
-                        <a class="nav-link d-flex align-items-center custom-link" th:href="@{/hod/manage-course}">
-                            <span>Manage Course</span>
-                        </a>
-
+                        <form th:action="@{/hodViewPages/add-course}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-light text-dark me-2">Add Course</button>
+                        </form>
+                        <form th:action="@{/hodViewPages/manage-course}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-light text-dark">Manage Course</button>
+                        </form>
                     </li>
+
+
+
                 </ul>
                 <form class="d-flex ms-auto">
                     <a href="/notifications" class="d-flex align-items-center me-3 custom-link notification-link" style="margin-right: 30px; color: white;">

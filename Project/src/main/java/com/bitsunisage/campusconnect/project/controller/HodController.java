@@ -12,4 +12,12 @@ public class HodController {
         return "hodViewPages/hod";
     }
 
+    @GetMapping("/hodViewPages/add-course")
+    public String showAddCoursePage() {
+        return "hodViewPages/add-course";  // Return the Thymeleaf template name
+    }
+    @GetMapping("/hodViewPages/manage-course")
+    public String showManageCoursePage() {
+        return "hodViewPages/manage-course";  // Return the Thymeleaf template name
+    }
 }
