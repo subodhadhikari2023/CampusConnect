@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -9,20 +9,22 @@
 <body>
 <div class="access-denied-container">
     <img alt="Access Denied" class="access-denied-image" th:src="@{/images/access-denied.png}">
-    <h1 th:text="'Error ' + ${statusCode}"></h1>
-    <p th:text="${errorMessage}"></p>
+
+    <h1 th:text="${error.statusCode}"></h1>
+    <h1 th:text="${error.errorMessage}"></h1>
+
 
     <span th:if="${#authorization.expression('hasRole(''ROLE_HOD'')')}">
-    <a th:href="@{/hod}" class="home-button">Home</a>
-</span>
+        <a class="home-button" th:href="@{/hod}">Home</a>
+    </span>
     <span th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-    <a th:href="@{/admin}" class="home-button">Home</a>
+    <a class="home-button" th:href="@{/admin}">Home</a>
 </span>
     <span th:if="${#authorization.expression('hasRole(''ROLE_TEACHER'')')}">
-    <a th:href="@{/teacher}" class="home-button">Home</a>
+    <a class="home-button" th:href="@{/teacher}">Home</a>
 </span>
     <span th:if="${#authorization.expression('hasRole(''ROLE_STUDENT'')')}">
-    <a th:href="@{/student}" class="home-button">Home</a>
+    <a class="home-button" th:href="@{/student}">Home</a>
 </span>
 </div>
 </body>

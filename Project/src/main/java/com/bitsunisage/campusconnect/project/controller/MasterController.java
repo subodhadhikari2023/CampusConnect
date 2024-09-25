@@ -12,6 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MasterController implements ErrorController {
 
     @GetMapping("/")
+    public String showPublicLandingPage(){
+        return "/index";
+    }
+
+
+
+    @GetMapping("/login")
     public String showLoginPage(HttpServletRequest request) {
         // Retrieve the URL prior to login from the session attribute
         String redirectURL = (String) request.getSession().getAttribute("url_prior_login");
@@ -21,7 +28,7 @@ public class MasterController implements ErrorController {
         }
         // If the attribute is not set, show the login page
 
-        return "loginfile";
+        return "/loginFile";
     }
 
 

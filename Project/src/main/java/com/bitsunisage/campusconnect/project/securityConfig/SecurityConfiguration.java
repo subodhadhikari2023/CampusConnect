@@ -6,7 +6,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,6 +26,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> configurer
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/student/**").hasRole("STUDENT")
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -35,12 +35,13 @@ public class SecurityConfiguration {
                         .authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/")
+                        .loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
                         .permitAll()
                         .successHandler(authenticationSuccessHandler())
 
-                ).logout(LogoutConfigurer::permitAll)
+                ).logout(logout -> logout.permitAll()
+                        .logoutSuccessUrl("/"))
 
                 .exceptionHandling(configurer -> configurer
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
