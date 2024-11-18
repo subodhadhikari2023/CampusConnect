@@ -68,3 +68,22 @@ body {
     font-weight: 500;
     font-style: normal;
 }
+.form-group {
+    display: flex;
+    justify-content: center;  /* Aligns children (the button) horizontally to the center */
+    align-items: center;  /* Aligns children vertically to the center */
+    margin: 20px 0;  /* Adds space around the group for better spacing and aesthetics */
+}
+.btn-home {
+    padding: 5px 10px;  /* Smaller padding */
+    font-size: 0.8em;  /* Smaller font size */
+    background-color: #e0e0e0;  /* Light grey background */
+    color: #333;  /* Dark text for visibility */
+    border: none;
+    border-radius: 4px;  /* Rounded corners */
+    transition: background-color 0.3s ease;  /* Smooth transition for hover */
+}
+
+.btn-home:hover {
+    background-color: #bdbdbd;  /* Darker grey on hover */
+}
