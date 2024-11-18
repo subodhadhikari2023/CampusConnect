@@ -45,9 +45,84 @@
         <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo" >
         <h1>Welcome to the Teacher's Dashboard</h1>
     </div>
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h5>Size Before Compression</h5>
+            <canvas id="sizeBeforeChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h5>Size After Compression</h5>
+            <canvas id="sizeAfterChart"></canvas>
+        </div>
+    </div>
+</div>
 
+<!-- Add Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Example data
+    const labels = ['PPTs', 'Videos', 'Audios', 'Reference Books']; // Types of resources
+    const sizeBeforeData = [50, 300, 120, 80]; // Example sizes before compression (in MB)
+    const sizeAfterData = [30, 200, 80, 50]; // Example sizes after compression (in MB)
+
+    // Chart for Size Before Compression
+    const ctxBefore = document.getElementById('sizeBeforeChart').getContext('2d');
+    new Chart(ctxBefore, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Size (MB)',
+                data: sizeBeforeData,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)', // Light red
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: ctx => `${ctx.raw} MB` } }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Size (MB)' } },
+                x: { title: { display: true, text: 'Resource Types' } }
+            }
+        }
+    });
+
+    // Chart for Size After Compression
+    const ctxAfter = document.getElementById('sizeAfterChart').getContext('2d');
+    new Chart(ctxAfter, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Size (MB)',
+                data: sizeAfterData,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)', // Light blue
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: ctx => `${ctx.raw} MB` } }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Size (MB)' } },
+                x: { title: { display: true, text: 'Resource Types' } }
+            }
+        }
+    });
+</script>
 
 </div>
+
+
 
 <div class="sidebar">
     <div>
