@@ -1,5 +1,6 @@
 package com.bitsunisage.campusconnect.project.service;
 
+import com.bitsunisage.campusconnect.project.entities.Department;
 import com.bitsunisage.campusconnect.project.entities.Roles;
 import com.bitsunisage.campusconnect.project.entities.User;
 
@@ -35,5 +36,6 @@ public interface UserService {
 
     List<Roles> findByRole(String role);
 
+    List<Department> getAllDepartments();
 
 }

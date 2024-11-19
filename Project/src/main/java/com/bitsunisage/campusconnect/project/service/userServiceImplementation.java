@@ -1,7 +1,9 @@
 package com.bitsunisage.campusconnect.project.service;
 
+import com.bitsunisage.campusconnect.project.dataAccessObject.DepartmentDAO;
 import com.bitsunisage.campusconnect.project.dataAccessObject.RoleDAO;
 import com.bitsunisage.campusconnect.project.dataAccessObject.UserDAO;
+import com.bitsunisage.campusconnect.project.entities.Department;
 import com.bitsunisage.campusconnect.project.entities.Roles;
 import com.bitsunisage.campusconnect.project.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,14 @@ import java.util.List;
 public class userServiceImplementation implements UserService {
     private UserDAO userDAO;
     private RoleDAO roleDAO;
+    private DepartmentDAO departmentDAO;
+
 
     @Autowired
-    public userServiceImplementation(UserDAO userDAO, RoleDAO roleDAO) {
+    public userServiceImplementation(UserDAO userDAO, RoleDAO roleDAO, DepartmentDAO departmentDAO) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
+        this.departmentDAO = departmentDAO;
     }
 
     @Override
@@ -57,8 +62,9 @@ public class userServiceImplementation implements UserService {
         userDAO.delete(user);
 
     }
+
     @Override
-    public void deleteRole(Roles roles){
+    public void deleteRole(Roles roles) {
         roleDAO.delete(roles);
     }
 
@@ -78,6 +84,11 @@ public class userServiceImplementation implements UserService {
     @Override
     public List<Roles> findByRole(String role) {
         return roleDAO.readRolesByRole(role);
+    }
+
+    @Override
+    public List<Department> getAllDepartments() {
+       return departmentDAO.findAll();
     }
 
 

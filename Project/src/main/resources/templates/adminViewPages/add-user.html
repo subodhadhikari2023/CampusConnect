@@ -47,14 +47,10 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="department">Department</label>
-            <select class="form-select" id="department" required th:field="*{department}">
-                <option th:value="CA">Computer Applications</option>
-                <option th:value="CSE">Computer Science</option>
-                <option th:value="ECE">Electronics</option>
-                <option th:value="EEE">Electrical</option>
-                <option th:value="MECH">Mechanical</option>
-                <option th:value="CIVIL">Civil</option>
-                <!-- Add more options as needed -->
+            <select class="form-select" id="department" required th:field="${user.department}">
+                <option disabled selected value="">Select a department</option>
+                <option th:each="d : ${departments}" th:text="${d.name}" th:value="${d.name}" ></option>
+
             </select>
         </div>
         <button class="btn btn-primary" type="submit">Save</button>
