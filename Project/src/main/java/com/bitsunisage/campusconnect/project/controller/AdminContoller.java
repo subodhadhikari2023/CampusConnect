@@ -1,5 +1,6 @@
 package com.bitsunisage.campusconnect.project.controller;
 
+import com.bitsunisage.campusconnect.project.entities.Department;
 import com.bitsunisage.campusconnect.project.entities.Roles;
 import com.bitsunisage.campusconnect.project.entities.User;
 import com.bitsunisage.campusconnect.project.service.UserService;
@@ -108,9 +109,11 @@ public class AdminContoller {
     public String addUser(Model model) {
         User user = new User();
         Roles roles = new Roles();
+        List<Department> departments = userService.getAllDepartments();
+
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
-
+        model.addAttribute("departments", departments);
         return "adminViewPages/add-user";
     }
 
@@ -139,8 +142,10 @@ public class AdminContoller {
     public String loadUser(@RequestParam("userId") String userId, Model model) {
         User user = userService.findUserByUserId(userId);
         Roles roles = userService.findRoleByUserId(userId);
+        List<Department> departments = userService.getAllDepartments();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
+        model.addAttribute("departments", departments);
 //        For debugging purpose
 //        System.out.println(user.getPassword());
 

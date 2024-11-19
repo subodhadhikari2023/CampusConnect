@@ -17,6 +17,20 @@ public class User {
     private boolean active;
     @Column(name = "email")
     private String email;
+    @Column(name = "department")
+    private String department;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     // No Argument Constructor
     public User() {
