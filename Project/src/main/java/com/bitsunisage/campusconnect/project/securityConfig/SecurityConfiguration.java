@@ -18,7 +18,7 @@ public class SecurityConfiguration {
     //  Allowing to access the resources without authentication and authorization for login form
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/loginResources/**");
+        return (web) -> web.ignoring().requestMatchers("/loginResources/**","view-data");
     }
 
 
