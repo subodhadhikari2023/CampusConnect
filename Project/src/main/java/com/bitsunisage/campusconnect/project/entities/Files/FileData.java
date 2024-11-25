@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class FileData {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,6 +22,26 @@ public class FileData {
 
     @Column(name = "file_size")
     private long fileSize;
+
+    @Column(name = "uploader_department")
+    private int ownersDepartmentID;
+
+
+    @Column(name = "uploader_name")
+    private String ownersName;
+
+    @Override
+    public String toString() {
+        return "FileData{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", fileSize=" + fileSize +
+                ", ownersDepartmentID=" + ownersDepartmentID +
+                ", ownersName='" + ownersName + '\'' +
+                '}';
+    }
 
     public Long getId() {
         return id;
@@ -63,14 +83,19 @@ public class FileData {
         this.fileSize = fileSize;
     }
 
-    @Override
-    public String toString() {
-        return "FileData{" +
-                "id=" + id +
-                ", fileName='" + fileName + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", fileType='" + fileType + '\'' +
-                ", fileSize=" + fileSize +
-                '}';
+    public int getOwnersDepartmentID() {
+        return ownersDepartmentID;
+    }
+
+    public void setOwnersDepartmentID(int ownersDepartmentID) {
+        this.ownersDepartmentID = ownersDepartmentID;
+    }
+
+    public String getOwnersName() {
+        return ownersName;
+    }
+
+    public void setOwnersName(String ownersName) {
+        this.ownersName = ownersName;
     }
 }
