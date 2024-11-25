@@ -8,10 +8,9 @@
 <body>
 <div class="container mt-5">
     <h2>Upload PowerPoint Presentations</h2>
-    <form th:action="@{/uploadPPTs}" method="post" enctype="multipart/form-data">
-        <label for="pptUpload" class="form-label">Upload PPTs</label>
-        <input type="file" class="form-control" id="pptUpload" name="file" accept=".ppt,.pptx">
-        <button type="submit" class="btn btn-outline-primary mt-3">Upload</button>
+    <form th:action="@{teacher/upload}" method="POST" enctype="multipart/form-data" >
+        <input type="file" name="file" required />
+        <button type="submit">Upload</button>
     </form>
 </div>
 
