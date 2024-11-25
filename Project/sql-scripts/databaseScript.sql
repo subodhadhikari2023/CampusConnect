@@ -107,6 +107,27 @@ INSERT INTO `department_details` VALUES
 (7, 1001, 'admin1', 'ADMIN'),
 (8, 1003, 'admin2', 'ADMIN');
 
+-- Table structure for table `file_data`
+DROP TABLE IF EXISTS `file_data`;
+CREATE TABLE `file_data` (
+  `file_id` INT NOT NULL AUTO_INCREMENT,
+  `file_name` VARCHAR(255) NOT NULL,
+  `file_type` VARCHAR(100) NOT NULL,
+  `file_size` BIGINT NOT NULL,
+  `department_id` INT NOT NULL,
+  `uploaded_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`file_id`),
+  KEY `department_id` (`department_id`),
+  CONSTRAINT `fk_department_file` FOREIGN KEY (`department_id`) REFERENCES `department` (`department_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+INSERT INTO `file_data` VALUES
+(1, 'lecture_notes_01.pdf', 'application/pdf', 5242880, 1001, '2024-11-25 10:00:00'),
+(2, 'exam_schedule_01.pdf', 'application/pdf', 1048576, 1002, '2024-11-25 10:15:00'),
+(3, 'research_paper_01.pdf', 'application/pdf', 2097152, 1003, '2024-11-25 11:00:00');
+
 -- Reset the environment variables
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
