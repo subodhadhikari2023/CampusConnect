@@ -23,24 +23,44 @@ public class FileData {
     @Column(name = "file_size")
     private long fileSize;
 
-    @Column(name = "uploader_department")
+    @Column(name = "uploader_department_id")
     private int ownersDepartmentID;
 
 
     @Column(name = "uploader_name")
     private String ownersName;
 
-    @Override
-    public String toString() {
-        return "FileData{" +
-                "id=" + id +
-                ", fileName='" + fileName + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", fileType='" + fileType + '\'' +
-                ", fileSize=" + fileSize +
-                ", ownersDepartmentID=" + ownersDepartmentID +
-                ", ownersName='" + ownersName + '\'' +
-                '}';
+    @Column(name = "course_id")
+    private int courseId;
+
+    @Column(name = "semester_id")
+    private int semesterId;
+
+    @Column(name = "subject_id")
+    private int subjectId;
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public int getSemesterId() {
+        return semesterId;
+    }
+
+    public void setSemesterId(int semesterId) {
+        this.semesterId = semesterId;
+    }
+
+    public int getSubjectId() {
+        return subjectId;
+    }
+
+    public void setSubjectId(int subjectId) {
+        this.subjectId = subjectId;
     }
 
     public Long getId() {
@@ -97,5 +117,21 @@ public class FileData {
 
     public void setOwnersName(String ownersName) {
         this.ownersName = ownersName;
+    }
+
+    @Override
+    public String toString() {
+        return "FileData{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", fileSize=" + fileSize +
+                ", ownersDepartmentID=" + ownersDepartmentID +
+                ", ownersName='" + ownersName + '\'' +
+                ", courseId=" + courseId +
+                ", semesterId=" + semesterId +
+                ", subjectId=" + subjectId +
+                '}';
     }
 }
