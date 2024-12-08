@@ -37,4 +37,25 @@ public class TeacherController {
     public String uploadPPTs() {
         return "teacherViewPages/uploadPPTs";
     }
+    @GetMapping("/uploadNotes")
+    public String uploadNotes() {
+        return "teacherViewPages/uploadNotes";
+    }
+    @GetMapping("/uploadsampleprograms")
+    public String uploadsampleprograms() {
+        return "teacherViewPages/uploadsampleprograms";
+    }
+    @GetMapping("/uploadaudiobooks")
+    public String uploadaudiobooks() {
+        return "teacherViewPages/uploadaudiobooks";
+    }
+    @GetMapping("/uploadReferenceBooks")
+    public String uploadReferenceBooks() {
+        return "teacherViewPages/uploadReferenceBooks";
+    }
+    @GetMapping("/uploadVideos")
+    public String uploadVideos() {
+        return "teacherViewPages/uploadVideos";
+    }
+
 }
