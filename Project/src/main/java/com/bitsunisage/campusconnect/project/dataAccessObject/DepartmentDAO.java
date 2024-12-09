@@ -9,4 +9,7 @@ import java.util.List;
 public interface DepartmentDAO extends JpaRepository<Department, String> {
 //    List<Department> findAllDepartment();
 //    List<Department> findAll();
+    List<Department> findById(Integer id);
+
+    Integer findIdByName(String name);
 }

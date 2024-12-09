@@ -1,6 +1,8 @@
-package com.bitsunisage.campusconnect.project.entities.Files;
+package com.bitsunisage.campusconnect.project.entities;
 
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.lang.NonNull;
 
 @Entity
 @Table(name = "file_data")
@@ -24,42 +26,42 @@ public class FileData {
     private long fileSize;
 
     @Column(name = "uploader_department_id")
-    private int ownersDepartmentID;
+    private Long ownersDepartmentID;
 
 
     @Column(name = "uploader_name")
     private String ownersName;
 
     @Column(name = "course_id")
-    private int courseId;
+    private Long courseId;
 
     @Column(name = "semester_id")
-    private int semesterId;
+    private Long semesterId;
 
     @Column(name = "subject_id")
-    private int subjectId;
+    private Long subjectId;
 
-    public int getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
+    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 
-    public int getSemesterId() {
+    public Long getSemesterId() {
         return semesterId;
     }
 
-    public void setSemesterId(int semesterId) {
+    public void setSemesterId(Long semesterId) {
         this.semesterId = semesterId;
     }
 
-    public int getSubjectId() {
+    public Long getSubjectId() {
         return subjectId;
     }
 
-    public void setSubjectId(int subjectId) {
+    public void setSubjectId(Long subjectId) {
         this.subjectId = subjectId;
     }
 
@@ -103,11 +105,11 @@ public class FileData {
         this.fileSize = fileSize;
     }
 
-    public int getOwnersDepartmentID() {
+    public Long getOwnersDepartmentID() {
         return ownersDepartmentID;
     }
 
-    public void setOwnersDepartmentID(int ownersDepartmentID) {
+    public void setOwnersDepartmentID(Long ownersDepartmentID) {
         this.ownersDepartmentID = ownersDepartmentID;
     }
 
