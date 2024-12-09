@@ -1,9 +1,9 @@
 package com.bitsunisage.campusconnect.project.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
 
 import java.io.IOException;
 
 public interface StorageService {
-    public void uploadImageToFileSystem(MultipartFile file) throws IOException;
+    public void uploadToFileSystem(FileUploadDTO fileUploadDTO) throws IOException;
 }

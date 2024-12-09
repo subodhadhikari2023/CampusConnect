@@ -1,8 +1,6 @@
 package com.bitsunisage.campusconnect.project.service;
 
-import com.bitsunisage.campusconnect.project.entities.Department;
-import com.bitsunisage.campusconnect.project.entities.Roles;
-import com.bitsunisage.campusconnect.project.entities.User;
+import com.bitsunisage.campusconnect.project.entities.*;
 
 import java.util.List;
 
@@ -25,6 +23,7 @@ public interface UserService {
 
     //    Delete the user
     void deleteUser(User user);
+
     void deleteRole(Roles roles);
 
     //    Returns an integer value that stores the total number of users present irrespective of roles
@@ -37,5 +36,14 @@ public interface UserService {
     List<Roles> findByRole(String role);
 
     List<Department> getAllDepartments();
+
+    List<CourseDetails> getAllCourses();
+
+    List<Semester> getAllSemesters();
+
+    List<SubjectDetails> getAllSubjects();
+
+    Integer getDepartmentIdByDepartmentName(String name);
+
 
 }
