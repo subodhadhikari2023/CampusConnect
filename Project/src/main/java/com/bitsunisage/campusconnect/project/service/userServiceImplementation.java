@@ -1,11 +1,7 @@
 package com.bitsunisage.campusconnect.project.service;
 
-import com.bitsunisage.campusconnect.project.dataAccessObject.DepartmentDAO;
-import com.bitsunisage.campusconnect.project.dataAccessObject.RoleDAO;
-import com.bitsunisage.campusconnect.project.dataAccessObject.UserDAO;
-import com.bitsunisage.campusconnect.project.entities.Department;
-import com.bitsunisage.campusconnect.project.entities.Roles;
-import com.bitsunisage.campusconnect.project.entities.User;
+import com.bitsunisage.campusconnect.project.dataAccessObject.*;
+import com.bitsunisage.campusconnect.project.entities.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,16 +11,21 @@ import java.util.List;
 @Transactional
 @Service
 public class userServiceImplementation implements UserService {
-    private UserDAO userDAO;
-    private RoleDAO roleDAO;
-    private DepartmentDAO departmentDAO;
-
+    private final UserDAO userDAO;
+    private final RoleDAO roleDAO;
+    private final DepartmentDAO departmentDAO;
+    private final CourseDetailsDAO courseDetailsDAO;
+    private final SemesterDAO semesterDAO;
+    private final SubjectDetailsDAO subjectDetailsDAO;
 
     @Autowired
-    public userServiceImplementation(UserDAO userDAO, RoleDAO roleDAO, DepartmentDAO departmentDAO) {
+    public userServiceImplementation(UserDAO userDAO, RoleDAO roleDAO, DepartmentDAO departmentDAO, CourseDetailsDAO courseDetailsDAO, SemesterDAO semesterDAO, SubjectDetailsDAO subjectDetailsDAO) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.departmentDAO = departmentDAO;
+        this.courseDetailsDAO = courseDetailsDAO;
+        this.semesterDAO = semesterDAO;
+        this.subjectDetailsDAO = subjectDetailsDAO;
     }
 
     @Override
@@ -90,7 +91,27 @@ public class userServiceImplementation implements UserService {
 
     @Override
     public List<Department> getAllDepartments() {
-       return departmentDAO.findAll();
+        return departmentDAO.findAll();
+    }
+
+    @Override
+    public List<CourseDetails> getAllCourses() {
+        return courseDetailsDAO.findAll();
+    }
+
+    @Override
+    public List<Semester> getAllSemesters() {
+        return semesterDAO.findAll();
+    }
+
+    @Override
+    public List<SubjectDetails> getAllSubjects() {
+        return subjectDetailsDAO.findAll();
+    }
+
+    @Override
+    public Integer getDepartmentIdByDepartmentName(String name) {
+       return departmentDAO.findIdByName(name);
     }
 
 
