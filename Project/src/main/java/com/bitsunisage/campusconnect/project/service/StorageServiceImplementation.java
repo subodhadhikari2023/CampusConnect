@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 
@@ -38,24 +40,8 @@ public class StorageServiceImplementation implements StorageService {
         try {
 //            System.out.println(filePath);
             String fileExtension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
-            switch (fileExtension) {
-                case ".pptx":
-                    new java.io.File(uploadDir + "/presentations/").mkdirs();
-                    file.transferTo(new java.io.File(uploadDir + "/presentations/" + file.getOriginalFilename()));
-                    break;
-                case ".ppt":
-                    new java.io.File(uploadDir + "/presentations/ppt/").mkdirs();
-                    file.transferTo(new java.io.File(uploadDir + "/presentations/" + file.getOriginalFilename()));
-                    break;
-                case ".pdf":
-                    new java.io.File(uploadDir + "/pdf/").mkdirs();
-                    file.transferTo(new java.io.File(uploadDir + "/pdf/" + file.getOriginalFilename()));
-                    break;
-                default:
-
-                    System.out.println("Unsupported file type: " + fileExtension);
-            }
-
+            new java.io.File(uploadDir + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()).mkdirs();
+            file.transferTo(Path.of(new File(uploadDir + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()) + "/" + file.getOriginalFilename()));
 
             FileData fileData = new FileData();
             fileData.setFileName(file.getOriginalFilename());
@@ -68,6 +54,7 @@ public class StorageServiceImplementation implements StorageService {
             fileData.setSemesterId(fileUploadDTO.getSemesterId());
             fileData.setSubjectId(fileUploadDTO.getSubjectId());
             FileData savedFileData = fileDAO.save(fileData);
+            System.out.println(fileUploadDTO);
             System.out.println("Saved FileData: " + savedFileData);
 
 

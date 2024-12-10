@@ -4,6 +4,7 @@ package com.bitsunisage.campusconnect.project.DataTransferObject;
 import org.springframework.web.multipart.MultipartFile;
 
 public class FileUploadDTO {
+    private String fileRole;
     private MultipartFile file;
     private Long courseId;
     private Long semesterId;
@@ -11,6 +12,26 @@ public class FileUploadDTO {
     private Long departmentId;
     private String ownerDepartmentName;
 
+    public String getFileRole() {
+        return fileRole;
+    }
+
+    public void setFileRole(String fileRole) {
+        this.fileRole = fileRole;
+    }
+
+    @Override
+    public String toString() {
+        return "FileUploadDTO{" +
+                "fileRole='" + fileRole + '\'' +
+                ", file=" + file +
+                ", courseId=" + courseId +
+                ", semesterId=" + semesterId +
+                ", subjectId=" + subjectId +
+                ", departmentId=" + departmentId +
+                ", ownerDepartmentName='" + ownerDepartmentName + '\'' +
+                '}';
+    }
 
     public MultipartFile getFile() {
         return file;
