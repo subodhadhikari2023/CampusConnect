@@ -55,7 +55,24 @@ public class TeacherController {
     }
 
     @GetMapping("/teacher/uploadPPTs")
-    public String uploadPPTs(Model model){
+    public String uploadPPTs(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("PPTS");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
+        modelFeeding(model);
+        return "teacherViewPages/uploadPPTs";
+    }
+
+    @GetMapping("/teacher/uploadNotes")
+    public String uploadNotes(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("Notes");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
+        modelFeeding(model);
+        return "teacherViewPages/uploadNotes";
+    }
+
+    private void modelFeeding(Model model) {
         List<Department> departmentsList = userService.getAllDepartments();
         List<CourseDetails> courseDetailsList = userService.getAllCourses();
         List<Semester> semesterList = userService.getAllSemesters();
@@ -64,22 +81,19 @@ public class TeacherController {
         model.addAttribute("courses", courseDetailsList);
         model.addAttribute("semesterList", semesterList);
         model.addAttribute("subjectList", subjectDetailsList);
-        model.addAttribute("fileUploadDTO", new FileUploadDTO());
-        return "teacherViewPages/uploadPPTs";
+
     }
 
-    @GetMapping("/teacher/uploadNotes")
-    public String uploadNotes() {
-        return "teacherViewPages/uploadNotes";
-    }
 
     @GetMapping("/uploadsampleprograms")
-    public String uploadsampleprograms() {
+    public String uploadsampleprograms(Model model) {
+        modelFeeding(model);
         return "teacherViewPages/uploadsampleprograms";
     }
 
     @GetMapping("/uploadaudiobooks")
-    public String uploadaudiobooks() {
+    public String uploadaudiobooks(Model model) {
+        modelFeeding(model);
         return "teacherViewPages/uploadaudiobooks";
     }
 
