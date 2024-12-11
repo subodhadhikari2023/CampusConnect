@@ -176,6 +176,7 @@ CREATE TABLE IF NOT EXISTS `file_data`
     `semester_id`            INT          NOT NULL,
     `subject_id`             INT          NOT NULL,
     `uploaded_at`            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    file_role                varchar(255) not null,
     PRIMARY KEY (`file_id`),
     KEY `department_id` (`uploader_department_id`),
     KEY `course_id` (`course_id`),

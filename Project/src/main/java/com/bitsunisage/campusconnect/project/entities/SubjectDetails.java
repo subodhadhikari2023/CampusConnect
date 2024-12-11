@@ -8,7 +8,7 @@ public class SubjectDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subject_id")
-    private int subjectId;
+    private Long subjectId;
 
     @Column(name = "subject_name")
     private String subjectName;
@@ -19,11 +19,11 @@ public class SubjectDetails {
     @Column(name = "semester_id")
     private int semesterId;
 
-    public int getSubjectId() {
+    public Long getSubjectId() {
         return subjectId;
     }
 
-    public void setSubjectId(int subjectId) {
+    public void setSubjectId(Long subjectId) {
         this.subjectId = subjectId;
     }
 

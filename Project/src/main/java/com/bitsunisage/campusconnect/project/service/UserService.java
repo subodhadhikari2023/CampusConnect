@@ -1,6 +1,5 @@
 package com.bitsunisage.campusconnect.project.service;
 
-import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
 import com.bitsunisage.campusconnect.project.entities.*;
 
 import java.util.List;
@@ -44,8 +43,14 @@ public interface UserService {
 
     List<SubjectDetails> getAllSubjects();
 
-    Integer getDepartmentIdByDepartmentName(String name);
+    Department getDepartmentIdByDepartmentName(String name);
+
+    Department getDepartmentNameByDepartmentId(Integer id);
+
+    List<CourseDetails> getCourseName(List<Long> id);
 
 
-    List<FileUploadDTO> findResourcesUploaded(User user);
+    List<Semester> getSemesterName(List<Long> semesterIds);
+
+    List<SubjectDetails> getSubjectName(List<Long> subjectIds);
 }

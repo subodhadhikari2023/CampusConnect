@@ -1,19 +1,17 @@
 package com.bitsunisage.campusconnect.project.controller;
 
 import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
+import com.bitsunisage.campusconnect.project.dataAccessObject.DepartmentDAO;
 import com.bitsunisage.campusconnect.project.entities.*;
 import com.bitsunisage.campusconnect.project.service.StorageService;
 import com.bitsunisage.campusconnect.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 
@@ -21,13 +19,14 @@ import java.util.List;
 public class TeacherController {
     private final StorageService storageService;
     private final UserService userService;
+    private final DepartmentDAO departmentDAO;
 
 
     @Autowired
-    public TeacherController(StorageService storageService, UserService userService) {
+    public TeacherController(StorageService storageService, UserService userService, DepartmentDAO departmentDAO) {
         this.storageService = storageService;
         this.userService = userService;
-
+        this.departmentDAO = departmentDAO;
     }
 
 
@@ -122,19 +121,30 @@ public class TeacherController {
     }
 
     @GetMapping("/teacher/viewUploadedResources")
-    public String viewUploadedResources(Model model, Principal principal){
-        String teacherUsername = principal.getName();
+    public String viewUploadedResources(Model model) {
+        User user = userService.findUserByUserId(storageService.getCurrentOwnersName());
+        List<FileData> resources = storageService.findResourcesUploaded(user.getUserId());
+        List<Long> courseIds = resources.stream().map(FileData::getCourseId).distinct().toList();
+        List<CourseDetails> courseDetails = userService.getCourseName(courseIds);
+        List<Long> semesterIds = resources.stream().map(FileData::getSemesterId).distinct().toList();
+        List<Semester> semesterList = userService.getSemesterName(semesterIds);
+        List<Long> subjectIds = resources.stream().map(FileData::getSubjectId).distinct().toList();
+        List<SubjectDetails> subjectDetailsList = userService.getSubjectName(subjectIds);
+        model.addAttribute("subjectList", subjectDetailsList);
+        model.addAttribute("semesterList", semesterList);
+        model.addAttribute("courseDetails", courseDetails);
+        model.addAttribute("user", user);
+        model.addAttribute("resources", resources);
 
-      User user = userService.findUserByUserId(teacherUsername);
+        return "teacherViewPages/viewUploadedResources";
+    }
 
-        Roles role = userService.findRoleByUserId(user.getUserId());
-        System.out.println(user.getUserId());
-        System.out.println("Role: "+role.getRole());
-        // Now, you can pass both userId and role to your resourceService
-        List<FileUploadDTO> resources = userService.findResourcesUploaded(user);
+    @PostMapping("/teacher/deleteResource")
+    public String deleteResource(@RequestParam Long id, RedirectAttributes redirectAttributes) {
+        storageService.deleteResource(id);
+        redirectAttributes.addFlashAttribute("message", "Resource has been deleted successfully.");
 
-        model.addAttribute("resources", "resources");
-        return "/teacherViewPages/viewUploadedResources";
+        return "redirect:/teacher";
     }
 
 
