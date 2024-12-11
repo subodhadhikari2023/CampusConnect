@@ -1,8 +1,8 @@
 package com.bitsunisage.campusconnect.project.entities;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.springframework.lang.NonNull;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "file_data")
@@ -25,9 +25,30 @@ public class FileData {
     @Column(name = "file_size")
     private long fileSize;
 
+    public String getFileRole() {
+        return fileRole;
+    }
+
+    public void setFileRole(String fileRole) {
+        this.fileRole = fileRole;
+    }
+
+    @Column(name = "file_role")
+    private String fileRole;
+
+    public Timestamp getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(Timestamp uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    @Column(name = "uploaded_at" ,insertable = false,updatable = false)
+    private Timestamp uploadDate;
+
     @Column(name = "uploader_department_id")
     private Long ownersDepartmentID;
-
 
     @Column(name = "uploader_name")
     private String ownersName;
@@ -40,6 +61,7 @@ public class FileData {
 
     @Column(name = "subject_id")
     private Long subjectId;
+
 
     public Long getCourseId() {
         return courseId;
@@ -59,6 +81,22 @@ public class FileData {
 
     public Long getSubjectId() {
         return subjectId;
+    }
+
+    @Override
+    public String toString() {
+        return "FileData{" +
+                "id=" + id +
+                ", fileName='" + fileName + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", fileSize=" + fileSize +
+                ", ownersDepartmentID=" + ownersDepartmentID +
+                ", ownersName='" + ownersName + '\'' +
+                ", courseId=" + courseId +
+                ", semesterId=" + semesterId +
+                ", subjectId=" + subjectId +
+                '}';
     }
 
     public void setSubjectId(Long subjectId) {
@@ -121,19 +159,5 @@ public class FileData {
         this.ownersName = ownersName;
     }
 
-    @Override
-    public String toString() {
-        return "FileData{" +
-                "id=" + id +
-                ", fileName='" + fileName + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", fileType='" + fileType + '\'' +
-                ", fileSize=" + fileSize +
-                ", ownersDepartmentID=" + ownersDepartmentID +
-                ", ownersName='" + ownersName + '\'' +
-                ", courseId=" + courseId +
-                ", semesterId=" + semesterId +
-                ", subjectId=" + subjectId +
-                '}';
-    }
+
 }

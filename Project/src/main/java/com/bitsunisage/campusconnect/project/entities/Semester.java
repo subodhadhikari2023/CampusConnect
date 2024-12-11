@@ -8,17 +8,17 @@ public class Semester {
     @Id
     @Column(name = "semester_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int semesterId;
+    private Long semesterId;
 
 
     @Column(name ="semester_name")
     private String semesterName;
 
-    public int getSemesterId() {
+    public Long getSemesterId() {
         return semesterId;
     }
 
-    public void setSemesterId(int semesterId) {
+    public void setSemesterId(Long semesterId) {
         this.semesterId = semesterId;
     }
 
