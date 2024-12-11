@@ -1,13 +1,11 @@
 package com.bitsunisage.campusconnect.project.controller;
 
 import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
-import com.bitsunisage.campusconnect.project.entities.CourseDetails;
-import com.bitsunisage.campusconnect.project.entities.Department;
-import com.bitsunisage.campusconnect.project.entities.Semester;
-import com.bitsunisage.campusconnect.project.entities.SubjectDetails;
+import com.bitsunisage.campusconnect.project.entities.*;
 import com.bitsunisage.campusconnect.project.service.StorageService;
 import com.bitsunisage.campusconnect.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 
@@ -85,26 +84,57 @@ public class TeacherController {
     }
 
 
-    @GetMapping("/uploadsampleprograms")
+    @GetMapping("/teacher/uploadsampleprograms")
     public String uploadsampleprograms(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("Programs");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
         modelFeeding(model);
         return "teacherViewPages/uploadsampleprograms";
     }
 
-    @GetMapping("/uploadaudiobooks")
+    @GetMapping("/teacher/uploadaudiobooks")
     public String uploadaudiobooks(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("AudioBooks");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
         modelFeeding(model);
         return "teacherViewPages/uploadaudiobooks";
     }
 
-    @GetMapping("/uploadReferenceBooks")
-    public String uploadReferenceBooks() {
+    @GetMapping("/teacher/uploadReferenceBooks")
+    public String uploadReferenceBooks(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("ReferenceBook");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
+        modelFeeding(model);
         return "teacherViewPages/uploadReferenceBooks";
     }
 
-    @GetMapping("/uploadVideos")
-    public String uploadVideos() {
+    @GetMapping("/teacher/uploadVideos")
+    public String uploadVideos(Model model) {
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setFileRole("Videos");
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
+        modelFeeding(model);
         return "teacherViewPages/uploadVideos";
+
+    }
+
+    @GetMapping("/teacher/viewUploadedResources")
+    public String viewUploadedResources(Model model, Principal principal){
+        String teacherUsername = principal.getName();
+
+      User user = userService.findUserByUserId(teacherUsername);
+
+        Roles role = userService.findRoleByUserId(user.getUserId());
+        System.out.println(user.getUserId());
+        System.out.println("Role: "+role.getRole());
+        // Now, you can pass both userId and role to your resourceService
+        List<FileUploadDTO> resources = userService.findResourcesUploaded(user);
+
+        model.addAttribute("resources", "resources");
+        return "/teacherViewPages/viewUploadedResources";
     }
 
 

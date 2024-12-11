@@ -120,12 +120,16 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="file">Upload File</label>
-            <input type="file" id="file" required th:accept="'.pptx,.ppt'" th:field="*{file}">
+        <div class="container mt-5">
+            <h2>Select Presentations </h2>
+            <div class="form-group">
+                <label for="file">Files accepted (.pptx,.ppt)</label>
+                <input type="file" class="form-control-file" id="file" name="file" th:accept="'.pptx,.ppt'">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
         </div>
 
-        <button type="submit" class="btn">Upload</button>
+
     </form>
 </div>
 

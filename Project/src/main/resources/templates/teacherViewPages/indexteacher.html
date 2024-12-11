@@ -1,48 +1,53 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Teacher's Dashboard - Upload Resources</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
-</head>
-<style>
-    .sidebar {
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 250px;
-        background-color: #f8f9fa;
-        padding-top: 60px;
-        padding-left: 15px;
-        padding-right: 15px;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    }
-    .content {
-        margin-right: 260px; /* Account for the sidebar width */
-    }
-    .logout-btn {
-        position: absolute;
-        bottom: 20px;
-        left: 15px;
-        right: 15px;
-    }
-    .header-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-    }
-    .header-container img {
-        position: absolute;
-        left: 0;
-        margin-left: 10px; /* Adjust the margin if needed */
-    }
-</style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"/>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding-top: 60px;
+            padding-left: 15px;
+            padding-right: 15px;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .content {
+            margin-right: 260px; /* Account for the sidebar width */
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-container img {
+            position: absolute;
+            left: 0;
+            margin-left: 10px; /* Adjust the margin if needed */
+        }
+    </style>
 <body>
 <div class="container content mt-5">
     <div class="header-container">
-        <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo" >
+        <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo">
         <h1>Welcome to the Teacher's Dashboard</h1>
     </div>
     <div class="row mt-5">
@@ -82,12 +87,12 @@
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: ctx => `${ctx.raw} MB` } }
+                legend: {display: false},
+                tooltip: {callbacks: {label: ctx => `${ctx.raw} MB`}}
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Size (MB)' } },
-                x: { title: { display: true, text: 'Resource Types' } }
+                y: {beginAtZero: true, title: {display: true, text: 'Size (MB)'}},
+                x: {title: {display: true, text: 'Resource Types'}}
             }
         }
     });
@@ -109,12 +114,12 @@
         options: {
             responsive: true,
             plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: ctx => `${ctx.raw} MB` } }
+                legend: {display: false},
+                tooltip: {callbacks: {label: ctx => `${ctx.raw} MB`}}
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: 'Size (MB)' } },
-                x: { title: { display: true, text: 'Resource Types' } }
+                y: {beginAtZero: true, title: {display: true, text: 'Size (MB)'}},
+                x: {title: {display: true, text: 'Resource Types'}}
             }
         }
     });
@@ -123,17 +128,20 @@
 </div>
 
 
-
 <div class="sidebar">
     <div>
         <h5>Upload Resources</h5>
         <div class="mb-3">
             <a href="#" th:href="@{/teacher/uploadPPTs}" class="btn btn-outline-primary w-100 mb-2">Upload PPTs</a>
-            <a href="#" th:href="@{/teacher/uploadNotes}" class="btn btn-outline-primary w-100 mb-2">Upload Lecture Notes</a>
-            <a href="#" th:href="@{/uploadsampleprograms}" class="btn btn-outline-primary w-100 mb-2">Upload Sample Programs</a>
-            <a href="#" th:href="@{/uploadaudiobooks}" class="btn btn-outline-primary w-100 mb-2">Upload Audio Books</a>
-            <a href="#" th:href="@{/uploadReferenceBooks}" class="btn btn-outline-primary w-100 mb-2">Upload Reference Books</a>
-            <a href="#" th:href="@{/uploadVideos}" class="btn btn-outline-primary w-100 mb-2">Upload Video Tutorials</a>
+            <a href="#" th:href="@{/teacher/uploadNotes}" class="btn btn-outline-primary w-100 mb-2">Upload Lecture
+                Notes</a>
+            <a href="#" th:href="@{/teacher/uploadsampleprograms}" class="btn btn-outline-primary w-100 mb-2">Upload Sample
+                Programs</a>
+            <a href="#" th:href="@{/teacher/uploadaudiobooks}" class="btn btn-outline-primary w-100 mb-2">Upload Audio Books</a>
+            <a href="#" th:href="@{/teacher/uploadReferenceBooks}" class="btn btn-outline-primary w-100 mb-2">Upload Reference
+                Books</a>
+            <a href="#" th:href="@{/teacher/viewUploadedResources}" class="btn btn-outline-primary w-100 mb-2">View Uploaded Resources</a>
+
         </div>
     </div>
     <form action="#" th:action="@{/logout}" method="POST" class="logout-btn">
@@ -147,6 +155,8 @@
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+VumWk0I1pHQG6EzfuZ8DEy5/VeKJ" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+VumWk0I1pHQG6EzfuZ8DEy5/VeKJ"
+        crossorigin="anonymous"></script>
 </body>
 </html>

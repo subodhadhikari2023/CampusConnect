@@ -1,5 +1,6 @@
 package com.bitsunisage.campusconnect.project.service;
 
+import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
 import com.bitsunisage.campusconnect.project.entities.*;
 
 import java.util.List;
@@ -46,4 +47,5 @@ public interface UserService {
     Integer getDepartmentIdByDepartmentName(String name);
 
 
+    List<FileUploadDTO> findResourcesUploaded(User user);
 }

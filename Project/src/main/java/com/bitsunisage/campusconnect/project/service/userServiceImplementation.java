@@ -1,5 +1,6 @@
 package com.bitsunisage.campusconnect.project.service;
 
+import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
 import com.bitsunisage.campusconnect.project.dataAccessObject.*;
 import com.bitsunisage.campusconnect.project.entities.*;
 import jakarta.transaction.Transactional;
@@ -112,6 +113,11 @@ public class userServiceImplementation implements UserService {
     @Override
     public Integer getDepartmentIdByDepartmentName(String name) {
        return departmentDAO.findIdByName(name);
+    }
+
+    @Override
+    public List<FileUploadDTO> findResourcesUploaded(User user) {
+        return List.of();
     }
 
 
