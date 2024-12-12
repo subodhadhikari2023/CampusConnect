@@ -4,7 +4,6 @@ import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
 import com.bitsunisage.campusconnect.project.entities.*;
 import com.bitsunisage.campusconnect.project.service.StorageService;
 import com.bitsunisage.campusconnect.project.service.UserService;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +26,11 @@ public class StudentController {
 
     static void formModelFeeding(Model model, UserService userService) {
         List<Department> departmentsList = userService.getAllDepartments();
+        List<User> userList = userService.findAllUsers();
         List<CourseDetails> courseDetailsList = userService.getAllCourses();
         List<Semester> semesterList = userService.getAllSemesters();
         List<SubjectDetails> subjectDetailsList = userService.getAllSubjects();
+        model.addAttribute("userList",userList);
         model.addAttribute("departments", departmentsList);
         model.addAttribute("courses", courseDetailsList);
         model.addAttribute("semesterList", semesterList);
@@ -104,7 +105,7 @@ public class StudentController {
     }
 
     @PostMapping("/student/PPTs/fetchData")
-    private String fetchData(@ModelAttribute FileUploadDTO fileUploadDTO, Model model){
+    private String fetchData(@ModelAttribute FileUploadDTO fileUploadDTO, Model model) {
         List<FileData> fileDataList = storageService.findFilesByFilters(
                 fileUploadDTO.getDepartmentId(),
                 fileUploadDTO.getCourseId(),

@@ -136,5 +136,11 @@ public class userServiceImplementation implements UserService {
         return subjectDetailsDAO.findBySubjectIdIn(subjectIds);
     }
 
+    @Override
+    public List<Department> getDepartmentNames(List<Long> deptIds) {
+
+        return departmentDAO.findByIdIn(deptIds);
+    }
+
 
 }

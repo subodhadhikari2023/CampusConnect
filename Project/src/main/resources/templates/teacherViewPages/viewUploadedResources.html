@@ -113,7 +113,13 @@
             <tr th:each="resource: ${resources}">
                 <td th:text="${resource.id}"></td>
                 <td th:text="${resource.fileRole}"></td>
-                <td th:text="${user.department}"></td>
+
+                <td>
+                    <span th:each="dept : ${departmentList}"
+                          th:if="${dept.id == resource.courseId}"
+                          th:text="${dept.name}">
+                    </span>
+                </td>
                 <td>
             <span th:each="course : ${courseDetails}"
                   th:if="${course.courseId == resource.courseId}"

@@ -53,4 +53,6 @@ public interface UserService {
     List<Semester> getSemesterName(List<Long> semesterIds);
 
     List<SubjectDetails> getSubjectName(List<Long> subjectIds);
+
+    List<Department> getDepartmentNames(List<Long> deptIds);
 }

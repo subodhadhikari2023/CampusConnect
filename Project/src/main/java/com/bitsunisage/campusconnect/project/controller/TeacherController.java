@@ -7,7 +7,10 @@ import com.bitsunisage.campusconnect.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -20,7 +23,6 @@ public class TeacherController {
     private final UserService userService;
 
 
-
     @Autowired
     public TeacherController(StorageService storageService, UserService userService) {
         this.storageService = storageService;
@@ -28,12 +30,25 @@ public class TeacherController {
 
     }
 
+    static void feedFileDataToModel(Model model, List<FileData> resources, UserService userService) {
+        List<Long> courseIds = resources.stream().map(FileData::getCourseId).distinct().toList();
+        List<CourseDetails> courseDetails = userService.getCourseName(courseIds);
+        List<Long> semesterIds = resources.stream().map(FileData::getSemesterId).distinct().toList();
+        List<Semester> semesterList = userService.getSemesterName(semesterIds);
+        List<Long> subjectIds = resources.stream().map(FileData::getSubjectId).distinct().toList();
+        List<SubjectDetails> subjectDetailsList = userService.getSubjectName(subjectIds);
+        List<Long> departmentIds = resources.stream().map(FileData::getFileDepartmentId).distinct().toList();
+        List<Department> departmentList = userService.getDepartmentNames(departmentIds);
+        model.addAttribute("departmentList", departmentList);
+        model.addAttribute("subjectList", subjectDetailsList);
+        model.addAttribute("semesterList", semesterList);
+        model.addAttribute("courseDetails", courseDetails);
+    }
 
     @GetMapping("/teacher")
     public String homePage() {
         return "teacherViewPages/indexteacher";
     }
-
 
     //    Later version of method to upload the file to the server local file system using the Data Transfer Object
     @PostMapping("/teacher/upload")
@@ -67,7 +82,6 @@ public class TeacherController {
         StudentController.formModelFeeding(model, userService);
 
     }
-
 
     @GetMapping("/teacher/uploadsampleprograms")
     public String uploadsampleprograms(Model model) {
@@ -115,18 +129,6 @@ public class TeacherController {
         model.addAttribute("resources", resources);
 
         return "teacherViewPages/viewUploadedResources";
-    }
-
-    static void feedFileDataToModel(Model model, List<FileData> resources, UserService userService) {
-        List<Long> courseIds = resources.stream().map(FileData::getCourseId).distinct().toList();
-        List<CourseDetails> courseDetails = userService.getCourseName(courseIds);
-        List<Long> semesterIds = resources.stream().map(FileData::getSemesterId).distinct().toList();
-        List<Semester> semesterList = userService.getSemesterName(semesterIds);
-        List<Long> subjectIds = resources.stream().map(FileData::getSubjectId).distinct().toList();
-        List<SubjectDetails> subjectDetailsList = userService.getSubjectName(subjectIds);
-        model.addAttribute("subjectList", subjectDetailsList);
-        model.addAttribute("semesterList", semesterList);
-        model.addAttribute("courseDetails", courseDetails);
     }
 
     @PostMapping("/teacher/deleteResource")

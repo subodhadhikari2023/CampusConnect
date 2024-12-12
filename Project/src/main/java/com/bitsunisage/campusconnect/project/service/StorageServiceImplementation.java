@@ -40,12 +40,12 @@ public class StorageServiceImplementation implements StorageService {
     public void uploadToFileSystem(FileUploadDTO fileUploadDTO) {
         MultipartFile file = fileUploadDTO.getFile();
 
-        String filePath = uploadDir + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId();
+        String filePath = uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId();
         try {
 //            System.out.println(filePath);
             String fileExtension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
-            new java.io.File(uploadDir + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()).mkdirs();
-            file.transferTo(Path.of(new File(uploadDir + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()) + "/" + file.getOriginalFilename()));
+            new java.io.File(uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()).mkdirs();
+            file.transferTo(Path.of(new File(uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()) + "/" + file.getOriginalFilename()));
 
             FileData fileData = new FileData();
             fileData.setFileName(file.getOriginalFilename());
@@ -55,6 +55,7 @@ public class StorageServiceImplementation implements StorageService {
             fileData.setOwnersName(getCurrentOwnersName());
             fileData.setFileDepartmentId(fileUploadDTO.getDepartmentId());
             fileData.setCourseId(fileUploadDTO.getCourseId());
+            fileData.setFileDepartmentId(fileUploadDTO.getDepartmentId());
             fileData.setSemesterId(fileUploadDTO.getSemesterId());
             fileData.setSubjectId(fileUploadDTO.getSubjectId());
             fileData.setFileRole(fileUploadDTO.getFileRole());
@@ -99,14 +100,14 @@ public class StorageServiceImplementation implements StorageService {
 
     @Override
     public List<Department> findAllDepartment(List<Long> departmentIds) {
-       return departmentDAO.findByIdIn(departmentIds);
+        return departmentDAO.findByIdIn(departmentIds);
     }
 
     @Override
-    public List<FileData> findFilesByFilters(Long departmentId, Long courseId, Long semesterId, Long subjectId,String fileRole) {
+    public List<FileData> findFilesByFilters(Long departmentId, Long courseId, Long semesterId, Long subjectId, String fileRole) {
 //        System.out.println(fileDAO.findFilesByFilters(departmentId, courseId, semesterId, subjectId));
 //        System.out.println(departmentId);
-        return fileDAO.findFilesByFilters(departmentId, courseId, semesterId, subjectId,fileRole);
+        return fileDAO.findFilesByFilters(departmentId, courseId, semesterId, subjectId, fileRole);
 
     }
 

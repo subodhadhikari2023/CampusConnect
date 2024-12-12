@@ -20,6 +20,17 @@ public class User {
     @Column(name = "department")
     private String department;
 
+    @Column(name = "dept_id")
+    private Long deptID;
+
+    public Long getDeptID() {
+        return deptID;
+    }
+
+    public void setDeptID(Long deptID) {
+        this.deptID = deptID;
+    }
+
     public boolean isActive() {
         return active;
     }
