@@ -61,7 +61,7 @@ public class StudentController {
         return "studentViewPages/searchppts";
     }
 
-    @GetMapping("/programs")
+    @GetMapping("/student/programs")
     public String programs(Model model) {
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         fileUploadDTO.setFileRole("Programs");
@@ -70,7 +70,7 @@ public class StudentController {
         return "studentViewPages/searchppts";
     }
 
-    @GetMapping("/audiobooks")
+    @GetMapping("/student/audiobooks")
     public String audiobooks(Model model) {
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         fileUploadDTO.setFileRole("AudioBooks");
@@ -79,7 +79,7 @@ public class StudentController {
         return "studentViewPages/searchppts";
     }
 
-    @GetMapping("/referencebooks")
+    @GetMapping("/student/referencebooks")
     public String reference(Model model) {
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         fileUploadDTO.setFileRole("ReferenceBooks");
@@ -88,7 +88,7 @@ public class StudentController {
         return "studentViewPages/searchppts";
     }
 
-    @GetMapping("/video")
+    @GetMapping("/student/video")
     public String video(Model model) {
 
         FileUploadDTO fileUploadDTO = new FileUploadDTO();
