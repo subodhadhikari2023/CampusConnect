@@ -48,7 +48,7 @@ public class FileData {
     private Timestamp uploadDate;
 
     @Column(name = "uploader_department_id")
-    private Long ownersDepartmentID;
+    private Long fileDepartmentId;
 
     @Column(name = "uploader_name")
     private String ownersName;
@@ -91,7 +91,7 @@ public class FileData {
                 ", filePath='" + filePath + '\'' +
                 ", fileType='" + fileType + '\'' +
                 ", fileSize=" + fileSize +
-                ", ownersDepartmentID=" + ownersDepartmentID +
+                ", ownersDepartmentID=" + fileDepartmentId +
                 ", ownersName='" + ownersName + '\'' +
                 ", courseId=" + courseId +
                 ", semesterId=" + semesterId +
@@ -143,12 +143,12 @@ public class FileData {
         this.fileSize = fileSize;
     }
 
-    public Long getOwnersDepartmentID() {
-        return ownersDepartmentID;
+    public Long getFileDepartmentId() {
+        return fileDepartmentId;
     }
 
-    public void setOwnersDepartmentID(Long ownersDepartmentID) {
-        this.ownersDepartmentID = ownersDepartmentID;
+    public void setFileDepartmentId(Long ownersDepartmentID) {
+        this.fileDepartmentId = ownersDepartmentID;
     }
 
     public String getOwnersName() {

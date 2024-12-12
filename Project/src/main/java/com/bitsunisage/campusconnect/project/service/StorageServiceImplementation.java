@@ -1,7 +1,9 @@
 package com.bitsunisage.campusconnect.project.service;
 
 import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
+import com.bitsunisage.campusconnect.project.dataAccessObject.DepartmentDAO;
 import com.bitsunisage.campusconnect.project.dataAccessObject.FileDAO;
+import com.bitsunisage.campusconnect.project.entities.Department;
 import com.bitsunisage.campusconnect.project.entities.FileData;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.Objects;
 @Service
 public class StorageServiceImplementation implements StorageService {
     private final FileDAO fileDAO;
+    private final DepartmentDAO departmentDAO;
 
 
     @Value("${file.upload-dir}")
@@ -27,9 +30,9 @@ public class StorageServiceImplementation implements StorageService {
 
 
     @Autowired
-    StorageServiceImplementation(FileDAO fileDAO) {
+    StorageServiceImplementation(FileDAO fileDAO, DepartmentDAO departmentDAO) {
         this.fileDAO = fileDAO;
-
+        this.departmentDAO = departmentDAO;
     }
 
     @Transactional
@@ -50,7 +53,7 @@ public class StorageServiceImplementation implements StorageService {
             fileData.setFileType(fileExtension);
             fileData.setFileSize(file.getSize());
             fileData.setOwnersName(getCurrentOwnersName());
-            fileData.setOwnersDepartmentID(fileUploadDTO.getDepartmentId());
+            fileData.setFileDepartmentId(fileUploadDTO.getDepartmentId());
             fileData.setCourseId(fileUploadDTO.getCourseId());
             fileData.setSemesterId(fileUploadDTO.getSemesterId());
             fileData.setSubjectId(fileUploadDTO.getSubjectId());
@@ -87,6 +90,24 @@ public class StorageServiceImplementation implements StorageService {
 
         }
         fileDAO.deleteById(id);
+    }
+
+    @Override
+    public List<FileData> findAll() {
+        return fileDAO.findAll();
+    }
+
+    @Override
+    public List<Department> findAllDepartment(List<Long> departmentIds) {
+       return departmentDAO.findByIdIn(departmentIds);
+    }
+
+    @Override
+    public List<FileData> findFilesByFilters(Long departmentId, Long courseId, Long semesterId, Long subjectId,String fileRole) {
+//        System.out.println(fileDAO.findFilesByFilters(departmentId, courseId, semesterId, subjectId));
+//        System.out.println(departmentId);
+        return fileDAO.findFilesByFilters(departmentId, courseId, semesterId, subjectId,fileRole);
+
     }
 
 

@@ -10,7 +10,7 @@ public class Department {
 
     @Id
     @Column(name = "department_id")
-    private Integer id;
+    private Long id;
     @Column(name = "department_name")
     private String name;
 
@@ -22,11 +22,11 @@ public class Department {
                 '}';
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
