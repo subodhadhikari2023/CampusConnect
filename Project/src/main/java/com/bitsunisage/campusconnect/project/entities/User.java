@@ -8,6 +8,17 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "members")
 public class User {
+    @Column(name = "id")
+    Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Id
     @Column(name = "user_id")
     private String userId;

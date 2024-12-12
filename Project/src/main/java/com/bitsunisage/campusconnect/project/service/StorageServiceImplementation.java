@@ -45,12 +45,12 @@ public class StorageServiceImplementation implements StorageService {
     public void uploadToFileSystem(FileUploadDTO fileUploadDTO) {
         MultipartFile file = fileUploadDTO.getFile();
 
-        String filePath = uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId();
+        String filePath = uploadDir + "/"+fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId();
         try {
 //            System.out.println(filePath);
             String fileExtension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf("."));
-            new java.io.File(uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()).mkdirs();
-            file.transferTo(Path.of(new File(uploadDir + fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()) + "/" + file.getOriginalFilename()));
+            new java.io.File(uploadDir +"/"+ fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()).mkdirs();
+            file.transferTo(Path.of(new File(uploadDir +"/"+ fileUploadDTO.getDepartmentId() + "/" + fileUploadDTO.getFileRole() + "/" + fileUploadDTO.getCourseId() + "/" + fileUploadDTO.getSemesterId() + "/" + fileUploadDTO.getSubjectId()) + "/" + file.getOriginalFilename()));
 
             FileData fileData = new FileData();
             fileData.setFileName(file.getOriginalFilename());
