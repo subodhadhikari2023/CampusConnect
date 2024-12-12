@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FileDAO extends JpaRepository<FileData, Long> {
     List<FileData> findAllByOwnersName(String name);
@@ -18,10 +19,15 @@ public interface FileDAO extends JpaRepository<FileData, Long> {
             + "( f.courseId = :courseId) AND "
             + "( f.semesterId = :semesterId) AND "
             + "(f.subjectId = :subjectId) AND "
-            + "f.fileRole=:fileRole"  )
+            + "f.fileRole=:fileRole")
     List<FileData> findFilesByFilters(@Param("departmentId") Long departmentId,
                                       @Param("courseId") Long courseId,
                                       @Param("semesterId") Long semesterId,
                                       @Param("subjectId") Long subjectId,
                                       @Param("fileRole") String fileRole);
+
+
+    Optional<FileData> findById(Long id);
+
+//FileData findById (Integer id);
 }

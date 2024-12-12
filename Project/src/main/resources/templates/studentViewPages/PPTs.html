@@ -68,12 +68,23 @@
         <td th:text="${resource.fileName}"></td>
         <td th:text="${resource.uploadDate}"></td>
         <td>
+        <td>
           <a class="btn btn-primary" th:href="@{/view/{fileName}(fileName=${resource.fileName})}" target="_blank">
             <i class="fas fa-eye"></i> View
           </a>
-          <a class="btn btn-success" th:href="@{/download/{fileName}(fileName=${resource.fileName})}" download>
-            <i class="fas fa-download"></i> Download
+          <a class="btn btn-success" th:href="@{/student/download/original/{fileId}(fileId=${resource.id})}" download>
+            <i class="fas fa-download"></i> Download Original
           </a>
+          <a class="btn btn-warning" th:href="@{/student/download/gzip/{fileId}(fileId=${resource.id})}" download>
+            <i class="fas fa-file-archive"></i> Download GZIP
+          </a>
+          <a class="btn btn-info" th:href="@{/student/download/zip/{fileId}(fileId=${resource.id})}" download>
+            <i class="fas fa-file-archive"></i> Download ZIP
+          </a>
+        </td>
+
+
+
         </td>
       </tr>
       </tbody>

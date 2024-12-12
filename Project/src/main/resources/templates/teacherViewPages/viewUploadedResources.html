@@ -116,7 +116,7 @@
 
                 <td>
                     <span th:each="dept : ${departmentList}"
-                          th:if="${dept.id == resource.courseId}"
+                          th:if="${dept.id == resource.fileDepartmentId}"
                           th:text="${dept.name}">
                     </span>
                 </td>
