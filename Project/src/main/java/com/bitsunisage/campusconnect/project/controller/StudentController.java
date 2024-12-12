@@ -123,6 +123,7 @@ public class StudentController {
                 fileUploadDTO.getSubjectId(),
                 fileUploadDTO.getFileRole()
         );
+        formModelFeeding(model);
         TeacherController.feedFileDataToModel(model, fileDataList, userService);
         model.addAttribute("fileDataList", fileDataList);
         System.out.println(fileDataList);

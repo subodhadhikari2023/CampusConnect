@@ -50,9 +50,13 @@ CREATE TABLE `members`
     `pw`         CHAR(68)     NOT NULL,
     `active`     TINYINT      NOT NULL,
     `department` VARCHAR(100) NOT NULL,
+    `dept_id` BIGINT,
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `id` (`id`),
-    UNIQUE KEY `email` (`email`)
+    UNIQUE KEY `email` (`email`),
+        FOREIGN KEY (`dept_id`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE
+
+
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 8
   DEFAULT CHARSET = latin1;
