@@ -1,7 +1,6 @@
 package com.bitsunisage.campusconnect.project.controller;
 
 import com.bitsunisage.campusconnect.project.DataTransferObject.FileUploadDTO;
-import com.bitsunisage.campusconnect.project.dataAccessObject.DepartmentDAO;
 import com.bitsunisage.campusconnect.project.entities.*;
 import com.bitsunisage.campusconnect.project.service.StorageService;
 import com.bitsunisage.campusconnect.project.service.UserService;
@@ -19,14 +18,14 @@ import java.util.List;
 public class TeacherController {
     private final StorageService storageService;
     private final UserService userService;
-    private final DepartmentDAO departmentDAO;
+
 
 
     @Autowired
-    public TeacherController(StorageService storageService, UserService userService, DepartmentDAO departmentDAO) {
+    public TeacherController(StorageService storageService, UserService userService) {
         this.storageService = storageService;
         this.userService = userService;
-        this.departmentDAO = departmentDAO;
+
     }
 
 
@@ -35,12 +34,6 @@ public class TeacherController {
         return "teacherViewPages/indexteacher";
     }
 
-//    Previous method to upload the file to the server local file system
-//    @PostMapping("teacher/upload")
-//    public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-//        storageService.uploadToFileSystem(new FileUploadDTO());
-//        return "teacherViewPages/uploadResult";
-//    }
 
     //    Later version of method to upload the file to the server local file system using the Data Transfer Object
     @PostMapping("/teacher/upload")
@@ -71,14 +64,7 @@ public class TeacherController {
     }
 
     private void modelFeeding(Model model) {
-        List<Department> departmentsList = userService.getAllDepartments();
-        List<CourseDetails> courseDetailsList = userService.getAllCourses();
-        List<Semester> semesterList = userService.getAllSemesters();
-        List<SubjectDetails> subjectDetailsList = userService.getAllSubjects();
-        model.addAttribute("departments", departmentsList);
-        model.addAttribute("courses", courseDetailsList);
-        model.addAttribute("semesterList", semesterList);
-        model.addAttribute("subjectList", subjectDetailsList);
+        StudentController.formModelFeeding(model, userService);
 
     }
 
@@ -124,6 +110,14 @@ public class TeacherController {
     public String viewUploadedResources(Model model) {
         User user = userService.findUserByUserId(storageService.getCurrentOwnersName());
         List<FileData> resources = storageService.findResourcesUploaded(user.getUserId());
+        feedFileDataToModel(model, resources, userService);
+        model.addAttribute("user", user);
+        model.addAttribute("resources", resources);
+
+        return "teacherViewPages/viewUploadedResources";
+    }
+
+    static void feedFileDataToModel(Model model, List<FileData> resources, UserService userService) {
         List<Long> courseIds = resources.stream().map(FileData::getCourseId).distinct().toList();
         List<CourseDetails> courseDetails = userService.getCourseName(courseIds);
         List<Long> semesterIds = resources.stream().map(FileData::getSemesterId).distinct().toList();
@@ -133,10 +127,6 @@ public class TeacherController {
         model.addAttribute("subjectList", subjectDetailsList);
         model.addAttribute("semesterList", semesterList);
         model.addAttribute("courseDetails", courseDetails);
-        model.addAttribute("user", user);
-        model.addAttribute("resources", resources);
-
-        return "teacherViewPages/viewUploadedResources";
     }
 
     @PostMapping("/teacher/deleteResource")

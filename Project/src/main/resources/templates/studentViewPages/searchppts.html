@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Resources</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,16 +42,11 @@
         }
 
         .form {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
             margin-top: 20px;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
+            margin-bottom: 15px;
         }
 
         label {
@@ -68,20 +64,27 @@
         }
 
         .resources {
-            display: none; /* Hidden by default */
             margin-top: 20px;
         }
 
-        .resources ul {
-            padding-left: 20px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .resources li {
-            margin-bottom: 10px;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
 
         .btn {
-            margin-left: 10px;
             text-decoration: none;
             padding: 5px 10px;
             color: white;
@@ -98,76 +101,48 @@
 <div class="container">
     <h1 class="header">Campus<span class="highlight">Connect</span></h1>
     <hr class="divider">
-    <form id="filterForm">
+
+    <!-- Form Section -->
+    <form action="#" enctype="multipart/form-data"  th:action="@{/student/PPTs/fetchData}" th:method="POST"
+          th:object="${fileUploadDTO}">
+        <input type="hidden" th:field="*{fileRole}" th:value="*{fileRole}">
         <div class="form-group">
             <label for="department">Department</label>
-            <select id="department" name="department">
-                <option value="" selected>Select</option>
-                <option value="science">Science</option>
-                <option value="arts">Arts</option>
-                <option value="commerce">Commerce</option>
+            <select class="form-control" id="department" required th:field="*{departmentId}">
+                <option selected value="">Select</option>
+                <option th:each="dep: ${departments}" th:text="${dep.name}" th:value="${dep.id}"></option>
             </select>
         </div>
         <div class="form-group">
             <label for="course">Courses</label>
-            <select id="course" name="course">
-                <option value="" selected>Select</option>
-                <option value="course1">Course 1</option>
-                <option value="course2">Course 2</option>
+            <select class="form-control" id="course" required th:field="*{courseId}">
+                <option selected value="">Select</option>
+                <option th:each="course : ${courses}" th:text="${course.courseName}"
+                        th:value="${course.courseId}"></option>
             </select>
         </div>
         <div class="form-group">
-            <label for="semester">Sem</label>
-            <select id="semester" name="semester">
-                <option value="" selected>Select</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
+            <label for="semester">Semester</label>
+            <select class="form-control" id="semester" required th:field="*{semesterId}">
+                <option selected value="">Select</option>
+                <option th:each="semester : ${semesterList}" th:text="${semester.semesterName}"
+                        th:value="${semester.semesterId}"></option>
             </select>
         </div>
         <div class="form-group">
             <label for="subject">Subject</label>
-            <select id="subject" name="subject">
-                <option value="" selected>Select</option>
-                <option value="math">Math</option>
-                <option value="english">English</option>
+            <select class="form-control" id="subject" required th:field="*{subjectId}">
+                <option selected value="">Select</option>
+                <option th:each="subject : ${subjectList}" th:text="${subject.subjectName}"
+                        th:value="${subject.subjectId}"></option>
             </select>
         </div>
         <div class="form-group">
-            <button type="button" class="search-button btn btn-primary" onclick="showResources()">Fetch</button>
+            <button class="btn btn-primary" type="submit">Fetch</button>
         </div>
     </form>
 
-    <div id="resourcesSection" class="resources">
-        <h1>PPT Resources</h1>
-        <p>Here are the available PowerPoint presentations:</p>
-        <ul>
-            <li>
-                <span>PPT 1</span>
-                <a href="/view/ppt1.pptx" target="_blank" class="btn">
-                    <i class="fas fa-eye"></i> View
-                </a>
-                <a href="/files/ppt1.pptx" download class="btn">
-                    <i class="fas fa-download"></i> Download
-                </a>
-            </li>
-            <li>
-                <span>PPT 2</span>
-                <a href="/view/ppt2.pptx" target="_blank" class="btn">
-                    <i class="fas fa-eye"></i> View
-                </a>
-                <a href="/files/ppt2.pptx" download class="btn">
-                    <i class="fas fa-download"></i> Download
-                </a>
-            </li>
-        </ul>
-        <a href="/dashboard" class="btn">Back to Dashboard</a>
-    </div>
-</div>
 
-<script>
-    function showResources() {
-        document.getElementById('resourcesSection').style.display = 'block';
-    }
-</script>
+</div>
 </body>
 </html>
