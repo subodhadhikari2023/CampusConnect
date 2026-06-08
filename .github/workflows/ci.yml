@@ -26,4 +26,5 @@ jobs:
         working-directory: Project
         env:
           DB_PASSWORD: ci-placeholder
+          SPRING_PROFILES_ACTIVE: test
         run: mvn test
