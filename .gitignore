@@ -4,3 +4,5 @@ Project/.idea/
 # Ignore target directories
 Project/Project.iml
 Project/target/
+# Application log
+application.log
