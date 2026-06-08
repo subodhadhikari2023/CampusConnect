@@ -50,7 +50,7 @@ CREATE TABLE `members`
     `pw`         CHAR(68)     NOT NULL,
     `active`     TINYINT      NOT NULL,
     `department` VARCHAR(100) NOT NULL,
-    `dept_id` BIGINT,
+    `dept_id` INT,
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `id` (`id`),
     UNIQUE KEY `email` (`email`),
@@ -63,14 +63,14 @@ CREATE TABLE `members`
 
 -- Dummy Data for `members`
 INSERT INTO `members`
-VALUES (1, 'hod1', 'hod1@campus.com', '{noop}password', 1, 'Computer Applications'),
-       (2, 'hod2', 'hod2@campus.com', '{noop}password', 1, 'Computer Science'),
-       (3, 'teacher1', 'teacher1@campus.com', '{noop}password', 1, 'Computer Applications'),
-       (4, 'teacher2', 'teacher2@campus.com', '{noop}password', 1, 'Physics'),
-       (5, 'student1', 'student1@campus.com', '{noop}password', 1, 'Computer Science'),
-       (6, 'student2', 'student2@campus.com', '{noop}password', 1, 'Physics'),
-       (7, 'admin1', 'admin1@campus.com', '{noop}password', 1, 'Computer Applications'),
-       (8, 'admin2', 'admin2@campus.com', '{noop}password', 1, 'Physics');
+VALUES (1, 'hod1', 'hod1@campus.com', '{noop}password', 1, 'Computer Applications', 1001),
+       (2, 'hod2', 'hod2@campus.com', '{noop}password', 1, 'Computer Science', 1002),
+       (3, 'teacher1', 'teacher1@campus.com', '{noop}password', 1, 'Computer Applications', 1001),
+       (4, 'teacher2', 'teacher2@campus.com', '{noop}password', 1, 'Physics', 1003),
+       (5, 'student1', 'student1@campus.com', '{noop}password', 1, 'Computer Science', 1002),
+       (6, 'student2', 'student2@campus.com', '{noop}password', 1, 'Physics', 1003),
+       (7, 'admin1', 'admin1@campus.com', '{noop}password', 1, 'Computer Applications', 1001),
+       (8, 'admin2', 'admin2@campus.com', '{noop}password', 1, 'Physics', 1003);
 
 -- Table structure for table `roles`
 DROP TABLE IF EXISTS `roles`;
