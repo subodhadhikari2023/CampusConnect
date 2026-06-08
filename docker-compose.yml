@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mysql:8.0
+    env_file:
+      - ./Project/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: campusConnect
+      MYSQL_USER: campusConnect
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Project/docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "campusConnect", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    ports:
+      - "3307:3306"
+
+  app:
+    build:
+      context: ./Project
+      dockerfile: Dockerfile
+    env_file:
+      - ./Project/.env
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://db:3306/campusConnect
+      DB_USERNAME: campusConnect
+      DB_PASSWORD: ${DB_PASSWORD}
+      UPLOAD_DIR: /uploads/
+    volumes:
+      - uploads:/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  uploads:

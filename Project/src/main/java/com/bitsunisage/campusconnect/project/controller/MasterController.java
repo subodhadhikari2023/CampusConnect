@@ -22,7 +22,7 @@ public class MasterController implements ErrorController {
 
     @GetMapping("/")
     public String showPublicLandingPage() {
-        return "/index";
+        return "index";
     }
 
 
@@ -36,7 +36,7 @@ public class MasterController implements ErrorController {
         }
         // If the attribute is not set, show the login page
 
-        return "/loginFile";
+        return "loginFile";
     }
 
 
@@ -56,7 +56,7 @@ public class MasterController implements ErrorController {
         model.addAttribute("members", userService.findAllUsers());
         model.addAttribute("roles", userService.findAllRoles());
         model.addAttribute("departments", userService.getAllDepartments());
-        return "/ReferralData";
+        return "ReferralData";
     }
 
 
