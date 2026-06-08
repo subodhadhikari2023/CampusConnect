@@ -6,3 +6,6 @@ Project/Project.iml
 Project/target/
 # Application log
 application.log
+# Local environment file — contains real credentials, never commit
+.env
+Project/.env
