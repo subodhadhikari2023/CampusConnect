@@ -28,7 +28,7 @@ class MasterControllerTest {
     void landingPageReturnsIndexView() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/index"));
+                .andExpect(view().name("index"));
     }
 
     @Test
@@ -45,7 +45,7 @@ class MasterControllerTest {
     void loginPageWithNoSessionAttributeReturnsLoginView() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/loginFile"));
+                .andExpect(view().name("loginFile"));
     }
 
     @Test
@@ -57,6 +57,6 @@ class MasterControllerTest {
         mockMvc.perform(get("/view-data"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("members", "roles", "departments"))
-                .andExpect(view().name("/ReferralData"));
+                .andExpect(view().name("ReferralData"));
     }
 }
