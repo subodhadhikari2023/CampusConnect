@@ -21,6 +21,7 @@ services:
       - "3307:3306"
 
   app:
+    image: ghcr.io/subodhadhikari2023/campusconnect:latest
     build:
       context: ./Project
       dockerfile: Dockerfile
