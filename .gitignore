@@ -10,8 +10,5 @@ application.log
 # Local environment file — contains real credentials, never commit
 .env
 
-# Archive sub-directories that must not be committed
-# (git history already preserves the old source tree)
-archive/.idea/
-archive/uploads/
-archive/Project_old/
+# Archive folder — historical files preserved in git history, not needed in the active tree
+archive/
