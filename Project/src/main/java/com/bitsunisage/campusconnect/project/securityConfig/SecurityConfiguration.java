@@ -13,16 +13,46 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import javax.sql.DataSource;
 
+/**
+ * Spring Security configuration for CampusConnect.
+ *
+ * <p>Configures URL-based role authorization, form login with a custom success handler,
+ * JDBC-backed authentication against the {@code members} and {@code roles} tables,
+ * and static resource bypass for the login page assets.</p>
+ */
 @Configuration
 public class SecurityConfiguration {
-    //  Allowing to access the resources without authentication and authorization for login form
+
+    /**
+     * Bypasses the security filter chain for static login-page resources and the
+     * debug data view, so they are accessible without authentication.
+     *
+     * @return customizer that excludes {@code /loginResources/**} from security
+     */
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/loginResources/**","view-data");
+        return (web) -> web.ignoring().requestMatchers("/loginResources/**", "view-data");
     }
 
-
-    //    Role based access control of the resources
+    /**
+     * Defines the main security filter chain.
+     *
+     * <ul>
+     *   <li>{@code /} — public</li>
+     *   <li>{@code /student/**} — requires {@code ROLE_STUDENT}</li>
+     *   <li>{@code /teacher/**} — requires {@code ROLE_TEACHER}</li>
+     *   <li>{@code /admin/**}   — requires {@code ROLE_ADMIN}</li>
+     *   <li>{@code /hod/**}     — requires {@code ROLE_HOD}</li>
+     *   <li>All other requests  — require any authenticated user</li>
+     * </ul>
+     *
+     * <p>CSRF is disabled because the application does not currently use CSRF tokens
+     * in its Thymeleaf forms.</p>
+     *
+     * @param http the {@link HttpSecurity} to configure
+     * @return the built {@link SecurityFilterChain}
+     * @throws Exception if Spring Security configuration fails
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> configurer
@@ -39,17 +69,14 @@ public class SecurityConfiguration {
                         .loginProcessingUrl("/authenticateTheUser")
                         .permitAll()
                         .successHandler(authenticationSuccessHandler())
-
-                ).logout(logout -> logout.permitAll()
+                )
+                .logout(logout -> logout.permitAll()
                         .logoutSuccessUrl("/"))
-
                 .exceptionHandling(configurer -> configurer
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            // Redirect to custom access denied page
                             response.sendRedirect("/access-denied");
                         })
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // Redirect to custom error page for unauthorized access
                             response.sendRedirect("/NoUrlFound");
                         })
                 )
@@ -59,23 +86,31 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    /**
+     * Provides the custom success handler that redirects users to their role-specific home page.
+     *
+     * @return a {@link CustomAuthenticationSuccessHandler} instance
+     */
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new CustomAuthenticationSuccessHandler();
     }
 
-
-    // Add support for JDBC ... no more hard coded users
-//    Query to fetch from custom tables
+    /**
+     * Configures JDBC-backed authentication against the application's custom schema.
+     * Custom queries map Spring Security's expected column names to the actual
+     * {@code members} and {@code roles} table columns.
+     *
+     * @param dataSource the application {@link DataSource} injected by Spring Boot
+     * @return a configured {@link UserDetailsManager}
+     */
     @Bean
     public UserDetailsManager userDetailsManager(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-        // Define query to fetch user from database for custom tables
-        jdbcUserDetailsManager.setUsersByUsernameQuery("SELECT user_id, pw, active FROM members WHERE user_id=?");
-        //Define query to fetch roles by username
-        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("SELECT user_id,role from roles where USER_id=?");
-
-
+        jdbcUserDetailsManager.setUsersByUsernameQuery(
+                "SELECT user_id, pw, active FROM members WHERE user_id=?");
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
+                "SELECT user_id, role FROM roles WHERE user_id=?");
         return jdbcUserDetailsManager;
     }
 }

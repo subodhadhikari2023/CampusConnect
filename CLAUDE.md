@@ -100,3 +100,35 @@ Key tables and their relationships:
 ### Passwords
 
 Passwords are stored with Spring Security's `{noop}` prefix for plain-text (dev/test only). The `{noop}` prefix is prepended explicitly in `AdminContoller.saveUser()` when creating new users.
+
+## Documentation Rules
+
+All new code **must** include Javadoc before the PR is opened. No exceptions.
+
+### What requires Javadoc
+
+- Every `public` and `protected` class, interface, and enum
+- Every `public` and `protected` method
+- Every `public` and `protected` field (unless it is self-evident from the name alone)
+
+### Format
+
+```java
+/**
+ * One-sentence summary of what this does.
+ *
+ * @param paramName what this parameter represents
+ * @return what is returned, and when it may be null
+ * @throws SomeException when and why this is thrown
+ */
+```
+
+- First sentence is the summary — keep it to one line
+- `@param` / `@return` / `@throws` only when they add information beyond the method signature
+- Do not restate the method name in prose ("This method saves a user" → bad)
+
+### Enforcement
+
+- **Within Claude Code sessions:** a `PostToolUse` hook fires after every `.java` edit and warns about missing Javadoc
+- **At commit time:** `.git/hooks/pre-commit` blocks the commit if staged Java files have undocumented public/protected members
+- Hook script: `.claude/hooks/check-javadoc.py`
