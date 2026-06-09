@@ -32,7 +32,8 @@ CREATE TABLE `department`
     UNIQUE KEY `department_name` (`department_name`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1004
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Dummy Data for `department`
 INSERT INTO `department`
@@ -59,7 +60,8 @@ CREATE TABLE `members`
 
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 8
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Dummy Data for `members`
 INSERT INTO `members`
@@ -81,7 +83,8 @@ CREATE TABLE `roles`
     PRIMARY KEY (`user_id`),
     CONSTRAINT `fk_user_roles` FOREIGN KEY (`user_id`) REFERENCES `members` (`user_id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Dummy Data for `roles`
 INSERT INTO `roles`
@@ -109,7 +112,8 @@ CREATE TABLE `department_details`
     CONSTRAINT `fk_member` FOREIGN KEY (`user_name`) REFERENCES `members` (`user_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 10
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Dummy Data for `department_details`
 INSERT INTO `department_details`
@@ -133,7 +137,8 @@ CREATE TABLE IF NOT EXISTS `course_details`
     CONSTRAINT `fk_department_course` FOREIGN KEY (`department_id`) REFERENCES `department` (`department_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `semester`
 DROP TABLE IF EXISTS `semester`;
@@ -145,7 +150,8 @@ CREATE TABLE IF NOT EXISTS `semester`
     PRIMARY KEY (`semester_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `subject_details`
 DROP TABLE IF EXISTS `subject_details`;
@@ -160,11 +166,11 @@ CREATE TABLE `subject_details`
     CONSTRAINT `fk_semester_subject` FOREIGN KEY (`semester_id`) REFERENCES `semester` (`semester_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 -- Table structure for table `file_data`
-DROP TABLE IF EXISTS `file_data`;
 DROP TABLE IF EXISTS `file_data`;
 
 CREATE TABLE IF NOT EXISTS `file_data`
@@ -174,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `file_data`
     `file_type`              VARCHAR(100) NOT NULL,
     `file_path`              VARCHAR(255) NOT NULL,
     `file_size`              BIGINT       NOT NULL,
-    `uploader_department_id` INT          NOT NULL, -- Changed to INT to match department table
+    `uploader_department_id` INT          NOT NULL,
     `uploader_name`          VARCHAR(255) NOT NULL,
     `course_id`              INT          NOT NULL,
     `semester_id`            INT          NOT NULL,
@@ -192,7 +198,8 @@ CREATE TABLE IF NOT EXISTS `file_data`
     CONSTRAINT `fk_subject_file` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 -- Reset the environment variables
