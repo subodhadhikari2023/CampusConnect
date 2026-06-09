@@ -41,11 +41,11 @@ flowchart TD
 |-------|---------|----------------|
 | Controllers | `controller/` | Receive HTTP requests, bind model data, return Thymeleaf view names |
 | Service | `service/` | Business logic — file storage, compression, ownership resolution |
-| DAO | `dataAccessObject/` | Spring Data JPA repositories; extend `JpaRepository` |
+| DAO | `repository/` | Spring Data JPA repositories; extend `JpaRepository` |
 | Entities | `entities/` | JPA `@Entity` classes that map to MySQL tables |
-| Security | `securityConfig/` | URL-based role authorization, JDBC authentication, login/logout flow |
+| Security | `config/` | URL-based role authorization, JDBC authentication, login/logout flow |
 | Exceptions | `exceptions/` | Custom exception types and a global `@ControllerAdvice` handler |
-| DTOs | `DataTransferObject/` | `FileUploadDTO` — carries multipart form data from upload forms to the service layer |
+| DTOs | `dto/` | `FileUploadDTO` — carries multipart form data from upload forms to the service layer |
 
 ---
 
@@ -166,7 +166,7 @@ classDiagram
         +viewData(Model) String
     }
 
-    class AdminContoller {
+    class AdminController {
         -JdbcUserDetailsManager userDetailsManager
         -UserDAO userDAO
         -RoleDAO roleDAO
@@ -230,9 +230,9 @@ classDiagram
     StudentController  --> StorageService
     StorageServiceImplementation --> FileDAO
     StorageServiceImplementation --> DepartmentDAO
-    AdminContoller     --> UserDAO
-    AdminContoller     --> RoleDAO
-    AdminContoller     --> DepartmentDAO
+    AdminController     --> UserDAO
+    AdminController     --> RoleDAO
+    AdminController     --> DepartmentDAO
     SecurityConfiguration --> CustomAuthenticationSuccessHandler
 
     class UserDAO { <<JpaRepository>> }
@@ -256,15 +256,15 @@ classDiagram
 | MasterController | GET | `/access-denied` | 403 page |
 | MasterController | GET | `/error` | Generic error page |
 | MasterController | GET | `/view-data` | Debug data view (public) |
-| AdminContoller | GET | `/admin` | Admin dashboard |
-| AdminContoller | GET | `/admin/students` | List students |
-| AdminContoller | GET | `/admin/teachers` | List teachers |
-| AdminContoller | GET | `/admin/hods` | List HODs |
-| AdminContoller | GET | `/admin/add-user` | New user form |
-| AdminContoller | POST | `/admin/save` | Create user |
-| AdminContoller | GET | `/admin/showuserUpdateForm` | Load update form |
-| AdminContoller | POST | `/admin/loadUser` | Fetch user for editing |
-| AdminContoller | POST | `/admin/deleteUser` | Delete user |
+| AdminController | GET | `/admin` | Admin dashboard |
+| AdminController | GET | `/admin/students` | List students |
+| AdminController | GET | `/admin/teachers` | List teachers |
+| AdminController | GET | `/admin/hods` | List HODs |
+| AdminController | GET | `/admin/add-user` | New user form |
+| AdminController | POST | `/admin/save` | Create user |
+| AdminController | GET | `/admin/showuserUpdateForm` | Load update form |
+| AdminController | POST | `/admin/loadUser` | Fetch user for editing |
+| AdminController | POST | `/admin/deleteUser` | Delete user |
 | HodController | GET | `/hod` | HOD dashboard |
 | HodController | GET | `/hodViewPages/add-course` | Add course form |
 | HodController | GET | `/hodViewPages/manage-course` | Manage courses |
