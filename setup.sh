@@ -4,7 +4,7 @@
 # What it does:
 #   1. Verifies required tools are installed (Java 17+, Maven, MySQL client)
 #   2. Creates .env from .env.example if it doesn't exist yet
-#   3. Loads environment variables from Project/.env
+#   3. Loads environment variables from .env
 #   4. Validates that required env vars are set
 #   5. Checks whether the campusConnect database already exists
 #   6. If not, asks for the MySQL root password and runs the full schema + seed script
@@ -17,9 +17,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$REPO_ROOT/Project"
-ENV_FILE="$PROJECT_DIR/.env"
-SQL_SCRIPT="$PROJECT_DIR/sql-scripts/databaseScript.sql"
+ENV_FILE="$REPO_ROOT/.env"
+SQL_SCRIPT="$REPO_ROOT/sql-scripts/databaseScript.sql"
 
 # ── Colours ─────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
@@ -52,15 +51,15 @@ success "Java $JAVA_VERSION"
 # ── 2. Check Maven ───────────────────────────────────────────────────────────
 info "Checking Maven..."
 MVN_CMD=""
-if [[ -f "$PROJECT_DIR/mvnw" ]]; then
-    chmod +x "$PROJECT_DIR/mvnw"
-    MVN_CMD="$PROJECT_DIR/mvnw"
+if [[ -f "$REPO_ROOT/mvnw" ]]; then
+    chmod +x "$REPO_ROOT/mvnw"
+    MVN_CMD="$REPO_ROOT/mvnw"
     success "Using Maven Wrapper (mvnw)"
 elif command -v mvn &>/dev/null; then
     MVN_CMD="mvn"
     success "Using system Maven: $(mvn --version | head -1)"
 else
-    error "Maven not found. Install Maven or ensure the mvnw wrapper exists in $PROJECT_DIR."
+    error "Maven not found. Install Maven or ensure the mvnw wrapper exists at the repo root."
 fi
 
 # ── 3. Check MySQL client ────────────────────────────────────────────────────
@@ -73,7 +72,7 @@ success "MySQL client found"
 # ── 4. Set up .env ───────────────────────────────────────────────────────────
 info "Checking environment file..."
 if [[ ! -f "$ENV_FILE" ]]; then
-    warn ".env not found — creating a blank one at $ENV_FILE"
+    warn ".env not found — creating a blank one at $REPO_ROOT/.env"
     cat > "$ENV_FILE" <<'EOF'
 DB_URL=jdbc:mysql://localhost:3306/campusConnect
 DB_USERNAME=campusConnect
@@ -146,5 +145,5 @@ info "Starting CampusConnect on http://localhost:8080 ..."
 info "Press Ctrl+C to stop."
 echo ""
 
-cd "$PROJECT_DIR"
+cd "$REPO_ROOT"
 exec $MVN_CMD spring-boot:run
