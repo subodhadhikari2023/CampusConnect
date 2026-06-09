@@ -118,9 +118,14 @@ def _process(lines):
         if any('/**' in ln for ln in window):
             continue
 
-        is_override = any(
-            _OVERRIDE_RE.match(lines[j]) for j in range(max(0, i - 3), i)
-        )
+        # Find @Override line so Javadoc is inserted before it, not between it and the method
+        override_idx = None
+        for j in range(max(0, i - 3), i):
+            if _OVERRIDE_RE.match(lines[j]):
+                override_idx = j
+                break
+        is_override = override_idx is not None
+        insert_at = override_idx if override_idx is not None else i
 
         if is_class:
             m = is_class
@@ -133,7 +138,7 @@ def _process(lines):
             throws = [t.strip() for t in throws_raw.split(',') if t.strip()]
             doc = _build_javadoc(m.group(1), is_override, return_type, param_names, throws)
 
-        insertions.append((i, doc))
+        insertions.append((insert_at, doc))
 
     if not insertions:
         return None
