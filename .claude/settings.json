@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /run/media/bitsunisage/Development/01-Projects/01-CampusConnect/.claude/hooks/check-javadoc.py"
+            "command": "python3 /run/media/bitsunisage/Development/01-Projects/01-CampusConnect/.claude/hooks/add-javadoc.py"
           }
         ]
       }
