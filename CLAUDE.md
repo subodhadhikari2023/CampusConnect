@@ -8,23 +8,23 @@ CampusConnect is a Spring Boot web application — a collaborative learning plat
 
 ## Commands
 
-All commands run from the `Project/` directory.
+All commands run from the repository root.
 
 ```bash
 # Run the application (dev mode with hot reload via spring-boot-devtools)
-./mvnw spring-boot:run
+mvn spring-boot:run
 
 # Build (skip tests)
-./mvnw package -DskipTests
+mvn package -DskipTests
 
 # Run all tests
-./mvnw test
+mvn test
 
 # Run a single test class
-./mvnw test -Dtest=ClassName
+mvn test -Dtest=ClassName
 
 # Clean build
-./mvnw clean package
+mvn clean package
 ```
 
 The app runs at `http://localhost:8080`.
@@ -34,7 +34,7 @@ The app runs at `http://localhost:8080`.
 Requires MySQL Server 8.0+. Run the full schema and seed data as root:
 
 ```bash
-mysql -u root -p < Project/sql-scripts/databaseScript.sql
+mysql -u root -p < sql-scripts/databaseScript.sql
 ```
 
 This creates the `campusConnect` database, the `campusConnect` MySQL user (password: `Frpsxwhu2001@`), all tables, and dummy users. The `departments.sql` script can be run separately for additional department seed data.
@@ -47,7 +47,7 @@ This creates the `campusConnect` database, the `campusConnect` MySQL user (passw
 
 ## Configuration
 
-`Project/src/main/resources/application.properties` — two values typically need updating per environment:
+`src/main/resources/application.properties` — two values typically need updating per environment:
 
 - `spring.datasource.url/username/password` — DB connection (defaults to `campusConnect`@`localhost`)
 - `file.upload-dir` — absolute path where uploaded files are stored (default is `D:/Uploads/` — **must be changed on Linux/Mac**)
@@ -57,15 +57,15 @@ This creates the `campusConnect` database, the `campusConnect` MySQL user (passw
 ### Layer Structure
 
 ```
-controller/        → Spring MVC @Controller classes (one per role)
-service/           → Business logic interfaces + implementations
-dataAccessObject/  → Spring Data JPA repositories (extend JpaRepository)
-entities/          → JPA @Entity classes mapping to DB tables
-DataTransferObject/→ DTOs (currently FileUploadDTO for file uploads)
-securityConfig/    → Spring Security configuration
-exceptions/        → Custom exceptions and global exception handler
-templates/         → Thymeleaf HTML templates, organized by role subdirectory
-static/            → CSS, JS, images (under loginResources/ for unauthenticated access)
+controller/  → Spring MVC @Controller classes (one per role)
+service/     → Business logic interfaces + implementations
+repository/  → Spring Data JPA repositories (extend JpaRepository)
+entities/    → JPA @Entity classes mapping to DB tables
+dto/         → DTOs (currently FileUploadDTO for file uploads)
+config/      → Spring Security configuration
+exceptions/  → Custom exceptions and global exception handler
+templates/   → Thymeleaf HTML templates, organized by role subdirectory
+static/      → CSS, JS, images (under loginResources/ for unauthenticated access)
 ```
 
 ### Role-Based Routing
@@ -132,3 +132,8 @@ All new code **must** include Javadoc before the PR is opened. No exceptions.
 - **Within Claude Code sessions:** a `PostToolUse` hook fires after every `.java` edit and warns about missing Javadoc
 - **At commit time:** `.git/hooks/pre-commit` blocks the commit if staged Java files have undocumented public/protected members
 - Hook script: `.claude/hooks/check-javadoc.py`
+
+## Project Structure
+
+The Maven project (`pom.xml`, `src/`, `Dockerfile`, `sql-scripts/`) lives at the **repository root**.
+The `archive/` directory holds historical files that are no longer part of the active source tree.
