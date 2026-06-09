@@ -1,19 +1,19 @@
 [![Contributors][contributors-shield]][contributors-url]
-  [![Issues][issues-shield]][issues-url]
-  [![GNU License][license-shield]][license-url]
+[![Issues][issues-shield]][issues-url]
+[![GNU License][license-shield]][license-url]
+[![CI][ci-shield]][ci-url]
+[![Docker][docker-shield]][docker-url]
 
 <h2>Project Link</h2>
-<br>
+
 <a href="https://github.com/subodhadhikari2023/CampusConnect">
-    <img src="https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github" style="height:100; width:200" alt="GitHub Project Link" />
+  <img src="https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github" alt="GitHub Project Link" />
 </a>
 
+---
 
+<h2 align="center">Contributors</h2>
 
-<br />
-<p style="text-align: center; font-weight: bold;">
-   <h2 style="text-align:center"> Contributors</h2>
-  </p>
 <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
 
   <div style="text-align: center; flex: 1; min-width: 150px; max-width: 45%;">
@@ -48,170 +48,219 @@
 
 </div>
 
-
-
-<br>
-<br>
-<br>
-
+---
 
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#built-with">Built With</a></li>
+    <li><a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#built-with">Built With</a></li>
+        <li><a href="#option-1-docker-recommended">Option 1: Docker (Recommended)</a></li>
+        <li><a href="#option-2-manual-setup">Option 2: Manual Setup</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#running-the-project-in-your-local-system">Running the project in your local system</a></li>
-      </ul>
-    </li>
+    <li><a href="#testing">Testing</a></li>
+    <li><a href="#ci-cd">CI/CD</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
+## About The Project
 
+**Campus Connect** is a role-based academic management and collaborative learning platform designed for educational institutions. It provides a centralized hub where administrators, department heads, faculty, and students can manage academic workflows, share resources, and collaborate — all within a structured, permission-driven environment.
 
-<!-- ABOUT THE PROJECT -->
-# About The Project
-
-
-## Project Title
-Campus Connect - A Collaborative Learning Platform
-
-## Description
-Campus Connect is an innovative educational platform designed to foster collaboration within academic institutions. It serves as a centralized hub where faculty members and students can seamlessly connect and engage in collaborative learning activities.
-
-The platform is structured into multiple modules catering to the distinct roles and responsibilities of administrators, Heads of Departments (HODs), teachers, and students.
-
-At its core, Campus Connect serves as a dynamic and inclusive digital ecosystem fostering a culture of collaboration, knowledge sharing, and continuous improvement. By providing a centralized hub for communication and resource management, Campus Connect empowers users at all levels—administrators, Heads of Departments (HODs), teachers, and students—to connect and collaborate in meaningful ways.
+---
 
 ## Features
-- **Role-Based Access Control:** Differentiate user roles (Admin, HOD, Teacher, Student) with specific permissions for accessing and performing actions within the platform.
-- **Course and Subject Management:** Empower HODs to oversee courses, subjects, and teacher assignments.
-- **Syllabus Submission and Approval:** Enable teachers to submit syllabi for HOD approval before distribution to students.
-- **Syllabus Progress Tracking:** Teachers update syllabus completion status with student acknowledgment. Students can provide feedback if they disagree.
-- **Resource Library:** Create a centralized repository for educational resources such as lecture slides, videos, and articles organized by subject or topic for easy access.
-- **Student Note Contribution:** Students contribute notes with teacher approval required for visibility to peers.
-- **Collaboration Points System:** Implement a metric for rewarding student collaboration earned by active participation and contributions.
-- **Latest Approved Version Visibility:** Only the latest approved version of student-contributed notes is visible to all users, ensuring accuracy and consistency.
-- **Discussion Forums:** Provide a platform for students and teachers to engage in discussions, ask questions, and share insights related to course topics.
-- **Customized Dashboard:** Offers users a personalized and intuitive interface tailored to their specific roles and preferences. This dynamic dashboard serves as the gateway to the platform, providing users with instant access to relevant information, tools, and resources.
 
+- **Role-Based Access Control** — Distinct roles (Admin, HOD, Teacher, Student) with scoped permissions across all platform actions
+- **Course and Subject Management** — HODs manage courses, subjects, and teacher assignments
+- **Syllabus Submission and Approval** — Teachers submit syllabi for HOD review before student distribution
+- **Syllabus Progress Tracking** — Teachers mark completion status; students acknowledge or raise feedback
+- **Resource Library** — Centralized repository for lecture slides, videos, and reference material organized by subject
+- **Student Note Contribution** — Students submit notes requiring teacher approval before peer visibility
+- **Collaboration Points System** — Metric rewarding active student participation and contributions
+- **Latest Approved Version Visibility** — Only the most recent approved version of contributed notes is visible, ensuring accuracy
+- **Discussion Forums** — Subject-level discussion threads for students and teachers
+- **File Compression Downloads** — Download resources in multiple compression formats
+- **Customized Dashboards** — Role-specific dashboards providing immediate access to relevant tools and information
 
+---
 
+## Built With
 
-### Built With
+**Application**
 
+[![Spring Boot][SpringBoot6.js]][SpringBoot6-url]
+[![Spring Security][SpringSecurity.js]][SpringSecurity-url]
+[![JPA Hibernate][JPA.com]][JPA-url]
+[![Thymeleaf][Thymeleaf.js]][Thymeleaf-url]
+[![MySQL][MySQL.js]][MySQL-url]
+[![HTML][HTML.js]][HTML-url]
+[![CSS][CSS.js]][CSS-url]
+[![JavaScript][Javascript.js]][Javascript-url]
 
-* [![HTML][HTML.js]][HTML-url]
-* [![CSS][CSS.js]][CSS-url]
-* [![JAVASCRIPT][Javascript.js]][Javascript-url]
-* [![Thymeleaf][Thymeleaf.js]][Thymeleaf-url]
-* [![SpringBoot][SpringBoot6.js]][SpringBoot6-url]
-* [![MySQL][MySQL.js]][MySQL-url]
-* [![JPA Hibernate][JPA.com]][JPA-url]
+**DevOps & CI/CD**
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+[![Docker][DockerBadge.js]][Docker-url]
+[![GitHub Actions][GHA.js]][GHA-url]
+[![GHCR][GHCR.js]][GHCR-url]
 
+**Testing**
 
+[![JUnit 5][JUnit.js]][JUnit-url]
+[![Mockito][Mockito.js]][Mockito-url]
+[![H2][H2.js]][H2-url]
+[![Spring Security Test][SST.js]][SST-url]
 
-### Running the project in your local system
-
-1. Clone the repo into your local system
-   
-bash
-   git clone https://github.com/subodhadhikari2023/CampusConnect.git
-
-2. 
-3. Open the CampusConnect/Project/sql-scripts on your MySQL Workbench and run it as the Root User.
-4. Or you can copy the sql script and run it from mysql server
-5. Open the Project directory on your IDE.
-6. Now run the project as Java Application.
-7. Go to your browser and open the url localhost:8080/
-8. Thats it!!!
-
-
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Clone the repo into your local system
-   
-bash
-   git clone https://github.com/your_user_name/CampusConnect.git
-
-3. Create your Feature Branch (git branch <your_branch_name>)
-4. Change to your branch (git checkout <your_branch_name>)
-5. Make the changes you want and add it in the staging area (git add <your_file_name.extension>)>
-6. Commit your Changes (git commit -m 'Add some AmazingFeature')
-7. Push to the Branch (git push origin AmazingFeature)
-8. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+---
 
 ## Getting Started
 
-### Prerequisites
+### Option 1: Docker (Recommended)
 
-This is an example of  list of things you need to use the software.
-- Intellij (Preffered). Any other IDE can be used according to your choice.
-- MySQL Server 8.0.30
-- Java Development Kit-17
-- MySQL Workbench(Optional)
-- maven(Completely optional however having would be beneficial)
+The fastest way to run the project. No manual database setup required.
 
-<!-- LICENSE -->
+**Prerequisites:** Docker and Docker Compose installed.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/subodhadhikari2023/CampusConnect.git
+cd CampusConnect
+
+# 2. Run the automated setup script (first time only)
+chmod +x setup.sh && ./setup.sh
+
+# 3. Start the application
+docker compose up --build
+```
+
+The application will be available at `http://localhost:8080`.
+
+The Docker Compose stack includes:
+- Spring Boot application container (multi-stage build, Alpine JRE runtime)
+- MySQL 8.0 container with health checks and named volumes
+- Automatic schema initialization via `docker/init.sql`
+
+To stop: `docker compose down`  
+To stop and remove volumes: `docker compose down -v`
+
+---
+
+### Option 2: Manual Setup
+
+**Prerequisites**
+
+- Java Development Kit 17
+- MySQL Server 8.0+
+- Maven (or use the included `./mvnw` wrapper)
+- IntelliJ IDEA (recommended) or any IDE
+
+**Steps**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/subodhadhikari2023/CampusConnect.git
+cd CampusConnect
+
+# 2. Set up the database
+# Open Project/sql-scripts/databaseScript.sql in MySQL Workbench
+# and run it as root, OR run directly:
+mysql -u root -p < Project/sql-scripts/databaseScript.sql
+
+# 3. Configure environment variables
+# Copy the example env file and fill in your credentials
+cp Project/.env.example Project/.env
+# Edit Project/.env with your DB username and password
+
+# 4. Run the application
+cd Project
+./mvnw spring-boot:run
+
+# 5. Open in browser
+# http://localhost:8080
+```
+
+---
+
+## Testing
+
+The project includes **88 tests** covering all application layers.
+
+| Layer | Tests | Framework | Notes |
+|---|---|---|---|
+| Security | 18 | Spring Security Test + MockMvc | Role isolation, unauthenticated redirects, public endpoint access, logout |
+| Controllers | 29 | @WebMvcTest + Mockito | Admin, HOD, Teacher, Student, Master controllers — views, model attributes, redirects |
+| Services | 26 | JUnit 5 + Mockito | UserService, StorageService — plain unit tests, no Spring context |
+| Repositories | 14 | @DataJpaTest + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
+
+Tests use an **H2 in-memory database** via `application-test.properties`, ensuring no MySQL dependency in CI or local test runs.
+
+```bash
+# Run all tests
+./mvnw test
+
+# Run a specific test class
+./mvnw test -Dtest=SecurityIntegrationTest
+```
+
+---
+
+## CI/CD
+
+Every push and pull request targeting `main` triggers the GitHub Actions pipeline:
+
+1. **Test job** — Runs the full 88-test suite against H2 in-memory DB
+2. **Push job** *(main branch only)* — Builds the Docker image and pushes to GitHub Container Registry (GHCR) tagged with `:latest` and the commit SHA
+
+Pull the latest image:
+
+```bash
+docker pull ghcr.io/subodhadhikari2023/campusconnect:latest
+```
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Clone your fork: `git clone https://github.com/your_username/CampusConnect.git`
+3. Create a feature branch: `git checkout -b feature/your-feature-name`
+4. Make your changes and stage them: `git add <files>`
+5. Commit: `git commit -m 'Add your feature description'`
+6. Push: `git push origin feature/your-feature-name`
+7. Open a Pull Request against `main`
+
+Contributions are welcome. Please open an issue first for significant changes.
+
+---
+
 ## License
 
-Distributed under the GNU License. See LICENSE for more information.
+Distributed under the GNU General Public License. See [LICENSE](LICENSE) for details.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+---
 
-
-
-<!-- CONTACT -->
 ## Contact
 
-Manav Agarwal: <br> <a href="mailto:manav9981@outlook.com">
-        <img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" alt="Outlook Manav" /></a><a href="https://www.linkedin.com/in/manav-agarwal-8139b92b8/">
-        <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Manav" />
-    </a>
-        
-        
-Subodh Adhikari <br><a href="mailto:subodhadhikari2023@outlook.com">
-        <img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" alt="Outlook Subodh" />
-        <a href="https://www.linkedin.com/in/subodh-adhikari-4b811a296/">
-        <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Subodh" />
-    </a>
-<br>
+**Subodh Adhikari**
+<a href="mailto:subodhadhikari2023@outlook.com"><img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" /></a>
+<a href="https://www.linkedin.com/in/subodh-adhikari-4b811a296/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" /></a>
 
-
-
+**Manav Agarwal**
+<a href="mailto:manav9981@outlook.com"><img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" /></a>
+<a href="https://www.linkedin.com/in/manav-agarwal-8139b92b8/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" /></a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
+---
 
 [contributors-shield]: https://img.shields.io/github/contributors/subodhadhikari2023/CampusConnect?style=for-the-badge
 [contributors-url]: https://github.com/subodhadhikari2023/CampusConnect/graphs/contributors
@@ -219,21 +268,38 @@ Subodh Adhikari <br><a href="mailto:subodhadhikari2023@outlook.com">
 [issues-url]: https://github.com/subodhadhikari2023/CampusConnect/issues
 [license-shield]: https://img.shields.io/badge/License-GPLv3-blue.svg
 [license-url]: https://github.com/subodhadhikari2023/CampusConnect/blob/main/LICENSE
+[ci-shield]: https://github.com/subodhadhikari2023/CampusConnect/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/subodhadhikari2023/CampusConnect/actions
+[docker-shield]: https://img.shields.io/badge/Docker-available-2496ED?style=flat-square&logo=docker&logoColor=white
+[docker-url]: https://github.com/subodhadhikari2023/CampusConnect/pkgs/container/campusconnect
 
-
-
-[product-screenshot]: images/screenshot.png
-[HTML.js]: https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white
-[HTML-url]:https://html.com/
-[CSS.js]: https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white
-[CSS-url]:https://css-tricks.com/
-[Javascript.js]: https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
-[Javascript-url]:https://developer.mozilla.org/en-US/docs/Web/JavaScript
-[Thymeleaf.js]: https://img.shields.io/badge/thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white
+[HTML.js]: https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white
+[HTML-url]: https://html.com/
+[CSS.js]: https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white
+[CSS-url]: https://css-tricks.com/
+[Javascript.js]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
+[Javascript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+[Thymeleaf.js]: https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white
 [Thymeleaf-url]: https://www.thymeleaf.org/
-[SpringBoot6.js]: https://img.shields.io/badge/spring%20boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white
-[SpringBoot6-url]:https://spring.io/projects/spring-boot
+[SpringBoot6.js]: https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white
+[SpringBoot6-url]: https://spring.io/projects/spring-boot
+[SpringSecurity.js]: https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring&logoColor=white
+[SpringSecurity-url]: https://spring.io/projects/spring-security
 [MySQL.js]: https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white
 [MySQL-url]: https://www.mysql.com/
-[JPA.com]:https://img.shields.io/badge/JPA_Hibernate-59666C?style=for-the-badge&logo=hibernate&logoColor=white
-[JPA-url]:https://www.baeldung.com/learn-jpa-hibernate
+[JPA.com]: https://img.shields.io/badge/Hibernate_JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white
+[JPA-url]: https://www.baeldung.com/learn-jpa-hibernate
+[DockerBadge.js]: https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white
+[Docker-url]: https://www.docker.com/
+[GHA.js]: https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white
+[GHA-url]: https://github.com/features/actions
+[GHCR.js]: https://img.shields.io/badge/GHCR-181717?style=for-the-badge&logo=github&logoColor=white
+[GHCR-url]: https://github.com/subodhadhikari2023/CampusConnect/pkgs/container/campusconnect
+[JUnit.js]: https://img.shields.io/badge/JUnit_5-25A162?style=for-the-badge&logo=junit5&logoColor=white
+[JUnit-url]: https://junit.org/junit5/
+[Mockito.js]: https://img.shields.io/badge/Mockito-78A641?style=for-the-badge
+[Mockito-url]: https://site.mockito.org/
+[H2.js]: https://img.shields.io/badge/H2_Database-1021FF?style=for-the-badge
+[H2-url]: https://www.h2database.com/
+[SST.js]: https://img.shields.io/badge/Spring_Security_Test-6DB33F?style=for-the-badge&logo=spring&logoColor=white
+[SST-url]: https://docs.spring.io/spring-security/reference/servlet/test/index.html
