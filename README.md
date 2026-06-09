@@ -124,9 +124,13 @@
 
 ## Getting Started
 
+Choose the setup method that suits your environment.
+
+---
+
 ### Option 1: Docker (Recommended)
 
-The fastest way to run the project. No manual database setup required.
+No manual database setup required. Docker handles everything — the database, schema creation, and the application.
 
 **Prerequisites:** Docker and Docker Compose installed.
 
@@ -135,26 +139,37 @@ The fastest way to run the project. No manual database setup required.
 git clone https://github.com/subodhadhikari2023/CampusConnect.git
 cd CampusConnect
 
-# 2. Run the automated setup script (first time only)
-chmod +x setup.sh && ./setup.sh
+# 2. Create your environment file and fill in your credentials
+cp Project/.env.example Project/.env
+# Open Project/.env and set DB_PASSWORD and MYSQL_ROOT_PASSWORD
 
-# 3. Start the application
+# 3. Build and start both containers (app + MySQL)
 docker compose up --build
 ```
 
 The application will be available at `http://localhost:8080`.
 
-The Docker Compose stack includes:
-- Spring Boot application container (multi-stage build, Alpine JRE runtime)
-- MySQL 8.0 container with health checks and named volumes
-- Automatic schema initialization via `docker/init.sql`
+**What Docker sets up automatically:**
+- MySQL 8.0 container — creates the database and user from your `.env`
+- Runs `docker/init.sql` on first startup to create all tables and seed data
+- Spring Boot app container — compiled via multi-stage build, connects to MySQL over Docker's internal network
+- The app container waits for MySQL to pass its health check before starting
 
-To stop: `docker compose down`  
-To stop and remove volumes: `docker compose down -v`
+```bash
+# Stop the containers
+docker compose down
+
+# Stop and delete all data (volumes)
+docker compose down -v
+```
+
+> **Note:** `setup.sh` is for the manual setup path only. Do not run it before `docker compose up` — it starts the application directly via Maven and is not needed for Docker.
 
 ---
 
-### Option 2: Manual Setup
+### Option 2: Manual Setup (No Docker)
+
+Use this if you prefer to run the application directly on your machine without containers.
 
 **Prerequisites**
 
@@ -165,28 +180,24 @@ To stop and remove volumes: `docker compose down -v`
 
 **Steps**
 
+`setup.sh` automates the entire manual setup — checking dependencies, creating the `.env`, initialising the database, and starting the application.
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/subodhadhikari2023/CampusConnect.git
 cd CampusConnect
 
-# 2. Set up the database
-# Open Project/sql-scripts/databaseScript.sql in MySQL Workbench
-# and run it as root, OR run directly:
-mysql -u root -p < Project/sql-scripts/databaseScript.sql
-
-# 3. Configure environment variables
-# Copy the example env file and fill in your credentials
-cp Project/.env.example Project/.env
-# Edit Project/.env with your DB username and password
-
-# 4. Run the application
-cd Project
-./mvnw spring-boot:run
-
-# 5. Open in browser
-# http://localhost:8080
+# 2. Run the setup script (handles everything below automatically)
+chmod +x setup.sh && ./setup.sh
 ```
+
+On first run, `setup.sh` will:
+1. Verify Java 17+, Maven, and MySQL client are installed
+2. Create `Project/.env` if it does not exist, then exit — fill in `DB_PASSWORD` and re-run
+3. Check whether the database exists — if not, prompt for MySQL root password and run the schema script
+4. Start the application via `./mvnw spring-boot:run`
+
+The application will be available at `http://localhost:8080`.
 
 ---
 
