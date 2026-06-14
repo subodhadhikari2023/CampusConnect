@@ -23,7 +23,8 @@ CREATE TABLE `department`
     UNIQUE KEY `department_name` (`department_name`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1004
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO `department`
 VALUES (1001, 'Computer Applications'),
@@ -47,7 +48,8 @@ CREATE TABLE `members`
     FOREIGN KEY (`dept_id`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 8
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO `members`
 VALUES (1, 'hod1', 'hod1@campus.com', '{noop}password', 1, 'Computer Applications', 1001),
@@ -68,7 +70,8 @@ CREATE TABLE `roles`
     PRIMARY KEY (`user_id`),
     CONSTRAINT `fk_user_roles` FOREIGN KEY (`user_id`) REFERENCES `members` (`user_id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO `roles`
 VALUES ('hod1', 'ROLE_HOD'),
@@ -95,7 +98,8 @@ CREATE TABLE `department_details`
     CONSTRAINT `fk_member` FOREIGN KEY (`user_name`) REFERENCES `members` (`user_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 10
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO `department_details`
 VALUES (1, 1001, 'hod1', 'HOD'),
@@ -118,7 +122,8 @@ CREATE TABLE IF NOT EXISTS `course_details`
     CONSTRAINT `fk_department_course` FOREIGN KEY (`department_id`) REFERENCES `department` (`department_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `semester`
 DROP TABLE IF EXISTS `semester`;
@@ -129,7 +134,8 @@ CREATE TABLE IF NOT EXISTS `semester`
     PRIMARY KEY (`semester_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `subject_details`
 DROP TABLE IF EXISTS `subject_details`;
@@ -144,7 +150,8 @@ CREATE TABLE `subject_details`
     CONSTRAINT `fk_semester_subject` FOREIGN KEY (`semester_id`) REFERENCES `semester` (`semester_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `file_data`
 DROP TABLE IF EXISTS `file_data`;
@@ -173,7 +180,8 @@ CREATE TABLE IF NOT EXISTS `file_data`
     CONSTRAINT `fk_subject_file` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 /*!40101 SET SQL_MODE = @OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS */;
