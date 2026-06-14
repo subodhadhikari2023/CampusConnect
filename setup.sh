@@ -132,8 +132,7 @@ else
     read -rs MYSQL_ROOT_PASS
     echo ""
 
-    if ! mysql -h "$DB_HOST" -P "$DB_PORT" -u root -p"$MYSQL_ROOT_PASS" \
-        < "$SQL_SCRIPT" 2>&1; then
+    if ! envsubst < "$SQL_SCRIPT" | mysql -h "$DB_HOST" -P "$DB_PORT" -u root -p"$MYSQL_ROOT_PASS" 2>&1; then
         error "Database setup failed. Check your root password and that MySQL is running."
     fi
     success "Database '$DB_NAME' created and seeded"

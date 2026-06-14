@@ -37,7 +37,7 @@ Requires MySQL Server 8.0+. Run the full schema and seed data as root:
 mysql -u root -p < sql-scripts/databaseScript.sql
 ```
 
-This creates the `campusConnect` database, the `campusConnect` MySQL user (password: `Frpsxwhu2001@`), all tables, and dummy users. The `departments.sql` script can be run separately for additional department seed data.
+This creates the `campusConnect` database, the `campusConnect` MySQL user (password from `DB_PASSWORD` in your `.env`), all tables, and dummy users. The `departments.sql` script can be run separately for additional department seed data.
 
 **Dummy credentials** (all use password `password`):
 - Admin: `admin1`, `admin2`
