@@ -38,6 +38,7 @@
                     <th scope="col">Username</th>
                     <th scope="col">Email</th>
                     <th scope="col">Department</th>
+                    <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,13 @@
                     <td th:text="${u.userId}"></td>
                     <td th:text="${u.email}"></td>
                     <td th:text="${u.department}"></td>
+                    <td>
+                        <form th:action="@{/admin/toggleActive}" method="POST" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${u.userId}">
+                            <input type="hidden" name="redirectTo" value="/admin/inactive-users">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Activate</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>

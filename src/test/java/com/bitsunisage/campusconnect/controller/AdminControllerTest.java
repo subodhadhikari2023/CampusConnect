@@ -493,6 +493,50 @@ class AdminControllerTest {
                 .andExpect(model().attributeExists("courses", "deptNames"));
     }
 
+    // ---- Toggle Active ----
+
+    @Test
+    void toggleActiveDeactivatesAnActiveUser() throws Exception {
+        testUser.setActive(true);
+        when(userService.findUserByUserId("testUser")).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/toggleActive").with(csrf())
+                        .param("userId", "testUser")
+                        .param("redirectTo", "/admin/students"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/students"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).save(argThat((User u) -> !u.isActive()));
+    }
+
+    @Test
+    void toggleActiveActivatesAnInactiveUser() throws Exception {
+        testUser.setActive(false);
+        when(userService.findUserByUserId("testUser")).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/toggleActive").with(csrf())
+                        .param("userId", "testUser")
+                        .param("redirectTo", "/admin/inactive-users"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/inactive-users"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).save(argThat((User u) -> u.isActive()));
+    }
+
+    @Test
+    void toggleActiveBlocksSelfStatusChange() throws Exception {
+        mockMvc.perform(post("/admin/toggleActive").with(csrf())
+                        .param("userId", "admin1")
+                        .param("redirectTo", "/admin/students"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/students"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
     // ---- Inactive Users ----
 
     @Test

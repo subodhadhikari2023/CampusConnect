@@ -32,8 +32,14 @@
             <td th:text="${teacher.email}"></td>
             <td th:text="${teacher.department}"></td>
             <td>
-                <span th:if="${teacher.active}" class="badge bg-success">Active</span>
-                <span th:unless="${teacher.active}" class="badge bg-secondary">Inactive</span>
+                <form th:action="@{/admin/toggleActive}" method="POST" class="d-inline">
+                    <input type="hidden" name="userId" th:value="${teacher.userId}">
+                    <input type="hidden" name="redirectTo" value="/admin/teachers">
+                    <button type="submit"
+                            th:class="${teacher.active} ? 'badge border-0 bg-success' : 'badge border-0 bg-secondary'"
+                            th:text="${teacher.active} ? 'Active' : 'Inactive'"
+                            th:title="${teacher.active} ? 'Click to deactivate' : 'Click to activate'"></button>
+                </form>
             </td>
             <td>
                 <a th:href="@{/admin/editUser(userId=${teacher.userId})}"

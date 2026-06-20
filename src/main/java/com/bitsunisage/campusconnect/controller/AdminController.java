@@ -468,6 +468,39 @@ public class AdminController {
         return "redirect:/admin/files";
     }
 
+    // ── Toggle active status ─────────────────────────────────────────────────
+
+    /**
+     * Flips the active flag of a user account and redirects back to the calling list page.
+     * Blocks an admin from changing their own status.
+     * The {@code redirectTo} parameter must start with {@code /} to prevent open-redirect attacks.
+     *
+     * @param userId             the login username of the user to toggle
+     * @param redirectTo         the relative URL to redirect back to after the action
+     * @param authentication     the currently authenticated principal, used to block self-toggle
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
+     * @return redirect to {@code redirectTo}
+     */
+    @PostMapping("/admin/toggleActive")
+    public String toggleActive(@RequestParam("userId") String userId,
+                               @RequestParam(value = "redirectTo", defaultValue = "/admin") String redirectTo,
+                               Authentication authentication,
+                               RedirectAttributes redirectAttributes) {
+        if (!redirectTo.startsWith("/")) {
+            redirectTo = "/admin";
+        }
+        if (authentication.getName().equals(userId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You cannot change the status of your own account.");
+            return "redirect:" + redirectTo;
+        }
+        User user = userService.findUserByUserId(userId);
+        user.setActive(!user.isActive());
+        userService.save(user);
+        String status = user.isActive() ? "activated" : "deactivated";
+        redirectAttributes.addFlashAttribute("successMessage", userId + " has been " + status + ".");
+        return "redirect:" + redirectTo;
+    }
+
     // ── Courses (read-only) ───────────────────────────────────────────────────
 
     /**
