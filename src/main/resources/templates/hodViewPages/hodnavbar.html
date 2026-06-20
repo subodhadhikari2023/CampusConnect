@@ -30,11 +30,14 @@
                         </form>
                     </li>
                     <li class="nav-item d-flex align-items-center me-3">
-                        <form th:action="@{/hodViewPages/add-course}" method="get" style="display:inline;">
+                        <form th:action="@{/hod/add-course}" method="get" style="display:inline;">
                             <button type="submit" class="btn btn-light text-dark me-2">Add Course</button>
                         </form>
-                        <form th:action="@{/hodViewPages/manage-course}" method="get" style="display:inline;">
-                            <button type="submit" class="btn btn-light text-dark">Manage Course</button>
+                        <form th:action="@{/hod/manage-course}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-light text-dark me-2">Manage Courses</button>
+                        </form>
+                        <form th:action="@{/hod/manage-subject}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-light text-dark">Manage Subjects</button>
                         </form>
                     </li>
 

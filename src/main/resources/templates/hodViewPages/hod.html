@@ -54,26 +54,26 @@
         <table class="stats-box">
             <thead>
             <tr>
-                <td><h4><img th:src="@{SVGs/gears-solid.svg}"> Pending Requests</h4></td>
+                <td><h4><img th:src="@{SVGs/gears-solid.svg}"> Total Courses</h4></td>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td th:text="${pendingRequests}"></td>
+                <td th:text="${totalCourses}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 
     <div class="action-buttons">
-        <a class="text-white" th:href="@{hod/update-department}">
-            <button class="action-button">Update Department Details</button>
+        <a class="text-white" th:href="@{/hod/add-course}">
+            <button class="action-button">Add Course</button>
         </a>
-        <a class="text-white" th:href="@{hod/update-faculty}">
-            <button class="action-button">Update Faculty</button>
+        <a class="text-white" th:href="@{/hod/manage-course}">
+            <button class="action-button">Manage Courses</button>
         </a>
-        <a class="text-white" th:href="@{hod/approve-requests}">
-            <button class="action-button">Approve Requests</button>
+        <a class="text-white" th:href="@{/hod/manage-subject}">
+            <button class="action-button">Manage Subjects</button>
         </a>
     </div>
 </div>

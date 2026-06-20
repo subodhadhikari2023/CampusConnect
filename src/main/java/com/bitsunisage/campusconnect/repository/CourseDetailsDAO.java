@@ -28,4 +28,19 @@ public interface CourseDetailsDAO extends JpaRepository<CourseDetails, Integer> 
      * @return list of matching {@link CourseDetails}; may be empty
      */
     List<CourseDetails> findByCourseIdIn(List<Long> courseId);
+
+    /**
+     * Looks up a single course by its primary key.
+     *
+     * @param courseId the course ID
+     * @return the matching {@link CourseDetails}, or {@code null} if not found
+     */
+    CourseDetails findByCourseId(Long courseId);
+
+    /**
+     * Deletes a course by its primary key.
+     *
+     * @param courseId the course ID to delete
+     */
+    void deleteByCourseId(Long courseId);
 }
