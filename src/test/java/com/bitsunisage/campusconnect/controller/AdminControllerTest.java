@@ -493,6 +493,47 @@ class AdminControllerTest {
                 .andExpect(model().attributeExists("courses", "deptNames"));
     }
 
+    // ---- HOD Assignment ----
+
+    @Test
+    void assignHodFormLoadsWithDepartmentAndHodList() throws Exception {
+        Roles hodRole = new Roles();
+        hodRole.setUserId("hod1");
+        hodRole.setRole("ROLE_HOD");
+        User hodUser = new User();
+        hodUser.setUserId("hod1");
+        hodUser.setDeptID(1001L);
+
+        when(userService.getDepartmentNameByDepartmentId(1001)).thenReturn(testDept);
+        when(userService.findByRole("ROLE_HOD")).thenReturn(List.of(hodRole));
+        when(userService.findAllUsers()).thenReturn(List.of(hodUser));
+
+        mockMvc.perform(get("/admin/assign-hod").param("deptId", "1001"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/assign-hod"))
+                .andExpect(model().attributeExists("dept", "hods", "currentHodId"));
+    }
+
+    @Test
+    void saveHodAssignmentUpdatesDeptIdAndRedirects() throws Exception {
+        User hodUser = new User();
+        hodUser.setUserId("hod1");
+        hodUser.setDeptID(9999L);
+
+        when(userService.findUserByUserId("hod1")).thenReturn(hodUser);
+        when(userService.getDepartmentNameByDepartmentId(1001)).thenReturn(testDept);
+
+        mockMvc.perform(post("/admin/save-hod-assignment").with(csrf())
+                        .param("deptId", "1001")
+                        .param("hodUserId", "hod1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).save(argThat((User u) -> u.getDeptID().equals(1001L) &&
+                u.getDepartment().equals("Test Department")));
+    }
+
     // ---- Toggle Active ----
 
     @Test

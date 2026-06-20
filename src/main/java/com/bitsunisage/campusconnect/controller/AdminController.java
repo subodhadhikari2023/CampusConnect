@@ -286,14 +286,21 @@ public class AdminController {
     // ── Departments ──────────────────────────────────────────────────────────
 
     /**
-     * Lists all departments.
+     * Lists all departments with the currently assigned HOD for each.
      *
-     * @param model populated with {@code departments} — list of all {@link Department} records
+     * @param model populated with {@code departments} and {@code hodByDept}
+     *              (map of department ID to HOD username, may be absent for unassigned departments)
      * @return Thymeleaf template {@code adminViewPages/departments}
      */
     @GetMapping("/admin/departments")
     public String listDepartments(Model model) {
         model.addAttribute("departments", userService.getAllDepartments());
+        Set<String> hodIds = userService.findByRole("ROLE_HOD")
+                .stream().map(Roles::getUserId).collect(Collectors.toSet());
+        Map<Long, String> hodByDept = userService.findAllUsers().stream()
+                .filter(u -> hodIds.contains(u.getUserId()) && u.getDeptID() != null)
+                .collect(Collectors.toMap(User::getDeptID, User::getUserId, (a, b) -> a));
+        model.addAttribute("hodByDept", hodByDept);
         return "adminViewPages/departments";
     }
 
@@ -466,6 +473,65 @@ public class AdminController {
         storageService.deleteResource(fileId);
         redirectAttributes.addFlashAttribute("successMessage", "File deleted successfully.");
         return "redirect:/admin/files";
+    }
+
+    // ── HOD assignment ───────────────────────────────────────────────────────
+
+    /**
+     * Renders the HOD-assignment form for a given department.
+     * Populates the form with all current HOD users and marks whichever HOD
+     * is currently assigned to this department as pre-selected.
+     *
+     * @param deptId             the department to assign an HOD to
+     * @param model              populated with {@code dept}, {@code hods}, and {@code currentHodId}
+     * @param redirectAttributes used to pass an error flash if the department is not found
+     * @return Thymeleaf template {@code adminViewPages/assign-hod}
+     */
+    @GetMapping("/admin/assign-hod")
+    public String assignHodForm(@RequestParam("deptId") Long deptId,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
+        Department dept = userService.getDepartmentNameByDepartmentId(deptId.intValue());
+        if (dept == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Department not found.");
+            return "redirect:/admin/departments";
+        }
+        Set<String> hodIds = userService.findByRole("ROLE_HOD")
+                .stream().map(Roles::getUserId).collect(Collectors.toSet());
+        List<User> hods = userService.findAllUsers().stream()
+                .filter(u -> hodIds.contains(u.getUserId()))
+                .collect(Collectors.toList());
+        String currentHodId = hods.stream()
+                .filter(u -> deptId.equals(u.getDeptID()))
+                .map(User::getUserId)
+                .findFirst().orElse(null);
+        model.addAttribute("dept", dept);
+        model.addAttribute("hods", hods);
+        model.addAttribute("currentHodId", currentHodId);
+        return "adminViewPages/assign-hod";
+    }
+
+    /**
+     * Saves the HOD-to-department assignment by updating the chosen HOD's {@code deptID}
+     * and denormalised {@code department} name, then redirecting to the departments list.
+     *
+     * @param deptId             the department to assign the HOD to
+     * @param hodUserId          the login username of the HOD to assign
+     * @param redirectAttributes used to pass a success flash across the redirect
+     * @return redirect to {@code /admin/departments}
+     */
+    @PostMapping("/admin/save-hod-assignment")
+    public String saveHodAssignment(@RequestParam("deptId") Long deptId,
+                                    @RequestParam("hodUserId") String hodUserId,
+                                    RedirectAttributes redirectAttributes) {
+        Department dept = userService.getDepartmentNameByDepartmentId(deptId.intValue());
+        User hod = userService.findUserByUserId(hodUserId);
+        hod.setDeptID(deptId);
+        hod.setDepartment(dept.getName());
+        userService.save(hod);
+        redirectAttributes.addFlashAttribute("successMessage",
+                hodUserId + " assigned as HOD of " + dept.getName() + ".");
+        return "redirect:/admin/departments";
     }
 
     // ── Toggle active status ─────────────────────────────────────────────────
