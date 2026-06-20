@@ -19,6 +19,7 @@ public class UserServiceImplementation implements UserService {
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
     private final DepartmentDAO departmentDAO;
+    private final DepartmentDetailsDAO departmentDetailsDAO;
     private final CourseDetailsDAO courseDetailsDAO;
     private final SemesterDAO semesterDAO;
     private final SubjectDetailsDAO subjectDetailsDAO;
@@ -26,22 +27,25 @@ public class UserServiceImplementation implements UserService {
     /**
      * Constructs the service with all required repositories injected by Spring.
      *
-     * @param userDAO            repository for {@link User}
-     * @param roleDAO            repository for {@link Roles}
-     * @param departmentDAO      repository for {@link Department}
-     * @param courseDetailsDAO   repository for {@link CourseDetails}
-     * @param semesterDAO        repository for {@link Semester}
-     * @param subjectDetailsDAO  repository for {@link SubjectDetails}
+     * @param userDAO               repository for {@link User}
+     * @param roleDAO               repository for {@link Roles}
+     * @param departmentDAO         repository for {@link Department}
+     * @param departmentDetailsDAO  repository for {@link DepartmentDetails}
+     * @param courseDetailsDAO      repository for {@link CourseDetails}
+     * @param semesterDAO           repository for {@link Semester}
+     * @param subjectDetailsDAO     repository for {@link SubjectDetails}
      */
     @Autowired
     public UserServiceImplementation(UserDAO userDAO, RoleDAO roleDAO,
                                      DepartmentDAO departmentDAO,
+                                     DepartmentDetailsDAO departmentDetailsDAO,
                                      CourseDetailsDAO courseDetailsDAO,
                                      SemesterDAO semesterDAO,
                                      SubjectDetailsDAO subjectDetailsDAO) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.departmentDAO = departmentDAO;
+        this.departmentDetailsDAO = departmentDetailsDAO;
         this.courseDetailsDAO = courseDetailsDAO;
         this.semesterDAO = semesterDAO;
         this.subjectDetailsDAO = subjectDetailsDAO;
@@ -171,5 +175,65 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<Department> getDepartmentNames(List<Long> deptIds) {
         return departmentDAO.findByIdIn(deptIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<CourseDetails> getCoursesByDepartmentId(Long deptId) {
+        return courseDetailsDAO.findByDepartmentId(deptId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public CourseDetails saveCourse(CourseDetails course) {
+        return courseDetailsDAO.save(course);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public CourseDetails getCourseById(Long courseId) {
+        return courseDetailsDAO.findByCourseId(courseId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteCourseById(Long courseId) {
+        courseDetailsDAO.deleteByCourseId(courseId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SubjectDetails> getSubjectsByCourseId(int courseId) {
+        return subjectDetailsDAO.findByCourseId(courseId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public SubjectDetails saveSubject(SubjectDetails subject) {
+        return subjectDetailsDAO.save(subject);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteSubjectById(Long subjectId) {
+        subjectDetailsDAO.deleteBySubjectId(subjectId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int countMembersByDepartmentAndRole(Long deptId, String role) {
+        return departmentDetailsDAO.countByDepartmentIdAndRole(deptId.intValue(), role);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DepartmentDetails saveDepartmentDetails(DepartmentDetails details) {
+        return departmentDetailsDAO.save(details);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteDepartmentDetailsByUserName(String userName) {
+        departmentDetailsDAO.deleteByUserName(userName);
     }
 }

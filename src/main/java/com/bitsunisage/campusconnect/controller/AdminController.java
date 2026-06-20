@@ -1,19 +1,24 @@
 package com.bitsunisage.campusconnect.controller;
 
 import com.bitsunisage.campusconnect.entities.Department;
+import com.bitsunisage.campusconnect.entities.DepartmentDetails;
 import com.bitsunisage.campusconnect.entities.Roles;
 import com.bitsunisage.campusconnect.entities.User;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Handles HTTP requests for the Admin role.
@@ -52,51 +57,54 @@ public class AdminController {
 
     /**
      * Lists all registered students.
+     * Resolves user records with a single bulk query to avoid N+1 DB calls.
      *
      * @param model populated with {@code userStudents} — list of {@link User} with ROLE_STUDENT
      * @return Thymeleaf template {@code adminViewPages/getstudents}
      */
     @GetMapping("/admin/students")
     public String getStudentsInfo(Model model) {
-        List<Roles> students = userService.findByRole("ROLE_STUDENT");
-        List<User> users = new ArrayList<>();
-        for (Roles stud : students) {
-            users.add(userService.findUserByUserId(stud.getUserId()));
-        }
+        Set<String> studentIds = userService.findByRole("ROLE_STUDENT")
+                .stream().map(Roles::getUserId).collect(Collectors.toSet());
+        List<User> users = userService.findAllUsers().stream()
+                .filter(u -> studentIds.contains(u.getUserId()))
+                .collect(Collectors.toList());
         model.addAttribute("userStudents", users);
         return "adminViewPages/getstudents";
     }
 
     /**
      * Lists all registered teachers.
+     * Resolves user records with a single bulk query to avoid N+1 DB calls.
      *
      * @param model populated with {@code userTeachers} — list of {@link User} with ROLE_TEACHER
      * @return Thymeleaf template {@code adminViewPages/getteachers}
      */
     @GetMapping("/admin/teachers")
     public String getTeachersInfo(Model model) {
-        List<Roles> teacherIds = userService.findByRole("ROLE_TEACHER");
-        List<User> users = new ArrayList<>();
-        for (Roles r : teacherIds) {
-            users.add(userService.findUserByUserId(r.getUserId()));
-        }
+        Set<String> teacherIds = userService.findByRole("ROLE_TEACHER")
+                .stream().map(Roles::getUserId).collect(Collectors.toSet());
+        List<User> users = userService.findAllUsers().stream()
+                .filter(u -> teacherIds.contains(u.getUserId()))
+                .collect(Collectors.toList());
         model.addAttribute("userTeachers", users);
         return "adminViewPages/getteachers";
     }
 
     /**
      * Lists all registered HODs.
+     * Resolves user records with a single bulk query to avoid N+1 DB calls.
      *
      * @param model populated with {@code userHODs} — list of {@link User} with ROLE_HOD
      * @return Thymeleaf template {@code adminViewPages/gethod}
      */
     @GetMapping("/admin/hods")
     public String getHodsInfo(Model model) {
-        List<Roles> hodIds = userService.findByRole("ROLE_HOD");
-        List<User> users = new ArrayList<>();
-        for (Roles r : hodIds) {
-            users.add(userService.findUserByUserId(r.getUserId()));
-        }
+        Set<String> hodIds = userService.findByRole("ROLE_HOD")
+                .stream().map(Roles::getUserId).collect(Collectors.toSet());
+        List<User> users = userService.findAllUsers().stream()
+                .filter(u -> hodIds.contains(u.getUserId()))
+                .collect(Collectors.toList());
         model.addAttribute("userHODs", users);
         return "adminViewPages/gethod";
     }
@@ -117,19 +125,44 @@ public class AdminController {
     }
 
     /**
-     * Creates a new user. Prepends the {@code {noop}} prefix to the raw password
-     * so Spring Security treats it as plain-text during authentication.
+     * Creates or updates a user. Resolves the department name from the selected dept ID,
+     * sets the role's userId to match the user, and maintains the department_details membership.
+     * Redirects with an error flash if the department selection is missing.
      *
-     * @param user  the new user bound from the form
-     * @param roles the role assignment bound from the form
+     * @param user               the user bound from the form (deptID populated from dropdown)
+     * @param roles              the role assignment bound from the form
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
      * @return redirect to the admin dashboard
      */
     @PostMapping("/admin/save")
     public String saveUser(@ModelAttribute("user") User user,
-                           @ModelAttribute("roles") Roles roles) {
-        user.setPassword("{noop}" + user.getPassword());
+                           @ModelAttribute("roles") Roles roles,
+                           RedirectAttributes redirectAttributes) {
+        if (user.getDeptID() == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select a department.");
+            return "redirect:/admin";
+        }
+
+        if (!user.getPassword().startsWith("{noop}")) {
+            user.setPassword("{noop}" + user.getPassword());
+        }
+
+        Department dept = userService.getDepartmentNameByDepartmentId(user.getDeptID().intValue());
+        user.setDepartment(dept.getName());
+
         userService.save(user);
+
+        roles.setUserId(user.getUserId());
         userService.save(roles);
+
+        userService.deleteDepartmentDetailsByUserName(user.getUserId());
+        DepartmentDetails details = new DepartmentDetails();
+        details.setUserName(user.getUserId());
+        details.setDepartmentId(user.getDeptID().intValue());
+        details.setRole(roles.getRole().replace("ROLE_", ""));
+        userService.saveDepartmentDetails(details);
+
+        redirectAttributes.addFlashAttribute("successMessage", "User saved successfully.");
         return "redirect:/admin";
     }
 
@@ -163,18 +196,31 @@ public class AdminController {
     }
 
     /**
-     * Deletes a user and their role record. The role must be deleted first to satisfy
-     * the foreign key constraint from {@code roles} to {@code members}.
+     * Deletes a user, their role record, and their department-details membership.
+     * Blocks self-deletion and redirects with an error flash in that case.
+     * Deletion order satisfies FK constraints: department_details → roles → members.
      *
-     * @param userId the login username of the user to delete
+     * @param userId             the login username of the user to delete
+     * @param authentication     the currently authenticated principal, used to prevent self-delete
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
      * @return redirect to the admin dashboard
      */
     @PostMapping("/admin/deleteUser")
-    public String deleteUser(@RequestParam("userId") String userId) {
-        User user = userService.findUserByUserId(userId);
+    public String deleteUser(@RequestParam("userId") String userId,
+                             Authentication authentication,
+                             RedirectAttributes redirectAttributes) {
+        if (authentication.getName().equals(userId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You cannot delete your own account.");
+            return "redirect:/admin";
+        }
+
+        userService.deleteDepartmentDetailsByUserName(userId);
         Roles roles = userService.findRoleByUserId(userId);
         userService.deleteRole(roles);
+        User user = userService.findUserByUserId(userId);
         userService.deleteUser(user);
+
+        redirectAttributes.addFlashAttribute("successMessage", "User deleted successfully.");
         return "redirect:/admin";
     }
 }

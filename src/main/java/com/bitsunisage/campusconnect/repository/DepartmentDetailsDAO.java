@@ -18,4 +18,21 @@ public interface DepartmentDetailsDAO extends JpaRepository<DepartmentDetails, I
      * @return the matching {@link DepartmentDetails}, or {@code null} if not found
      */
     DepartmentDetails getDepartmentIdByUserName(String userName);
+
+    /**
+     * Counts members in a department that hold the given role label.
+     *
+     * @param departmentId department primary key
+     * @param role         role label as stored in this table (e.g. {@code "TEACHER"}, {@code "STUDENT"})
+     * @return count of matching rows
+     */
+    int countByDepartmentIdAndRole(Integer departmentId, String role);
+
+    /**
+     * Deletes the department-details record for a given user.
+     * Called before removing a user to satisfy FK constraints.
+     *
+     * @param userName login username
+     */
+    void deleteByUserName(String userName);
 }

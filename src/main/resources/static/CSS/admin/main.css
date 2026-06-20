@@ -1,62 +1,15 @@
-/* Updated CSS Styles */
-
-/* General styles */
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #f5f7fa; /* Soft blue-gray background color */
-}
-
-.content-header {
-    background-color: #007a7a; /* Slightly darker teal to add contrast */
-    color: white;
-    padding: 15px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    animation: slide-in 1.5s ease-in-out;
-    position: fixed;
-    top: 0; /* Fixing the content header to the top */
-    left: 250px; /* Adjusted for the sidebar width */
-    width: calc(100% - 250px); /* Adjusted for the sidebar width */
-    z-index: 10;
-}
-
-@keyframes slide-in {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.main-content {
-    margin-top: 60px;
-    padding: 20px;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-sizing: border-box;
-    margin-left: 250px;
-    background-color: #f5f7fa; /* Soft blue-gray background color */
+    background-color: #f5f7fa;
 }
 
 .stats-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     width: 100%;
-    padding-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center; /* Center the grid */
+    margin-top: 20px;
 }
 
 .stats-box {
@@ -90,71 +43,24 @@ body {
 
 .stats-box h4 {
     font-size: 1.2em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-.stats-box h4 img {
-    width: 28px;
-    height: 28px;
-}
-
-.sidebar {
-    width: 250px;
-    background-color: rgb(205, 117, 10); /* Kept sidebar color */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-.sidebar .logo {
-    margin: 20px 0;
-    font-size: 26px;
+.stats-box tbody tr td {
+    font-size: 1.2em;
     font-weight: bold;
-}
-
-.sidebar .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
-
-.sidebar .menu li {
-    width: 100%;
+    color: #007a7a;
+    background-color: #d6e6e6;
+    padding: 8px;
+    border-radius: 5px;
     text-align: center;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: background 0.3s;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, background-color 0.3s;
 }
 
-.sidebar .menu li:hover {
-    background-color: rgb(186, 61, 3); /* Hover color matches sidebar */
-}
-
-.sidebar .menu li a {
-    text-decoration: none;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sidebar .menu li i {
-    margin-right: 10px;
-    font-size: 1.5em;
-}
-
-.sidebar .menu li img {
-    width: 24px;
-    height: 24px;
+.stats-box tbody tr td:hover {
+    background-color: #b4d3d3;
+    transform: translateY(-2px);
 }
 
 .action-buttons {
@@ -170,7 +76,7 @@ body {
 }
 
 .action-button {
-    background-color: #007a7a; /* Slightly darker teal for buttons */
+    background-color: #007a7a;
     border: none;
     padding: 15px 30px;
     font-size: 16px;
@@ -180,25 +86,5 @@ body {
 }
 
 .action-button:hover {
-    background-color: #005d5d; /* Darker teal for hover */
-}
-
-/* Style for the stats box text */
-.stats-box tbody tr td {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #007a7a; /* Teal text color */
-    background-color: #d6e6e6; /* Lighter teal background */
-    padding: 8px;
-    border-radius: 5px;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-/* Hover effect to make the text interactive */
-.stats-box tbody tr td:hover {
-    background-color: #b4d3d3; /* Slightly darker shade on hover */
-    transform: translateY(-2px);
+    background-color: #005d5d;
 }
