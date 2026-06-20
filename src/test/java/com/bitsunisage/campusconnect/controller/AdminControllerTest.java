@@ -493,6 +493,31 @@ class AdminControllerTest {
                 .andExpect(model().attributeExists("courses", "deptNames"));
     }
 
+    // ---- Edit Semester ----
+
+    @Test
+    void editSemesterFormLoadsWithExistingData() throws Exception {
+        Semester sem = new Semester();
+        sem.setSemesterId(1L);
+        sem.setSemesterName("Semester I");
+        when(userService.getSemesterById(1L)).thenReturn(sem);
+
+        mockMvc.perform(get("/admin/editSemester").param("semesterId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/add-semester"))
+                .andExpect(model().attribute("semester", sem));
+    }
+
+    @Test
+    void editSemesterWithUnknownIdRedirectsWithError() throws Exception {
+        when(userService.getSemesterById(99L)).thenReturn(null);
+
+        mockMvc.perform(get("/admin/editSemester").param("semesterId", "99"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/semesters"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
     // ---- HOD Assignment ----
 
     @Test

@@ -46,6 +46,8 @@
                     <td th:text="${sem.semesterId}"></td>
                     <td th:text="${sem.semesterName}"></td>
                     <td>
+                        <a th:href="@{/admin/editSemester(semesterId=${sem.semesterId})}"
+                           class="btn btn-sm btn-outline-primary me-1">Edit</a>
                         <form th:action="@{/admin/delete-semester}" method="POST"
                               style="display: inline;">
                             <input type="hidden" name="semesterId" th:value="${sem.semesterId}"/>

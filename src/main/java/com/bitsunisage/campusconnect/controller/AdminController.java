@@ -405,6 +405,28 @@ public class AdminController {
     }
 
     /**
+     * Loads an existing semester into the add-semester form for editing.
+     * Redirects with an error flash if the semester ID does not exist.
+     *
+     * @param semesterId         the semester primary key
+     * @param model              populated with the existing {@code semester}
+     * @param redirectAttributes used to pass an error flash if the semester is not found
+     * @return Thymeleaf template {@code adminViewPages/add-semester}, or redirect to {@code /admin/semesters}
+     */
+    @GetMapping("/admin/editSemester")
+    public String editSemesterForm(@RequestParam("semesterId") Long semesterId,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes) {
+        Semester semester = userService.getSemesterById(semesterId);
+        if (semester == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Semester not found.");
+            return "redirect:/admin/semesters";
+        }
+        model.addAttribute("semester", semester);
+        return "adminViewPages/add-semester";
+    }
+
+    /**
      * Creates or updates a semester and redirects back to the semester list.
      *
      * @param semester           the semester bound from the form
