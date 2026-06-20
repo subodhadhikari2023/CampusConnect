@@ -249,4 +249,58 @@ public interface UserService {
      * @param userName login username whose membership record should be removed
      */
     void deleteDepartmentDetailsByUserName(String userName);
+
+    /**
+     * Persists a new or updated department record.
+     *
+     * @param dept the {@link Department} to save
+     * @return the saved entity (ID populated for new records)
+     */
+    Department saveDepartment(Department dept);
+
+    /**
+     * Deletes a department record.
+     *
+     * @param dept the {@link Department} to delete
+     */
+    void deleteDepartment(Department dept);
+
+    /**
+     * Counts all members assigned to the given department.
+     *
+     * @param deptId department primary key
+     * @return count of members in that department
+     */
+    int countMembersByDepartment(Long deptId);
+
+    /**
+     * Persists a new or updated semester record.
+     *
+     * @param semester the {@link Semester} to save
+     * @return the saved entity (ID populated for new records)
+     */
+    Semester saveSemester(Semester semester);
+
+    /**
+     * Deletes a semester record.
+     *
+     * @param semester the {@link Semester} to delete
+     */
+    void deleteSemester(Semester semester);
+
+    /**
+     * Looks up a semester by its primary key.
+     *
+     * @param semesterId the semester ID
+     * @return the matching {@link Semester}, or {@code null} if not found
+     */
+    Semester getSemesterById(Long semesterId);
+
+    /**
+     * Counts all subjects assigned to the given semester.
+     *
+     * @param semesterId the semester primary key
+     * @return count of subjects in that semester
+     */
+    int countSubjectsBySemester(Long semesterId);
 }

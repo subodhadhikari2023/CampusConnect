@@ -35,4 +35,12 @@ public interface DepartmentDetailsDAO extends JpaRepository<DepartmentDetails, I
      * @param userName login username
      */
     void deleteByUserName(String userName);
+
+    /**
+     * Counts all members assigned to the given department regardless of role.
+     *
+     * @param departmentId department primary key
+     * @return count of members in that department
+     */
+    int countByDepartmentId(int departmentId);
 }

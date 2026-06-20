@@ -236,4 +236,46 @@ public class UserServiceImplementation implements UserService {
     public void deleteDepartmentDetailsByUserName(String userName) {
         departmentDetailsDAO.deleteByUserName(userName);
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public Department saveDepartment(Department dept) {
+        return departmentDAO.save(dept);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteDepartment(Department dept) {
+        departmentDAO.delete(dept);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int countMembersByDepartment(Long deptId) {
+        return departmentDetailsDAO.countByDepartmentId(deptId.intValue());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Semester saveSemester(Semester semester) {
+        return semesterDAO.save(semester);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteSemester(Semester semester) {
+        semesterDAO.delete(semester);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Semester getSemesterById(Long semesterId) {
+        return semesterDAO.findById(semesterId.intValue()).orElse(null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int countSubjectsBySemester(Long semesterId) {
+        return subjectDetailsDAO.countBySemesterId(semesterId.intValue());
+    }
 }

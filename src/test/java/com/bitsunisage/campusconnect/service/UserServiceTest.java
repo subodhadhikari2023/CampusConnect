@@ -239,4 +239,66 @@ class UserServiceTest {
         userService.deleteDepartmentDetailsByUserName("teacher1");
         verify(departmentDetailsDAO).deleteByUserName("teacher1");
     }
+
+    @Test
+    void saveDepartmentDelegatesToDAO() {
+        Department dept = new Department();
+        dept.setName("Physics");
+        when(departmentDAO.save(dept)).thenReturn(dept);
+        Department result = userService.saveDepartment(dept);
+        assertThat(result.getName()).isEqualTo("Physics");
+        verify(departmentDAO).save(dept);
+    }
+
+    @Test
+    void deleteDepartmentDelegatesToDAO() {
+        Department dept = new Department();
+        dept.setId(1L);
+        userService.deleteDepartment(dept);
+        verify(departmentDAO).delete(dept);
+    }
+
+    @Test
+    void countMembersByDepartmentDelegatesToDAO() {
+        when(departmentDetailsDAO.countByDepartmentId(1001)).thenReturn(5);
+        int result = userService.countMembersByDepartment(1001L);
+        assertThat(result).isEqualTo(5);
+        verify(departmentDetailsDAO).countByDepartmentId(1001);
+    }
+
+    @Test
+    void saveSemesterDelegatesToDAO() {
+        Semester semester = new Semester();
+        semester.setSemesterName("Semester I");
+        when(semesterDAO.save(semester)).thenReturn(semester);
+        Semester result = userService.saveSemester(semester);
+        assertThat(result.getSemesterName()).isEqualTo("Semester I");
+        verify(semesterDAO).save(semester);
+    }
+
+    @Test
+    void deleteSemesterDelegatesToDAO() {
+        Semester semester = new Semester();
+        semester.setSemesterId(1L);
+        userService.deleteSemester(semester);
+        verify(semesterDAO).delete(semester);
+    }
+
+    @Test
+    void getSemesterByIdDelegatesToDAO() {
+        Semester semester = new Semester();
+        semester.setSemesterId(2L);
+        when(semesterDAO.findById(2)).thenReturn(java.util.Optional.of(semester));
+        Semester result = userService.getSemesterById(2L);
+        assertThat(result).isEqualTo(semester);
+        verify(semesterDAO).findById(2);
+    }
+
+    @Test
+    void countSubjectsBySemesterDelegatesToDAO() {
+        when(subjectDetailsDAO.countBySemesterId(3)).thenReturn(7);
+        int result = userService.countSubjectsBySemester(3L);
+        assertThat(result).isEqualTo(7);
+        verify(subjectDetailsDAO).countBySemesterId(3);
+    }
 }

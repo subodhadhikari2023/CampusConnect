@@ -2,8 +2,11 @@ package com.bitsunisage.campusconnect.controller;
 
 import com.bitsunisage.campusconnect.entities.Department;
 import com.bitsunisage.campusconnect.entities.DepartmentDetails;
+import com.bitsunisage.campusconnect.entities.FileData;
 import com.bitsunisage.campusconnect.entities.Roles;
+import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,25 +19,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Handles HTTP requests for the Admin role.
- * Provides dashboard statistics and full user management (create, update, delete).
+ * Provides dashboard statistics, full user management (create, update, delete),
+ * department and semester management, file moderation, and course/inactive-user views.
  * All routes under {@code /admin/**} require {@code ROLE_ADMIN} authority.
  */
 @Controller
 public class AdminController {
 
-    private UserService userService;
+    private final UserService userService;
+    private final StorageService storageService;
 
     /**
-     * @param userService service for user and role operations
+     * Constructs the controller with all required services injected by Spring.
+     *
+     * @param userService    service for user, department, and academic-catalogue operations
+     * @param storageService service for file upload/download/deletion operations
      */
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, StorageService storageService) {
         this.userService = userService;
+        this.storageService = storageService;
     }
 
     /**
@@ -106,6 +116,21 @@ public class AdminController {
                 .collect(Collectors.toList());
         model.addAttribute("userHODs", users);
         return "adminViewPages/gethod";
+    }
+
+    /**
+     * Lists all users whose account is inactive (active flag is false).
+     *
+     * @param model populated with {@code inactiveUsers} — list of inactive {@link User} records
+     * @return Thymeleaf template {@code adminViewPages/inactive-users}
+     */
+    @GetMapping("/admin/inactive-users")
+    public String getInactiveUsers(Model model) {
+        List<User> inactiveUsers = userService.findAllUsers().stream()
+                .filter(u -> !u.isActive())
+                .collect(Collectors.toList());
+        model.addAttribute("inactiveUsers", inactiveUsers);
+        return "adminViewPages/inactive-users";
     }
 
     /**
@@ -256,5 +281,208 @@ public class AdminController {
 
         redirectAttributes.addFlashAttribute("successMessage", "User deleted successfully.");
         return "redirect:/admin";
+    }
+
+    // ── Departments ──────────────────────────────────────────────────────────
+
+    /**
+     * Lists all departments.
+     *
+     * @param model populated with {@code departments} — list of all {@link Department} records
+     * @return Thymeleaf template {@code adminViewPages/departments}
+     */
+    @GetMapping("/admin/departments")
+    public String listDepartments(Model model) {
+        model.addAttribute("departments", userService.getAllDepartments());
+        return "adminViewPages/departments";
+    }
+
+    /**
+     * Renders the add-department form with an empty {@link Department}.
+     *
+     * @param model populated with an empty {@code dept} and the full {@code departments} list
+     * @return Thymeleaf template {@code adminViewPages/add-department}
+     */
+    @GetMapping("/admin/add-department")
+    public String addDepartmentForm(Model model) {
+        model.addAttribute("dept", new Department());
+        model.addAttribute("departments", userService.getAllDepartments());
+        return "adminViewPages/add-department";
+    }
+
+    /**
+     * Loads an existing department into the form for editing.
+     * Redirects with an error flash if the ID does not exist.
+     *
+     * @param id                 the department primary key
+     * @param model              populated with the existing {@code dept} and {@code departments} list
+     * @param redirectAttributes used to pass an error flash if the department is not found
+     * @return Thymeleaf template {@code adminViewPages/add-department}, or redirect to {@code /admin/departments}
+     */
+    @GetMapping("/admin/editDepartment")
+    public String editDepartmentForm(@RequestParam("id") Long id,
+                                     Model model,
+                                     RedirectAttributes redirectAttributes) {
+        Department dept = userService.getDepartmentNameByDepartmentId(id.intValue());
+        if (dept == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Department not found.");
+            return "redirect:/admin/departments";
+        }
+        model.addAttribute("dept", dept);
+        model.addAttribute("departments", userService.getAllDepartments());
+        return "adminViewPages/add-department";
+    }
+
+    /**
+     * Creates or updates a department and redirects back to the department list.
+     *
+     * @param dept               the department bound from the form
+     * @param redirectAttributes used to pass a success flash across the redirect
+     * @return redirect to {@code /admin/departments}
+     */
+    @PostMapping("/admin/save-department")
+    public String saveDepartment(@ModelAttribute("dept") Department dept,
+                                 RedirectAttributes redirectAttributes) {
+        userService.saveDepartment(dept);
+        redirectAttributes.addFlashAttribute("successMessage", "Department saved successfully.");
+        return "redirect:/admin/departments";
+    }
+
+    /**
+     * Deletes a department after verifying it has no enrolled members.
+     * Redirects with an error flash if members exist; otherwise deletes and flashes success.
+     *
+     * @param deptId             the department primary key
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
+     * @return redirect to {@code /admin/departments}
+     */
+    @PostMapping("/admin/delete-department")
+    public String deleteDepartment(@RequestParam("deptId") Long deptId,
+                                   RedirectAttributes redirectAttributes) {
+        if (userService.countMembersByDepartment(deptId) > 0) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot delete a department with enrolled members.");
+            return "redirect:/admin/departments";
+        }
+        Department dept = userService.getDepartmentNameByDepartmentId(deptId.intValue());
+        userService.deleteDepartment(dept);
+        redirectAttributes.addFlashAttribute("successMessage", "Department deleted successfully.");
+        return "redirect:/admin/departments";
+    }
+
+    // ── Semesters ────────────────────────────────────────────────────────────
+
+    /**
+     * Lists all semesters.
+     *
+     * @param model populated with {@code semesters} — list of all {@link Semester} records
+     * @return Thymeleaf template {@code adminViewPages/semesters}
+     */
+    @GetMapping("/admin/semesters")
+    public String listSemesters(Model model) {
+        model.addAttribute("semesters", userService.getAllSemesters());
+        return "adminViewPages/semesters";
+    }
+
+    /**
+     * Renders the add-semester form with an empty {@link Semester}.
+     *
+     * @param model populated with an empty {@code semester} and the full {@code semesters} list
+     * @return Thymeleaf template {@code adminViewPages/add-semester}
+     */
+    @GetMapping("/admin/add-semester")
+    public String addSemesterForm(Model model) {
+        model.addAttribute("semester", new Semester());
+        model.addAttribute("semesters", userService.getAllSemesters());
+        return "adminViewPages/add-semester";
+    }
+
+    /**
+     * Creates or updates a semester and redirects back to the semester list.
+     *
+     * @param semester           the semester bound from the form
+     * @param redirectAttributes used to pass a success flash across the redirect
+     * @return redirect to {@code /admin/semesters}
+     */
+    @PostMapping("/admin/save-semester")
+    public String saveSemester(@ModelAttribute("semester") Semester semester,
+                               RedirectAttributes redirectAttributes) {
+        userService.saveSemester(semester);
+        redirectAttributes.addFlashAttribute("successMessage", "Semester saved successfully.");
+        return "redirect:/admin/semesters";
+    }
+
+    /**
+     * Deletes a semester after verifying it has no subjects assigned.
+     * Redirects with an error flash if subjects exist; otherwise deletes and flashes success.
+     *
+     * @param semesterId         the semester primary key
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
+     * @return redirect to {@code /admin/semesters}
+     */
+    @PostMapping("/admin/delete-semester")
+    public String deleteSemester(@RequestParam("semesterId") Long semesterId,
+                                 RedirectAttributes redirectAttributes) {
+        if (userService.countSubjectsBySemester(semesterId) > 0) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot delete a semester that has subjects assigned.");
+            return "redirect:/admin/semesters";
+        }
+        Semester semester = userService.getSemesterById(semesterId);
+        userService.deleteSemester(semester);
+        redirectAttributes.addFlashAttribute("successMessage", "Semester deleted successfully.");
+        return "redirect:/admin/semesters";
+    }
+
+    // ── Files (moderation) ───────────────────────────────────────────────────
+
+    /**
+     * Lists all uploaded files with department name lookup for display.
+     *
+     * @param model populated with {@code files} (all {@link FileData} records) and
+     *              {@code deptNames} (map of department ID to department name)
+     * @return Thymeleaf template {@code adminViewPages/files}
+     */
+    @GetMapping("/admin/files")
+    public String listFiles(Model model) {
+        List<FileData> files = storageService.findAll();
+        Map<Long, String> deptNames = userService.getAllDepartments().stream()
+                .collect(Collectors.toMap(Department::getId, Department::getName));
+        model.addAttribute("files", files);
+        model.addAttribute("deptNames", deptNames);
+        return "adminViewPages/files";
+    }
+
+    /**
+     * Deletes a file record and its physical file on disk, then redirects to the file list.
+     *
+     * @param fileId             the {@link FileData} primary key to delete
+     * @param redirectAttributes used to pass a success flash across the redirect
+     * @return redirect to {@code /admin/files}
+     */
+    @PostMapping("/admin/delete-file")
+    public String deleteFile(@RequestParam("fileId") Long fileId,
+                             RedirectAttributes redirectAttributes) {
+        storageService.deleteResource(fileId);
+        redirectAttributes.addFlashAttribute("successMessage", "File deleted successfully.");
+        return "redirect:/admin/files";
+    }
+
+    // ── Courses (read-only) ───────────────────────────────────────────────────
+
+    /**
+     * Lists all courses with department name lookup for display.
+     *
+     * @param model populated with {@code courses} (all course records) and
+     *              {@code deptNames} (map of department ID to department name)
+     * @return Thymeleaf template {@code adminViewPages/courses}
+     */
+    @GetMapping("/admin/courses")
+    public String listCourses(Model model) {
+        Map<Long, String> deptNames = userService.getAllDepartments().stream()
+                .collect(Collectors.toMap(Department::getId, Department::getName));
+        model.addAttribute("courses", userService.getAllCourses());
+        model.addAttribute("deptNames", deptNames);
+        return "adminViewPages/courses";
     }
 }

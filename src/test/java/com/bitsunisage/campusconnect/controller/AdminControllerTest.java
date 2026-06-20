@@ -3,7 +3,9 @@ package com.bitsunisage.campusconnect.controller;
 import com.bitsunisage.campusconnect.entities.Department;
 import com.bitsunisage.campusconnect.entities.DepartmentDetails;
 import com.bitsunisage.campusconnect.entities.Roles;
+import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -32,6 +35,9 @@ class AdminControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private StorageService storageService;
 
     private User testUser;
     private Roles testRole;
@@ -59,6 +65,11 @@ class AdminControllerTest {
         lenient().when(userService.save(any(User.class))).thenReturn(testUser);
         lenient().when(userService.save(any(Roles.class))).thenReturn(testRole);
         lenient().when(userService.saveDepartmentDetails(any(DepartmentDetails.class))).thenReturn(new DepartmentDetails());
+        lenient().when(userService.saveDepartment(any(Department.class))).thenReturn(testDept);
+        lenient().when(userService.getSemesterById(anyLong())).thenReturn(new Semester());
+        lenient().when(userService.saveSemester(any(Semester.class))).thenReturn(new Semester());
+        lenient().when(storageService.findAll()).thenReturn(List.of());
+        lenient().doNothing().when(storageService).deleteResource(anyLong());
     }
 
     // ---- Dashboard ----
@@ -313,5 +324,192 @@ class AdminControllerTest {
                 .andExpect(view().name("adminViewPages/add-user"))
                 .andExpect(model().attribute("user", testUser))
                 .andExpect(model().attribute("roles", testRole));
+    }
+
+    // ---- Departments ----
+
+    @Test
+    void departmentsPageListsAllDepartments() throws Exception {
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/departments"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/departments"))
+                .andExpect(model().attributeExists("departments"));
+    }
+
+    @Test
+    void addDepartmentFormLoadsEmpty() throws Exception {
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/add-department"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/add-department"))
+                .andExpect(model().attributeExists("dept", "departments"));
+    }
+
+    @Test
+    void editDepartmentFormLoadsWithExistingData() throws Exception {
+        when(userService.getDepartmentNameByDepartmentId(1001)).thenReturn(testDept);
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/editDepartment").param("id", "1001"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/add-department"))
+                .andExpect(model().attributeExists("dept"));
+    }
+
+    @Test
+    void editDepartmentWithUnknownIdRedirectsWithError() throws Exception {
+        when(userService.getDepartmentNameByDepartmentId(9999)).thenReturn(null);
+
+        mockMvc.perform(get("/admin/editDepartment").param("id", "9999"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void saveDepartmentRedirectsWithSuccess() throws Exception {
+        mockMvc.perform(post("/admin/save-department").with(csrf())
+                        .param("name", "Physics Dept"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("successMessage"));
+    }
+
+    @Test
+    void deleteDepartmentWithMembersRedirectsWithError() throws Exception {
+        when(userService.countMembersByDepartment(1001L)).thenReturn(3);
+
+        mockMvc.perform(post("/admin/delete-department").with(csrf())
+                        .param("deptId", "1001"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).deleteDepartment(any(Department.class));
+    }
+
+    @Test
+    void deleteDepartmentWithNoMembersSucceeds() throws Exception {
+        when(userService.countMembersByDepartment(1001L)).thenReturn(0);
+        when(userService.getDepartmentNameByDepartmentId(1001)).thenReturn(testDept);
+
+        mockMvc.perform(post("/admin/delete-department").with(csrf())
+                        .param("deptId", "1001"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).deleteDepartment(testDept);
+    }
+
+    // ---- Semesters ----
+
+    @Test
+    void semestersPageListsAllSemesters() throws Exception {
+        Semester sem = new Semester();
+        sem.setSemesterId(1L);
+        sem.setSemesterName("Semester I");
+        when(userService.getAllSemesters()).thenReturn(List.of(sem));
+
+        mockMvc.perform(get("/admin/semesters"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/semesters"))
+                .andExpect(model().attributeExists("semesters"));
+    }
+
+    @Test
+    void saveSemesterRedirectsWithSuccess() throws Exception {
+        mockMvc.perform(post("/admin/save-semester").with(csrf())
+                        .param("semesterName", "Semester I"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/semesters"))
+                .andExpect(flash().attributeExists("successMessage"));
+    }
+
+    @Test
+    void deleteSemesterWithSubjectsRedirectsWithError() throws Exception {
+        when(userService.countSubjectsBySemester(1L)).thenReturn(2);
+
+        mockMvc.perform(post("/admin/delete-semester").with(csrf())
+                        .param("semesterId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/semesters"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void deleteSemesterWithNoSubjectsSucceeds() throws Exception {
+        when(userService.countSubjectsBySemester(1L)).thenReturn(0);
+        Semester sem = new Semester();
+        sem.setSemesterId(1L);
+        when(userService.getSemesterById(1L)).thenReturn(sem);
+
+        mockMvc.perform(post("/admin/delete-semester").with(csrf())
+                        .param("semesterId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/semesters"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).deleteSemester(sem);
+    }
+
+    // ---- Files ----
+
+    @Test
+    void filesPageListsAllFiles() throws Exception {
+        when(storageService.findAll()).thenReturn(List.of());
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/files"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/files"))
+                .andExpect(model().attributeExists("files", "deptNames"));
+    }
+
+    @Test
+    void deleteFileRedirectsWithSuccess() throws Exception {
+        mockMvc.perform(post("/admin/delete-file").with(csrf())
+                        .param("fileId", "42"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/files"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(storageService).deleteResource(42L);
+    }
+
+    // ---- Courses ----
+
+    @Test
+    void coursesPageListsAllCourses() throws Exception {
+        when(userService.getAllCourses()).thenReturn(List.of());
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/courses"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/courses"))
+                .andExpect(model().attributeExists("courses", "deptNames"));
+    }
+
+    // ---- Inactive Users ----
+
+    @Test
+    void inactiveUsersPageFiltersInactiveOnly() throws Exception {
+        User activeUser = new User();
+        activeUser.setUserId("activeUser");
+        activeUser.setActive(true);
+
+        User inactiveUser = new User();
+        inactiveUser.setUserId("inactiveUser");
+        inactiveUser.setActive(false);
+
+        when(userService.findAllUsers()).thenReturn(List.of(activeUser, inactiveUser));
+
+        mockMvc.perform(get("/admin/inactive-users"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/inactive-users"))
+                .andExpect(model().attribute("inactiveUsers", List.of(inactiveUser)));
     }
 }
