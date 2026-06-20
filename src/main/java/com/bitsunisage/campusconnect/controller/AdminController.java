@@ -239,22 +239,6 @@ public class AdminController {
     }
 
     /**
-     * Loads an existing user into the add-user form for editing via POST.
-     * Kept for backward compatibility; prefer the GET {@code /admin/editUser} endpoint.
-     *
-     * @param userId the login username of the user to edit
-     * @param model  populated with the user's current {@link User}, {@link Roles}, and departments
-     * @return Thymeleaf template {@code adminViewPages/add-user} pre-filled with existing values
-     */
-    @PostMapping("/admin/loadUser")
-    public String loadUser(@RequestParam("userId") String userId, Model model) {
-        model.addAttribute("user", userService.findUserByUserId(userId));
-        model.addAttribute("roles", userService.findRoleByUserId(userId));
-        model.addAttribute("departments", userService.getAllDepartments());
-        return "adminViewPages/add-user";
-    }
-
-    /**
      * Deletes a user, their role record, and their department-details membership.
      * Blocks self-deletion and redirects with an error flash in that case.
      * Deletion order satisfies FK constraints: department_details → roles → members.

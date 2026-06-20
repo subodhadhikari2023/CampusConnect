@@ -310,22 +310,6 @@ class AdminControllerTest {
         verify(userService, never()).deleteUser(any());
     }
 
-    // ---- Load User for Edit (POST, kept for compat) ----
-
-    @Test
-    void loadUserPopulatesFormWithExistingUserData() throws Exception {
-        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(testUser);
-        when(userService.findRoleByUserId(testUser.getUserId())).thenReturn(testRole);
-        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
-
-        mockMvc.perform(post("/admin/loadUser").with(csrf())
-                        .param("userId", testUser.getUserId()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("adminViewPages/add-user"))
-                .andExpect(model().attribute("user", testUser))
-                .andExpect(model().attribute("roles", testRole));
-    }
-
     // ---- Departments ----
 
     @Test
