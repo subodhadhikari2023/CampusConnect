@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <title>Files</title>
+    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+</head>
+<body>
+<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-semibold" style="color: var(--clr-text);">File Moderation</h2>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${#lists.isEmpty(files)}" class="text-center py-5"
+         style="color: var(--clr-text-muted);">
+        No files uploaded yet.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(files)}"
+         class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: var(--clr-primary-light);">
+                <tr>
+                    <th scope="col">File Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Uploader</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Uploaded At</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="file : ${files}">
+                    <td th:text="${file.fileName}"></td>
+                    <td th:text="${file.fileType}"></td>
+                    <td th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1) + ' KB'}"></td>
+                    <td th:text="${file.ownersName}"></td>
+                    <td th:text="${deptNames[file.fileDepartmentId] ?: 'Unknown'}"></td>
+                    <td th:text="${#temporals.format(file.uploadDate.toLocalDateTime(), 'dd MMM yyyy HH:mm')}"></td>
+                    <td>
+                        <form th:action="@{/admin/delete-file}" method="POST" style="display: inline;">
+                            <input type="hidden" name="fileId" th:value="${file.id}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    th:data-name="${file.fileName}"
+                                    onclick="return confirm('Delete file: ' + this.dataset.name + '?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

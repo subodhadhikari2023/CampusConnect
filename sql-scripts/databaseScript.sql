@@ -153,6 +153,15 @@ CREATE TABLE IF NOT EXISTS `semester`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- Seed data for `semester`
+INSERT INTO `semester` (`semester_name`)
+VALUES ('Semester I'),
+       ('Semester II'),
+       ('Semester III'),
+       ('Semester IV'),
+       ('Semester V'),
+       ('Semester VI');
+
 -- Table structure for table `subject_details`
 DROP TABLE IF EXISTS `subject_details`;
 CREATE TABLE `subject_details`

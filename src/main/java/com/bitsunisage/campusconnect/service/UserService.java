@@ -170,4 +170,137 @@ public interface UserService {
      * @return list of matching {@link Department}; may be empty
      */
     List<Department> getDepartmentNames(List<Long> deptIds);
+
+    /**
+     * Returns all courses belonging to the given department.
+     *
+     * @param deptId department ID
+     * @return list of courses; empty if none exist
+     */
+    List<CourseDetails> getCoursesByDepartmentId(Long deptId);
+
+    /**
+     * Persists a new or updated course record.
+     *
+     * @param course the {@link CourseDetails} to save
+     * @return the saved entity
+     */
+    CourseDetails saveCourse(CourseDetails course);
+
+    /**
+     * Looks up a course by its primary key.
+     *
+     * @param courseId the course ID
+     * @return the matching {@link CourseDetails}, or {@code null} if not found
+     */
+    CourseDetails getCourseById(Long courseId);
+
+    /**
+     * Deletes a course by its primary key.
+     *
+     * @param courseId the course ID to delete
+     */
+    void deleteCourseById(Long courseId);
+
+    /**
+     * Returns all subjects belonging to the given course.
+     *
+     * @param courseId course ID
+     * @return list of subjects; empty if none exist
+     */
+    List<SubjectDetails> getSubjectsByCourseId(int courseId);
+
+    /**
+     * Persists a new or updated subject record.
+     *
+     * @param subject the {@link SubjectDetails} to save
+     * @return the saved entity
+     */
+    SubjectDetails saveSubject(SubjectDetails subject);
+
+    /**
+     * Deletes a subject by its primary key.
+     *
+     * @param subjectId the subject ID to delete
+     */
+    void deleteSubjectById(Long subjectId);
+
+    /**
+     * Counts members in a department that hold the given role label.
+     *
+     * @param deptId department ID
+     * @param role   role label as stored in {@code department_details} (e.g. {@code "TEACHER"})
+     * @return count of matching members
+     */
+    int countMembersByDepartmentAndRole(Long deptId, String role);
+
+    /**
+     * Persists a new or updated department-details membership record.
+     *
+     * @param details the {@link DepartmentDetails} to save
+     * @return the saved entity with generated ID populated
+     */
+    DepartmentDetails saveDepartmentDetails(DepartmentDetails details);
+
+    /**
+     * Deletes the department-details record for the given user.
+     * Must be called before deleting the user to satisfy FK constraints.
+     *
+     * @param userName login username whose membership record should be removed
+     */
+    void deleteDepartmentDetailsByUserName(String userName);
+
+    /**
+     * Persists a new or updated department record.
+     *
+     * @param dept the {@link Department} to save
+     * @return the saved entity (ID populated for new records)
+     */
+    Department saveDepartment(Department dept);
+
+    /**
+     * Deletes a department record.
+     *
+     * @param dept the {@link Department} to delete
+     */
+    void deleteDepartment(Department dept);
+
+    /**
+     * Counts all members assigned to the given department.
+     *
+     * @param deptId department primary key
+     * @return count of members in that department
+     */
+    int countMembersByDepartment(Long deptId);
+
+    /**
+     * Persists a new or updated semester record.
+     *
+     * @param semester the {@link Semester} to save
+     * @return the saved entity (ID populated for new records)
+     */
+    Semester saveSemester(Semester semester);
+
+    /**
+     * Deletes a semester record.
+     *
+     * @param semester the {@link Semester} to delete
+     */
+    void deleteSemester(Semester semester);
+
+    /**
+     * Looks up a semester by its primary key.
+     *
+     * @param semesterId the semester ID
+     * @return the matching {@link Semester}, or {@code null} if not found
+     */
+    Semester getSemesterById(Long semesterId);
+
+    /**
+     * Counts all subjects assigned to the given semester.
+     *
+     * @param semesterId the semester primary key
+     * @return count of subjects in that semester
+     */
+    int countSubjectsBySemester(Long semesterId);
 }

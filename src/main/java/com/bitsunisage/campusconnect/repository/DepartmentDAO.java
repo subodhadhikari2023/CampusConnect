@@ -10,7 +10,7 @@ import java.util.List;
  * Repository for {@link Department} (the {@code department} table).
  */
 @Repository
-public interface DepartmentDAO extends JpaRepository<Department, String> {
+public interface DepartmentDAO extends JpaRepository<Department, Long> {
 
     /**
      * Looks up a department by its numeric primary key.

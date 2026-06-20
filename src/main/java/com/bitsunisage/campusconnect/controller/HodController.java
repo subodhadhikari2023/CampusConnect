@@ -1,43 +1,238 @@
 package com.bitsunisage.campusconnect.controller;
 
+import com.bitsunisage.campusconnect.entities.CourseDetails;
+import com.bitsunisage.campusconnect.entities.SubjectDetails;
+import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handles HTTP requests for the Head of Department (HOD) role.
- * All routes under {@code /hod/**} require {@code ROLE_HOD} authority,
- * enforced by Spring Security.
+ * All routes are under {@code /hod/**}, enforced by Spring Security with {@code ROLE_HOD}.
+ * The HOD can manage courses and subjects scoped to their own department.
  */
 @Controller
 public class HodController {
 
+    private final UserService userService;
+
     /**
-     * Renders the HOD dashboard home page.
+     * @param userService service for user, course, and subject operations
+     */
+    @Autowired
+    public HodController(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Renders the HOD dashboard populated with department statistics.
      *
-     * @return Thymeleaf template name for the HOD home view
+     * @param model populated with departmentName, totalFaculty, totalStudents, totalCourses
+     * @return Thymeleaf template {@code hodViewPages/hod}
      */
     @GetMapping("/hod")
-    public String homePage() {
+    public String homePage(Model model) {
+        User hod = getLoggedInUser();
+        Long deptId = hod.getDeptID();
+        model.addAttribute("departmentName", hod.getDepartment());
+        model.addAttribute("totalFaculty", userService.countMembersByDepartmentAndRole(deptId, "TEACHER"));
+        model.addAttribute("totalStudents", userService.countMembersByDepartmentAndRole(deptId, "STUDENT"));
+        model.addAttribute("totalCourses", userService.getCoursesByDepartmentId(deptId).size());
         return "hodViewPages/hod";
     }
 
     /**
-     * Renders the add-course form for the HOD.
+     * Renders the add-course form. The department is pre-set from the HOD's own department.
      *
-     * @return Thymeleaf template name for the add-course view
+     * @param model populated with the HOD's department name
+     * @return Thymeleaf template {@code hodViewPages/add-course}
      */
-    @GetMapping("/hodViewPages/add-course")
-    public String showAddCoursePage() {
+    @GetMapping("/hod/add-course")
+    public String showAddCoursePage(Model model) {
+        model.addAttribute("department", getLoggedInUser().getDepartment());
         return "hodViewPages/add-course";
     }
 
     /**
-     * Renders the manage-courses page for the HOD.
+     * Saves a new course bound to the HOD's department and redirects to its curriculum page.
      *
-     * @return Thymeleaf template name for the manage-course view
+     * @param courseName name of the new course
+     * @return redirect to {@code /hod/curriculum?courseId=<id>}
      */
-    @GetMapping("/hodViewPages/manage-course")
-    public String showManageCoursePage() {
+    @PostMapping("/hod/save-course")
+    public String saveCourse(@RequestParam("courseName") String courseName) {
+        User hod = getLoggedInUser();
+        CourseDetails course = new CourseDetails();
+        course.setCourseName(courseName);
+        course.setDepartmentId(hod.getDeptID());
+        CourseDetails saved = userService.saveCourse(course);
+        return "redirect:/hod/curriculum?courseId=" + saved.getCourseId();
+    }
+
+    /**
+     * Renders the curriculum management page for a single course, showing all semesters
+     * and their subjects with inline forms to add or remove subjects.
+     *
+     * @param courseId ID of the course whose curriculum is being managed
+     * @param model    populated with {@code course}, {@code semesters}, and {@code subjectsBySemester}
+     * @return Thymeleaf template {@code hodViewPages/curriculum}
+     */
+    @GetMapping("/hod/curriculum")
+    public String showCurriculumPage(@RequestParam("courseId") Long courseId, Model model) {
+        List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId.intValue());
+        Map<Long, List<SubjectDetails>> grouped = subjects.stream()
+                .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
+                         LinkedHashMap::new, Collectors.toList()));
+        model.addAttribute("course", userService.getCourseById(courseId));
+        model.addAttribute("semesters", userService.getAllSemesters());
+        model.addAttribute("subjectsBySemester", grouped);
+        return "hodViewPages/curriculum";
+    }
+
+    /**
+     * Renders the manage-courses page listing all courses for the HOD's department.
+     *
+     * @param model     populated with the department's course list
+     * @param error     optional error key shown when a deletion could not be completed
+     * @return Thymeleaf template {@code hodViewPages/manage-course}
+     */
+    @GetMapping("/hod/manage-course")
+    public String showManageCoursePage(Model model,
+                                       @RequestParam(value = "error", required = false) String error) {
+        User hod = getLoggedInUser();
+        List<CourseDetails> courses = userService.getCoursesByDepartmentId(hod.getDeptID());
+        model.addAttribute("courses", courses);
+        if ("has-subjects".equals(error)) {
+            model.addAttribute("errorMessage", "Cannot delete a course that still has subjects. Remove all subjects first.");
+        }
         return "hodViewPages/manage-course";
+    }
+
+    /**
+     * Updates the name of an existing course and redirects to manage-course.
+     *
+     * @param courseId   primary key of the course to rename
+     * @param courseName new course name
+     * @return redirect to {@code /hod/manage-course}
+     */
+    @PostMapping("/hod/update-course")
+    public String updateCourse(@RequestParam("courseId") Long courseId,
+                               @RequestParam("courseName") String courseName) {
+        CourseDetails course = userService.getCourseById(courseId);
+        course.setCourseName(courseName);
+        userService.saveCourse(course);
+        return "redirect:/hod/manage-course";
+    }
+
+    /**
+     * Deletes a course. If the course still has subjects attached, redirects with an error.
+     *
+     * @param courseId primary key of the course to delete
+     * @return redirect to {@code /hod/manage-course}, with {@code ?error=has-subjects} on failure
+     */
+    @PostMapping("/hod/delete-course")
+    public String deleteCourse(@RequestParam("courseId") Long courseId) {
+        try {
+            userService.deleteCourseById(courseId);
+        } catch (DataIntegrityViolationException e) {
+            return "redirect:/hod/manage-course?error=has-subjects";
+        }
+        return "redirect:/hod/manage-course";
+    }
+
+    /**
+     * Renders the add-subject form with the HOD's courses and all available semesters.
+     *
+     * @param model populated with the HOD's course list and all semesters
+     * @return Thymeleaf template {@code hodViewPages/add-subject}
+     */
+    @GetMapping("/hod/add-subject")
+    public String showAddSubjectPage(Model model) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        model.addAttribute("semesters", userService.getAllSemesters());
+        return "hodViewPages/add-subject";
+    }
+
+    /**
+     * Saves a new subject and redirects back to the course curriculum page.
+     *
+     * @param subjectName name of the new subject
+     * @param courseId    course this subject belongs to
+     * @param semesterId  semester this subject is taught in
+     * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
+     */
+    @PostMapping("/hod/save-subject")
+    public String saveSubject(@RequestParam("subjectName") String subjectName,
+                              @RequestParam("courseId") int courseId,
+                              @RequestParam("semesterId") int semesterId) {
+        SubjectDetails subject = new SubjectDetails();
+        subject.setSubjectName(subjectName);
+        subject.setCourseId(courseId);
+        subject.setSemesterId(semesterId);
+        userService.saveSubject(subject);
+        return "redirect:/hod/curriculum?courseId=" + courseId;
+    }
+
+    /**
+     * Renders the manage-subjects page. When {@code courseId} is provided, the subject list
+     * for that course is shown alongside the course selector, grouped by semester.
+     *
+     * @param courseId optional course filter; when absent only the selector is shown
+     * @param model    populated with courses, semesters, and optionally subjects and selectedCourseId
+     * @return Thymeleaf template {@code hodViewPages/manage-subject}
+     */
+    @GetMapping("/hod/manage-subject")
+    public String showManageSubjectPage(@RequestParam(value = "courseId", required = false) Integer courseId,
+                                        Model model) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        model.addAttribute("semesters", userService.getAllSemesters());
+        if (courseId != null) {
+            List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId);
+            Map<Long, List<SubjectDetails>> grouped = subjects.stream()
+                    .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
+                             LinkedHashMap::new, Collectors.toList()));
+            model.addAttribute("subjects", subjects);
+            model.addAttribute("subjectsBySemester", grouped);
+            model.addAttribute("selectedCourseId", courseId);
+        }
+        return "hodViewPages/manage-subject";
+    }
+
+    /**
+     * Deletes a subject and redirects back to the course curriculum page.
+     *
+     * @param subjectId primary key of the subject to delete
+     * @param courseId  the course to return to after deletion
+     * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
+     */
+    @PostMapping("/hod/delete-subject")
+    public String deleteSubject(@RequestParam("subjectId") Long subjectId,
+                                @RequestParam("courseId") int courseId) {
+        userService.deleteSubjectById(subjectId);
+        return "redirect:/hod/curriculum?courseId=" + courseId;
+    }
+
+    /**
+     * Returns the {@link User} entity for the currently authenticated principal.
+     *
+     * @return the logged-in HOD's user record
+     */
+    private User getLoggedInUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findUserByUserId(username);
     }
 }

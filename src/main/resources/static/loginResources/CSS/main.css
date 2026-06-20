@@ -1,6 +1,6 @@
 body {
     height: 100vh;
-    background: rgb(205, 117, 10);
+    background: #007a7a;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,9 +19,9 @@ body {
     border-radius:3%;
 }
 .signin-form{
-    color:#cd5907;
+    color: #007a7a;
     text-align: center;
-    border-bottom: 2px solid #cd5907;
+    border-bottom: 2px solid #007a7a;
     margin-bottom: 30px;
     padding: 10px;
     font-size:3vw;
@@ -30,7 +30,7 @@ body {
 #loginbox {
     width: 100%;
     max-width: 400px;
-    background-color: rgba(255, 255, 255, 0.9); /* White background with opacity */
+    background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -41,12 +41,12 @@ body {
 }
 .btn-custom {
     width: 100%;
-    background-color: #00796b; /* Dark teal background color */
+    background-color: #007a7a;
     color: white;
     border: none;
 }
 .btn-custom:hover {
-    background-color: #004d40; /* Darker teal for hover */
+    background-color: #005d5d;
 }
 
 .form-header {
@@ -70,20 +70,20 @@ body {
 }
 .form-group {
     display: flex;
-    justify-content: center;  /* Aligns children (the button) horizontally to the center */
-    align-items: center;  /* Aligns children vertically to the center */
-    margin: 20px 0;  /* Adds space around the group for better spacing and aesthetics */
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
 }
 .btn-home {
-    padding: 5px 10px;  /* Smaller padding */
-    font-size: 0.8em;  /* Smaller font size */
-    background-color: #e0e0e0;  /* Light grey background */
-    color: #333;  /* Dark text for visibility */
+    padding: 5px 10px;
+    font-size: 0.8em;
+    background-color: #e0e0e0;
+    color: #333;
     border: none;
-    border-radius: 4px;  /* Rounded corners */
-    transition: background-color 0.3s ease;  /* Smooth transition for hover */
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
 .btn-home:hover {
-    background-color: #bdbdbd;  /* Darker grey on hover */
+    background-color: #bdbdbd;
 }

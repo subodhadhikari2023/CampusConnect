@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <title>Inactive Users</title>
+    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+</head>
+<body>
+<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-semibold" style="color: var(--clr-text);">Inactive Users</h2>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${#lists.isEmpty(inactiveUsers)}" class="text-center py-5"
+         style="color: var(--clr-text-muted);">
+        All users are currently active.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(inactiveUsers)}"
+         class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: var(--clr-primary-light);">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${inactiveUsers}">
+                    <td th:text="${u.userId}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.department}"></td>
+                    <td>
+                        <form th:action="@{/admin/toggleActive}" method="POST" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${u.userId}">
+                            <input type="hidden" name="redirectTo" value="/admin/inactive-users">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Activate</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

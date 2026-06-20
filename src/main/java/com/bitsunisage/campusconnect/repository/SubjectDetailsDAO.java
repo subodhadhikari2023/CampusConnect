@@ -20,4 +20,27 @@ public interface SubjectDetailsDAO extends JpaRepository<SubjectDetails, String>
      * @return list of matching {@link SubjectDetails}; may be empty
      */
     List<SubjectDetails> findBySubjectIdIn(List<Long> subjectIds);
+
+    /**
+     * Returns all subjects belonging to the given course.
+     *
+     * @param courseId the course primary key
+     * @return list of matching {@link SubjectDetails}; empty if none exist
+     */
+    List<SubjectDetails> findByCourseId(int courseId);
+
+    /**
+     * Deletes a subject by its primary key.
+     *
+     * @param subjectId the subject ID to delete
+     */
+    void deleteBySubjectId(Long subjectId);
+
+    /**
+     * Counts all subjects assigned to the given semester.
+     *
+     * @param semesterId the semester primary key
+     * @return count of subjects in that semester
+     */
+    int countBySemesterId(int semesterId);
 }

@@ -1,87 +1,81 @@
-/* Updated CSS Styles */
+:root {
+    /* Brand */
+    --clr-primary:        #007a7a;
+    --clr-primary-dark:   #005d5d;
+    --clr-primary-light:  #d6e6e6;
+    --clr-primary-mid:    #b4d3d3;
+    --clr-primary-focus:  rgba(0, 122, 122, 0.25);
 
-/* General styles */
+    /* Semantic */
+    --clr-danger:         #dc3545;
+    --clr-danger-dark:    #b02a37;
+    --clr-success:        #198754;
+
+    /* Surfaces */
+    --clr-bg:             #f5f7fa;
+    --clr-surface:        #ffffff;
+    --clr-border:         #dee2e6;
+
+    /* Text */
+    --clr-text:           #212529;
+    --clr-text-muted:     #6c757d;
+    --clr-text-white:     #ffffff;
+
+    /* Shape */
+    --radius-sm:          4px;
+    --radius-md:          8px;
+    --radius-lg:          12px;
+
+    /* Elevation */
+    --shadow-sm:          0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md:          0 4px 8px rgba(0, 0, 0, 0.10);
+    --shadow-lg:          0 6px 12px rgba(0, 0, 0, 0.20);
+
+    /* Motion */
+    --transition-base:    0.3s ease;
+}
+
 body {
     margin: 0;
-    font-family: 'Roboto', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #f5f7fa; /* Soft blue-gray background color */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
 }
 
-.content-header {
-    background-color: #007a7a; /* Slightly darker teal to add contrast */
-    color: white;
-    padding: 15px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    animation: slide-in 1.5s ease-in-out;
-    position: fixed;
-    top: 0; /* Fixing the content header to the top */
-    left: 250px; /* Adjusted for the sidebar width */
-    width: calc(100% - 250px); /* Adjusted for the sidebar width */
-    z-index: 10;
-}
-
-@keyframes slide-in {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.main-content {
-    margin-top: 60px;
-    padding: 20px;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-sizing: border-box;
-    margin-left: 250px;
-    background-color: #f5f7fa; /* Soft blue-gray background color */
-}
+/* ── Stats grid ────────────────────────────────────────────── */
 
 .stats-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     width: 100%;
-    padding-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center; /* Center the grid */
+    margin-top: 20px;
 }
 
 .stats-box {
     height: 150px;
-    background-color: #007a7a;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    background-color: var(--clr-primary);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
     margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     cursor: pointer;
 }
 
 .stats-box:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
 }
 
-.stats-box h3, .stats-box h4 {
+.stats-box h3,
+.stats-box h4 {
     margin: 0;
-    color: white;
+    color: var(--clr-text-white);
 }
 
 .stats-box h3 {
@@ -90,72 +84,68 @@ body {
 
 .stats-box h4 {
     font-size: 1.2em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-.stats-box h4 img {
-    width: 28px;
-    height: 28px;
-}
-
-.sidebar {
-    width: 250px;
-    background-color: rgb(205, 117, 10); /* Kept sidebar color */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-.sidebar .logo {
-    margin: 20px 0;
-    font-size: 26px;
+.stats-box tbody tr td {
+    font-size: 1.2em;
     font-weight: bold;
-}
-
-.sidebar .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
-
-.sidebar .menu li {
-    width: 100%;
+    color: var(--clr-primary);
+    background-color: var(--clr-primary-light);
+    padding: 8px;
+    border-radius: var(--radius-sm);
     text-align: center;
-    padding: 15px 0;
-    cursor: pointer;
-    transition: background 0.3s;
+    width: 100%;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-base), background-color var(--transition-base);
 }
 
-.sidebar .menu li:hover {
-    background-color: rgb(186, 61, 3); /* Hover color matches sidebar */
+.stats-box tbody tr td:hover {
+    background-color: var(--clr-primary-mid);
+    transform: translateY(-2px);
 }
 
-.sidebar .menu li a {
-    text-decoration: none;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* ── Bootstrap primary colour override ─────────────────────── */
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
 }
 
-.sidebar .menu li i {
-    margin-right: 10px;
-    font-size: 1.5em;
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-visible {
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 
-.sidebar .menu li img {
-    width: 24px;
-    height: 24px;
+.btn-primary:focus-visible {
+    box-shadow: 0 0 0 0.2rem var(--clr-primary-focus);
 }
+
+.btn-outline-primary {
+    color: var(--clr-primary);
+    border-color: var(--clr-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-text-white);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 0.2rem var(--clr-primary-focus);
+}
+
+.form-control[readonly] {
+    background-color: var(--clr-bg);
+    color: var(--clr-text-muted);
+    cursor: not-allowed;
+}
+
+/* ── Dashboard action buttons ───────────────────────────────── */
 
 .action-buttons {
     display: flex;
@@ -166,39 +156,20 @@ body {
 
 .action-buttons a {
     text-decoration: none;
-    color: white;
+    color: var(--clr-text-white);
 }
 
 .action-button {
-    background-color: #007a7a; /* Slightly darker teal for buttons */
+    background-color: var(--clr-primary);
     border: none;
     padding: 15px 30px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color 0.3s;
+    color: var(--clr-text-white);
+    transition: background-color var(--transition-base);
 }
 
 .action-button:hover {
-    background-color: #005d5d; /* Darker teal for hover */
-}
-
-/* Style for the stats box text */
-.stats-box tbody tr td {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #007a7a; /* Teal text color */
-    background-color: #d6e6e6; /* Lighter teal background */
-    padding: 8px;
-    border-radius: 5px;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-/* Hover effect to make the text interactive */
-.stats-box tbody tr td:hover {
-    background-color: #b4d3d3; /* Slightly darker shade on hover */
-    transform: translateY(-2px);
+    background-color: var(--clr-primary-dark);
 }

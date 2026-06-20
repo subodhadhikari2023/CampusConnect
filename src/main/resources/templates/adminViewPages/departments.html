@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <title>Departments</title>
+    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+</head>
+<body>
+<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-semibold" style="color: var(--clr-text);">Departments</h2>
+        <a th:href="@{/admin/add-department}" class="btn btn-primary">Add Department</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${#lists.isEmpty(departments)}" class="text-center py-5"
+         style="color: var(--clr-text-muted);">
+        No departments yet.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(departments)}"
+         class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: var(--clr-primary-light);">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">HOD</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dept : ${departments}">
+                    <td th:text="${dept.id}"></td>
+                    <td th:text="${dept.name}"></td>
+                    <td>
+                        <span th:if="${hodByDept[dept.id] != null}"
+                              class="badge bg-success" th:text="${hodByDept[dept.id]}"></span>
+                        <span th:unless="${hodByDept[dept.id] != null}"
+                              class="text-muted small">Unassigned</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/assign-hod(deptId=${dept.id})}"
+                           class="btn btn-sm btn-outline-secondary me-1">Assign HOD</a>
+                        <a th:href="@{/admin/editDepartment(id=${dept.id})}"
+                           class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                        <form th:action="@{/admin/delete-department}" method="POST"
+                              style="display: inline;">
+                            <input type="hidden" name="deptId" th:value="${dept.id}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    th:data-name="${dept.name}"
+                                    onclick="return confirm('Delete department: ' + this.dataset.name + '?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

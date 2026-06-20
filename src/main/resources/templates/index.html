@@ -4,9 +4,8 @@
   <title>Home Page</title>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
   <link rel="stylesheet" th:href="@{loginResources/CSS/homepage.css}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"/>
 
 
   <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
@@ -26,15 +25,6 @@
     <a class="navbar-brand" th:href="@{/#}">
       <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect Logo">
     </a>
-<!--   To view dummy data please uncomment the following-->
-<!--    <a class="navbar-brand" th:href="@{/view-data}">-->
-<!--      View Dummy Credentials-->
-<!--    </a>-->
-
-    <!-- Centered Welcome Message -->
-    <div class="center-navbar-text">
-      Welcome to CampusConnect
-    </div>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,8 +32,8 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Pushes login button to the extreme right -->
-      <div class="ms-auto login-btn">
+      <span class="navbar-text mx-auto center-navbar-text">Welcome to CampusConnect</span>
+      <div class="login-btn">
         <a th:href="@{/login}" class="btn btn-primary">Login</a>
       </div>
     </div>
@@ -88,6 +78,6 @@
 </section>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

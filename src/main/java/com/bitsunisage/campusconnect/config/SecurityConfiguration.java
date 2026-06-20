@@ -24,14 +24,15 @@ import javax.sql.DataSource;
 public class SecurityConfiguration {
 
     /**
-     * Bypasses the security filter chain for static login-page resources and the
-     * debug data view, so they are accessible without authentication.
+     * Bypasses the security filter chain for all static assets and the debug data view,
+     * so they are accessible without authentication.
      *
-     * @return customizer that excludes {@code /loginResources/**} from security
+     * @return customizer that excludes static resource paths from security
      */
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/loginResources/**", "view-data");
+        return (web) -> web.ignoring().requestMatchers(
+                "/loginResources/**", "/vendor/**", "/images/**", "/CSS/**", "/JS/**", "view-data");
     }
 
     /**
