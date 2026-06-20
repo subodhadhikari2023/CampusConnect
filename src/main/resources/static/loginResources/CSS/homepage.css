@@ -28,9 +28,6 @@ body {
     color: #fff;
 }
 .center-navbar-text {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     color: #fff;
     font-size: 1.5rem;
 }

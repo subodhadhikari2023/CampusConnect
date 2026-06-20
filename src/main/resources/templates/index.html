@@ -25,15 +25,6 @@
     <a class="navbar-brand" th:href="@{/#}">
       <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect Logo">
     </a>
-<!--   To view dummy data please uncomment the following-->
-<!--    <a class="navbar-brand" th:href="@{/view-data}">-->
-<!--      View Dummy Credentials-->
-<!--    </a>-->
-
-    <!-- Centered Welcome Message -->
-    <div class="center-navbar-text">
-      Welcome to CampusConnect
-    </div>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,8 +32,8 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Pushes login button to the extreme right -->
-      <div class="ms-auto login-btn">
+      <span class="navbar-text mx-auto center-navbar-text">Welcome to CampusConnect</span>
+      <div class="login-btn">
         <a th:href="@{/login}" class="btn btn-primary">Login</a>
       </div>
     </div>
