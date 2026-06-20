@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handles HTTP requests for the Head of Department (HOD) role.
@@ -63,10 +66,10 @@ public class HodController {
     }
 
     /**
-     * Saves a new course bound to the HOD's department and redirects to manage-course.
+     * Saves a new course bound to the HOD's department and redirects to its curriculum page.
      *
      * @param courseName name of the new course
-     * @return redirect to {@code /hod/manage-course}
+     * @return redirect to {@code /hod/curriculum?courseId=<id>}
      */
     @PostMapping("/hod/save-course")
     public String saveCourse(@RequestParam("courseName") String courseName) {
@@ -74,8 +77,28 @@ public class HodController {
         CourseDetails course = new CourseDetails();
         course.setCourseName(courseName);
         course.setDepartmentId(hod.getDeptID());
-        userService.saveCourse(course);
-        return "redirect:/hod/manage-course";
+        CourseDetails saved = userService.saveCourse(course);
+        return "redirect:/hod/curriculum?courseId=" + saved.getCourseId();
+    }
+
+    /**
+     * Renders the curriculum management page for a single course, showing all semesters
+     * and their subjects with inline forms to add or remove subjects.
+     *
+     * @param courseId ID of the course whose curriculum is being managed
+     * @param model    populated with {@code course}, {@code semesters}, and {@code subjectsBySemester}
+     * @return Thymeleaf template {@code hodViewPages/curriculum}
+     */
+    @GetMapping("/hod/curriculum")
+    public String showCurriculumPage(@RequestParam("courseId") Long courseId, Model model) {
+        List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId.intValue());
+        Map<Long, List<SubjectDetails>> grouped = subjects.stream()
+                .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
+                         LinkedHashMap::new, Collectors.toList()));
+        model.addAttribute("course", userService.getCourseById(courseId));
+        model.addAttribute("semesters", userService.getAllSemesters());
+        model.addAttribute("subjectsBySemester", grouped);
+        return "hodViewPages/curriculum";
     }
 
     /**
@@ -144,12 +167,12 @@ public class HodController {
     }
 
     /**
-     * Saves a new subject and redirects to manage-subject for its course.
+     * Saves a new subject and redirects back to the course curriculum page.
      *
      * @param subjectName name of the new subject
      * @param courseId    course this subject belongs to
      * @param semesterId  semester this subject is taught in
-     * @return redirect to {@code /hod/manage-subject} filtered by the saved subject's course
+     * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
      */
     @PostMapping("/hod/save-subject")
     public String saveSubject(@RequestParam("subjectName") String subjectName,
@@ -160,15 +183,15 @@ public class HodController {
         subject.setCourseId(courseId);
         subject.setSemesterId(semesterId);
         userService.saveSubject(subject);
-        return "redirect:/hod/manage-subject?courseId=" + courseId;
+        return "redirect:/hod/curriculum?courseId=" + courseId;
     }
 
     /**
      * Renders the manage-subjects page. When {@code courseId} is provided, the subject list
-     * for that course is shown alongside the course selector.
+     * for that course is shown alongside the course selector, grouped by semester.
      *
      * @param courseId optional course filter; when absent only the selector is shown
-     * @param model    populated with courses, and optionally subjects and selectedCourseId
+     * @param model    populated with courses, semesters, and optionally subjects and selectedCourseId
      * @return Thymeleaf template {@code hodViewPages/manage-subject}
      */
     @GetMapping("/hod/manage-subject")
@@ -176,25 +199,31 @@ public class HodController {
                                         Model model) {
         User hod = getLoggedInUser();
         model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        model.addAttribute("semesters", userService.getAllSemesters());
         if (courseId != null) {
-            model.addAttribute("subjects", userService.getSubjectsByCourseId(courseId));
+            List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId);
+            Map<Long, List<SubjectDetails>> grouped = subjects.stream()
+                    .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
+                             LinkedHashMap::new, Collectors.toList()));
+            model.addAttribute("subjects", subjects);
+            model.addAttribute("subjectsBySemester", grouped);
             model.addAttribute("selectedCourseId", courseId);
         }
         return "hodViewPages/manage-subject";
     }
 
     /**
-     * Deletes a subject and redirects back to manage-subject for the same course.
+     * Deletes a subject and redirects back to the course curriculum page.
      *
      * @param subjectId primary key of the subject to delete
      * @param courseId  the course to return to after deletion
-     * @return redirect to {@code /hod/manage-subject?courseId=<courseId>}
+     * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
      */
     @PostMapping("/hod/delete-subject")
     public String deleteSubject(@RequestParam("subjectId") Long subjectId,
                                 @RequestParam("courseId") int courseId) {
         userService.deleteSubjectById(subjectId);
-        return "redirect:/hod/manage-subject?courseId=" + courseId;
+        return "redirect:/hod/curriculum?courseId=" + courseId;
     }
 
     /**

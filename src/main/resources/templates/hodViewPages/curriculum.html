@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title th:text="${course.courseName} + ' — Curriculum'">Curriculum</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodnavbar :: navbar}"></div>
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0" th:text="${course.courseName}">Course Name</h2>
+            <small class="text-muted">Curriculum — one section per semester</small>
+        </div>
+        <a th:href="@{/hod/manage-course}" class="btn btn-outline-secondary btn-sm">Back to Courses</a>
+    </div>
+
+    <div th:if="${semesters.empty}" class="alert alert-warning">
+        No semesters have been defined yet.
+        Contact the Admin to add semesters before setting up the curriculum.
+    </div>
+
+    <div th:each="sem : ${semesters}" class="mb-4">
+        <h5 class="border-bottom pb-1 mb-3" th:text="${sem.semesterName}">Semester I</h5>
+
+        <!-- Subjects already assigned to this course in this semester -->
+        <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
+            <table th:unless="${semSubjects == null or semSubjects.empty}" class="table table-sm table-hover mb-2">
+                <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Subject</th>
+                    <th style="width:90px;"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sub, stat : ${semSubjects}">
+                    <td th:text="${stat.count}" class="text-muted"></td>
+                    <td th:text="${sub.subjectName}"></td>
+                    <td>
+                        <form th:action="@{/hod/delete-subject}" method="post"
+                              th:data-name="${sub.subjectName}"
+                              onsubmit="return confirm('Remove ' + this.dataset.name + ' from this semester?')">
+                            <input type="hidden" name="subjectId" th:value="${sub.subjectId}">
+                            <input type="hidden" name="courseId" th:value="${course.courseId}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <p th:if="${semSubjects == null or semSubjects.empty}" class="text-muted small ms-1">No subjects assigned yet.</p>
+        </th:block>
+
+        <!-- Inline add-subject form for this semester -->
+        <form th:action="@{/hod/save-subject}" method="post" class="d-flex gap-2 align-items-center">
+            <input type="hidden" name="courseId" th:value="${course.courseId}">
+            <input type="hidden" name="semesterId" th:value="${sem.semesterId}">
+            <input type="text" name="subjectName" class="form-control form-control-sm"
+                   placeholder="Add a subject…" required style="max-width:320px;">
+            <button type="submit" class="btn btn-sm btn-primary">+ Add</button>
+        </form>
+    </div>
+
+</div>
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

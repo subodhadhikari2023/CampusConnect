@@ -27,6 +27,7 @@
             <th>#</th>
             <th>Course Name</th>
             <th style="width: 260px;">Rename</th>
+            <th style="width: 120px;">Curriculum</th>
             <th style="width: 100px;">Delete</th>
         </tr>
         </thead>
@@ -41,6 +42,10 @@
                            class="form-control form-control-sm" required>
                     <button type="submit" class="btn btn-sm btn-success">Save</button>
                 </form>
+            </td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{/hod/curriculum(courseId=${course.courseId})}">Edit</a>
             </td>
             <td>
                 <form th:action="@{/hod/delete-course}" method="post"

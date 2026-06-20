@@ -66,15 +66,44 @@ class HodControllerTest {
     }
 
     @Test
-    void saveCourseRedirectsToManageCourse() throws Exception {
+    void saveCourseRedirectsToCurriculum() throws Exception {
         CourseDetails saved = new CourseDetails();
+        saved.setCourseId(7L);
         saved.setCourseName("BCA");
         saved.setDepartmentId(1001L);
         when(userService.saveCourse(any())).thenReturn(saved);
 
         mockMvc.perform(post("/hod/save-course").with(csrf()).param("courseName", "BCA"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/hod/manage-course"));
+                .andExpect(redirectedUrl("/hod/curriculum?courseId=7"));
+    }
+
+    @Test
+    void curriculumPageLoadsCourseAndSubjectsBySemester() throws Exception {
+        CourseDetails course = new CourseDetails();
+        course.setCourseId(7L);
+        course.setCourseName("BCA");
+
+        Semester sem = new Semester();
+        sem.setSemesterId(1L);
+        sem.setSemesterName("Semester I");
+
+        SubjectDetails sub = new SubjectDetails();
+        sub.setSubjectId(10L);
+        sub.setSubjectName("Data Structures");
+        sub.setCourseId(7);
+        sub.setSemesterId(1);
+
+        when(userService.getCourseById(7L)).thenReturn(course);
+        when(userService.getAllSemesters()).thenReturn(List.of(sem));
+        when(userService.getSubjectsByCourseId(7)).thenReturn(List.of(sub));
+
+        mockMvc.perform(get("/hod/curriculum").param("courseId", "7"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/curriculum"))
+                .andExpect(model().attribute("course", course))
+                .andExpect(model().attributeExists("semesters"))
+                .andExpect(model().attributeExists("subjectsBySemester"));
     }
 
     @Test
@@ -137,7 +166,7 @@ class HodControllerTest {
     }
 
     @Test
-    void saveSubjectRedirectsToManageSubjectForCourse() throws Exception {
+    void saveSubjectRedirectsToCurriculum() throws Exception {
         when(userService.saveSubject(any())).thenReturn(new SubjectDetails());
 
         mockMvc.perform(post("/hod/save-subject").with(csrf())
@@ -145,17 +174,18 @@ class HodControllerTest {
                         .param("courseId", "1")
                         .param("semesterId", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/hod/manage-subject?courseId=1"));
+                .andExpect(redirectedUrl("/hod/curriculum?courseId=1"));
     }
 
     @Test
-    void manageSubjectWithCourseIdPopulatesSubjects() throws Exception {
+    void manageSubjectWithCourseIdPopulatesSubjectsAndSemesters() throws Exception {
         when(userService.getSubjectsByCourseId(1)).thenReturn(List.of());
 
         mockMvc.perform(get("/hod/manage-subject").param("courseId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("hodViewPages/manage-subject"))
                 .andExpect(model().attributeExists("subjects"))
+                .andExpect(model().attributeExists("semesters"))
                 .andExpect(model().attribute("selectedCourseId", 1));
     }
 
@@ -168,13 +198,13 @@ class HodControllerTest {
     }
 
     @Test
-    void deleteSubjectRedirectsBackToCourse() throws Exception {
+    void deleteSubjectRedirectsBackToCurriculum() throws Exception {
         doNothing().when(userService).deleteSubjectById(5L);
 
         mockMvc.perform(post("/hod/delete-subject").with(csrf())
                         .param("subjectId", "5")
                         .param("courseId", "1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/hod/manage-subject?courseId=1"));
+                .andExpect(redirectedUrl("/hod/curriculum?courseId=1"));
     }
 }
