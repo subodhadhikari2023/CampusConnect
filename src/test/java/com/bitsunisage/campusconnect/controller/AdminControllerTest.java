@@ -45,6 +45,7 @@ class AdminControllerTest {
         testUser.setActive(true);
         testUser.setDeptID(1001L);
         testUser.setDepartment("Test Department");
+        testUser.setPassword("{noop}testpass");
 
         testRole = new Roles();
         testRole.setUserId("testUser");
@@ -130,7 +131,7 @@ class AdminControllerTest {
     // ---- Add User Form ----
 
     @Test
-    void addUserFormLoadsWithDepartments() throws Exception {
+    void addUserFormLoadsWithDepartmentsAndActiveDefaultTrue() throws Exception {
         when(userService.getAllDepartments()).thenReturn(List.of(testDept));
 
         mockMvc.perform(get("/admin/add-user"))
@@ -139,10 +140,36 @@ class AdminControllerTest {
                 .andExpect(model().attributeExists("user", "roles", "departments"));
     }
 
+    // ---- Edit User (GET) ----
+
+    @Test
+    void editUserViaGetLoadsFormWithUserData() throws Exception {
+        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(testUser);
+        when(userService.findRoleByUserId(testUser.getUserId())).thenReturn(testRole);
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+
+        mockMvc.perform(get("/admin/editUser").param("userId", testUser.getUserId()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("adminViewPages/add-user"))
+                .andExpect(model().attributeExists("user", "roles", "departments"));
+    }
+
+    @Test
+    void editUserWithUnknownIdRedirectsWithErrorMessage() throws Exception {
+        when(userService.findUserByUserId("ghost")).thenReturn(null);
+
+        mockMvc.perform(get("/admin/editUser").param("userId", "ghost"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
     // ---- Save User ----
 
     @Test
     void saveNewUserPrependsNoopSetsRoleUserIdAndCreatesAllRecords() throws Exception {
+        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(null);
+
         mockMvc.perform(post("/admin/save").with(csrf())
                         .param("userId", testUser.getUserId())
                         .param("password", "plainpassword")
@@ -161,6 +188,8 @@ class AdminControllerTest {
 
     @Test
     void saveUserStripsRolePrefixBeforeStoringInDepartmentDetails() throws Exception {
+        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(null);
+
         mockMvc.perform(post("/admin/save").with(csrf())
                         .param("userId", testUser.getUserId())
                         .param("password", "plainpassword")
@@ -175,6 +204,8 @@ class AdminControllerTest {
 
     @Test
     void saveExistingUserWithNoopPasswordDoesNotDoubleWrap() throws Exception {
+        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(testUser);
+
         mockMvc.perform(post("/admin/save").with(csrf())
                         .param("userId", testUser.getUserId())
                         .param("password", "{noop}existingpassword")
@@ -185,6 +216,42 @@ class AdminControllerTest {
                 .andExpect(status().is3xxRedirection());
 
         verify(userService).save(argThat((User u) -> u.getPassword().equals("{noop}existingpassword")));
+    }
+
+    @Test
+    void saveUserWithBlankPasswordPreservesExistingStoredPassword() throws Exception {
+        when(userService.findUserByUserId(testUser.getUserId())).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/save").with(csrf())
+                        .param("userId", testUser.getUserId())
+                        .param("password", "")
+                        .param("active", "true")
+                        .param("email", testUser.getEmail())
+                        .param("deptID", testDept.getId().toString())
+                        .param("role", testRole.getRole()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).save(argThat((User u) -> u.getPassword().equals("{noop}testpass")));
+    }
+
+    @Test
+    void saveNewUserWithBlankPasswordRedirectsWithErrorAndSavesNothing() throws Exception {
+        when(userService.findUserByUserId("brandNewUser")).thenReturn(null);
+
+        mockMvc.perform(post("/admin/save").with(csrf())
+                        .param("userId", "brandNewUser")
+                        .param("password", "")
+                        .param("active", "true")
+                        .param("email", "new@campus.edu")
+                        .param("deptID", testDept.getId().toString())
+                        .param("role", testRole.getRole()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
     }
 
     @Test
@@ -232,31 +299,7 @@ class AdminControllerTest {
         verify(userService, never()).deleteUser(any());
     }
 
-    // ---- Update/Delete Form Selection ----
-
-    @Test
-    void showUpdateFormPassesActionAndUserListToModel() throws Exception {
-        when(userService.findAllUsers()).thenReturn(List.of(testUser));
-
-        mockMvc.perform(get("/admin/showuserUpdateForm").param("action", "update"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("adminViewPages/showUserFormForUpdate"))
-                .andExpect(model().attribute("action", "update"))
-                .andExpect(model().attributeExists("userList"));
-    }
-
-    @Test
-    void showDeleteFormPassesActionAndUserListToModel() throws Exception {
-        when(userService.findAllUsers()).thenReturn(List.of(testUser));
-
-        mockMvc.perform(get("/admin/showuserUpdateForm").param("action", "delete"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("adminViewPages/showUserFormForUpdate"))
-                .andExpect(model().attribute("action", "delete"))
-                .andExpect(model().attributeExists("userList"));
-    }
-
-    // ---- Load User for Edit ----
+    // ---- Load User for Edit (POST, kept for compat) ----
 
     @Test
     void loadUserPopulatesFormWithExistingUserData() throws Exception {

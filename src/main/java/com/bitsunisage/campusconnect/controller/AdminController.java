@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -110,7 +109,7 @@ public class AdminController {
     }
 
     /**
-     * Renders the add-user form with empty {@link User} and {@link Roles} objects
+     * Renders the add-user form with an empty {@link User} (active defaults to {@code true})
      * and the full department list for the dropdown.
      *
      * @param model populated with {@code user}, {@code roles}, and {@code departments}
@@ -118,23 +117,62 @@ public class AdminController {
      */
     @GetMapping("/admin/add-user")
     public String addUser(Model model) {
-        model.addAttribute("user", new User());
+        User newUser = new User();
+        newUser.setActive(true);
+        model.addAttribute("user", newUser);
         model.addAttribute("roles", new Roles());
         model.addAttribute("departments", userService.getAllDepartments());
         return "adminViewPages/add-user";
     }
 
     /**
-     * Creates or updates a user. Resolves the department name from the selected dept ID,
-     * sets the role's userId to match the user, and maintains the department_details membership.
-     * Redirects with an error flash if the department selection is missing.
+     * Loads an existing user into the add-user form for editing via a GET link.
+     * Clears the password field so the form does not expose the stored encoded value.
+     * Redirects with an error flash if the user ID does not exist.
      *
-     * @param user               the user bound from the form (deptID populated from dropdown)
+     * @param userId             the login username of the user to edit
+     * @param model              populated with the user's current data, role, and departments
+     * @param redirectAttributes used to pass an error flash if the user is not found
+     * @return Thymeleaf template {@code adminViewPages/add-user}, or redirect to {@code /admin}
+     */
+    @GetMapping("/admin/editUser")
+    public String editUser(@RequestParam("userId") String userId,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
+        User user = userService.findUserByUserId(userId);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found: " + userId);
+            return "redirect:/admin";
+        }
+        user.setPassword("");
+        model.addAttribute("user", user);
+        model.addAttribute("roles", userService.findRoleByUserId(userId));
+        model.addAttribute("departments", userService.getAllDepartments());
+        return "adminViewPages/add-user";
+    }
+
+    /**
+     * Creates or updates a user.
+     * <p>
+     * Password rules: if the submitted password is blank, the existing stored password is
+     * preserved (update case). If it is blank and no existing user is found (new user), the
+     * request is rejected. A non-blank password is wrapped with {@code {noop}} unless already
+     * prefixed.
+     * <p>
+     * Redirects with an error flash if the department selection or password is missing.
+     *
+     * @param user               the user bound from the form
      * @param roles              the role assignment bound from the form
      * @param redirectAttributes used to pass success/error flash messages across the redirect
      * @return redirect to the admin dashboard
      */
     @PostMapping("/admin/save")
+    /**
+     * TODO: describe this member.
+     *
+     * @param ("user" TODO
+     * @return TODO
+     */
     public String saveUser(@ModelAttribute("user") User user,
                            @ModelAttribute("roles") Roles roles,
                            RedirectAttributes redirectAttributes) {
@@ -143,8 +181,17 @@ public class AdminController {
             return "redirect:/admin";
         }
 
-        if (!user.getPassword().startsWith("{noop}")) {
-            user.setPassword("{noop}" + user.getPassword());
+        String submitted = user.getPassword();
+        if (submitted == null || submitted.isBlank()) {
+            User existing = userService.findUserByUserId(user.getUserId());
+            if (existing != null) {
+                user.setPassword(existing.getPassword());
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Password is required for new users.");
+                return "redirect:/admin";
+            }
+        } else if (!submitted.startsWith("{noop}")) {
+            user.setPassword("{noop}" + submitted);
         }
 
         Department dept = userService.getDepartmentNameByDepartmentId(user.getDeptID().intValue());
@@ -167,21 +214,8 @@ public class AdminController {
     }
 
     /**
-     * Renders a form for selecting which user to update or delete.
-     *
-     * @param action {@code "update"} or {@code "delete"} — controls which form variant is shown
-     * @param model  populated with {@code userList} and {@code action}
-     * @return Thymeleaf template {@code adminViewPages/showUserFormForUpdate}
-     */
-    @GetMapping("/admin/showuserUpdateForm")
-    public String showUserUpdateForm(@RequestParam(value = "action") String action, Model model) {
-        model.addAttribute("userList", userService.findAllUsers());
-        model.addAttribute("action", action);
-        return "adminViewPages/showUserFormForUpdate";
-    }
-
-    /**
-     * Loads an existing user into the add-user form for editing.
+     * Loads an existing user into the add-user form for editing via POST.
+     * Kept for backward compatibility; prefer the GET {@code /admin/editUser} endpoint.
      *
      * @param userId the login username of the user to edit
      * @param model  populated with the user's current {@link User}, {@link Roles}, and departments
