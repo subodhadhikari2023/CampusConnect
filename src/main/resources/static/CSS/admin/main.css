@@ -104,6 +104,47 @@ body {
     transform: translateY(-2px);
 }
 
+/* ── Bootstrap primary colour override ─────────────────────── */
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-visible {
+    background-color: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
+}
+
+.btn-primary:focus-visible {
+    box-shadow: 0 0 0 0.2rem var(--clr-primary-focus);
+}
+
+.btn-outline-primary {
+    color: var(--clr-primary);
+    border-color: var(--clr-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-text-white);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 0.2rem var(--clr-primary-focus);
+}
+
+.form-control[readonly] {
+    background-color: var(--clr-bg);
+    color: var(--clr-text-muted);
+    cursor: not-allowed;
+}
+
 /* ── Dashboard action buttons ───────────────────────────────── */
 
 .action-buttons {
