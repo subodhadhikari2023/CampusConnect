@@ -76,12 +76,15 @@ class AdminControllerTest {
 
     @Test
     void dashboardPopulatesAllStatsFromService() throws Exception {
+        Semester sem = new Semester();
         when(userService.findAllUsers()).thenReturn(List.of(testUser));
         when(userService.findAllRoles()).thenReturn(List.of(testRole));
         when(userService.totalUsers()).thenReturn(5);
         when(userService.totalUsers("ROLE_STUDENT")).thenReturn(2);
         when(userService.totalUsers("ROLE_TEACHER")).thenReturn(2);
         when(userService.totalUsers("ROLE_HOD")).thenReturn(1);
+        when(userService.getAllDepartments()).thenReturn(List.of(testDept));
+        when(userService.getAllSemesters()).thenReturn(List.of(sem));
 
         mockMvc.perform(get("/admin"))
                 .andExpect(status().isOk())
@@ -89,7 +92,9 @@ class AdminControllerTest {
                 .andExpect(model().attribute("totalUsers", 5))
                 .andExpect(model().attribute("totalStudents", 2))
                 .andExpect(model().attribute("totalTeachers", 2))
-                .andExpect(model().attribute("totalHods", 1));
+                .andExpect(model().attribute("totalHods", 1))
+                .andExpect(model().attribute("totalDepartments", 1))
+                .andExpect(model().attribute("totalSemesters", 1));
     }
 
     // ---- User list pages (N+1 fix) ----

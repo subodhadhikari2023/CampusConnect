@@ -22,27 +22,29 @@
     </div>
 
     <div class="stats-container">
-        <table class="stats-box">
-            <thead><tr><td><h4>Total Users</h4></td></tr></thead>
-            <tbody><tr><td th:text="${totalUsers}"></td></tr></tbody>
-        </table>
-        <table class="stats-box">
-            <thead><tr><td><h4>Total Students</h4></td></tr></thead>
-            <tbody><tr><td th:text="${totalStudents}"></td></tr></tbody>
-        </table>
-        <table class="stats-box">
-            <thead><tr><td><h4>Total Teachers</h4></td></tr></thead>
-            <tbody><tr><td th:text="${totalTeachers}"></td></tr></tbody>
-        </table>
-        <table class="stats-box">
-            <thead><tr><td><h4>Total HODs</h4></td></tr></thead>
-            <tbody><tr><td th:text="${totalHods}"></td></tr></tbody>
-        </table>
-    </div>
-
-    <div class="action-buttons mt-4">
-        <a class="text-white" th:href="@{/admin/add-user}">
-            <button class="action-button">Add User</button>
+        <a th:href="@{/admin/students}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalStudents}">0</h3>
+            <h4>Students</h4>
+        </a>
+        <a th:href="@{/admin/teachers}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalTeachers}">0</h3>
+            <h4>Teachers</h4>
+        </a>
+        <a th:href="@{/admin/hods}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalHods}">0</h3>
+            <h4>HODs</h4>
+        </a>
+        <a th:href="@{/admin/departments}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalDepartments}">0</h3>
+            <h4>Departments</h4>
+        </a>
+        <a th:href="@{/admin/semesters}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalSemesters}">0</h3>
+            <h4>Semesters</h4>
+        </a>
+        <a th:href="@{/admin/files}" class="stats-box text-decoration-none">
+            <h3 th:text="${totalUsers}">0</h3>
+            <h4>Total Users</h4>
         </a>
     </div>
 </div>

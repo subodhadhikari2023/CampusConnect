@@ -48,9 +48,9 @@ public class AdminController {
     }
 
     /**
-     * Renders the admin dashboard with user counts broken down by role.
+     * Renders the admin dashboard with user, department, and semester counts.
      *
-     * @param model populated with all users, roles, and per-role counts
+     * @param model populated with per-role user counts, department count, and semester count
      * @return Thymeleaf template {@code adminViewPages/admin}
      */
     @GetMapping("/admin")
@@ -61,6 +61,8 @@ public class AdminController {
         model.addAttribute("totalStudents", userService.totalUsers("ROLE_STUDENT"));
         model.addAttribute("totalTeachers", userService.totalUsers("ROLE_TEACHER"));
         model.addAttribute("totalHods", userService.totalUsers("ROLE_HOD"));
+        model.addAttribute("totalDepartments", userService.getAllDepartments().size());
+        model.addAttribute("totalSemesters", userService.getAllSemesters().size());
         return "adminViewPages/admin";
     }
 
