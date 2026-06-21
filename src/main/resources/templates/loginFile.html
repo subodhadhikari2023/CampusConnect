@@ -1,76 +1,82 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Login Page</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" th:href="@{loginResources/CSS/main.css}">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Sign In &mdash; CampusConnect</title>
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Kalnia+Glaze:wght@100..700&family=Lobster&display=swap"
-          rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/loginResources/CSS/main.css}">
 </head>
 <body>
-<div id="loginbox">
 
-    <div class="content">
-        <div class="form-header">
-            <div class="image">
-                <img th:src="@{loginResources/images/main-logo-black-transparent.png}" alt="Main Logo">
-            </div>
-            <div class="tagline">
-                <h3>A Collaborative Learning Platform</h3>
-            </div>
-        </div>
-        <div class="signin-form">
-            Sign In
-        </div>
-        <div class="card-body">
-            <div class="card-text">
-                <!-- Login Form -->
-                <form action="#" th:action="@{/authenticateTheUser}" method="POST" class="form-horizontal">
-                    <!-- Place for messages: error, alert etc ... -->
-                    <div class="form-group">
-                        <div class="col-xs-15">
-                            <div>
-                                <!-- Check for login error -->
-                                <div th:if="${param.logout}">
-                                    <div class="alert alert-info col-xs-offset-1 col-xs-10">
-                                        You have been logged out!
-                                    </div>
-                                </div>
-                                <div th:if="${param.error}">
-                                    <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                                        Wrong Credentials!
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- User name -->
-                    <div class="input-group">
-                        <input type="text" name="username" placeholder="Username" class="form-control"/>
-                    </div>
-                    <!-- Password -->
-                    <div class="input-group">
-                        <input type="password" name="password" placeholder="Password" class="form-control"/>
-                    </div>
-                    <!-- Login/Submit Button -->
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-custom">Login</button>
-                    </div>
-                    <!-- Home Button -->
-                    <div class="form-group">
-                        <a href="/" class="btn btn-home">Go To Home Page</a>
-                    </div>
+<div class="login-bg">
+    <div class="login-card">
 
-                </form>
+        <div class="login-card__header">
+            <img th:src="@{/loginResources/images/main-logo-black-transparent.png}"
+                 alt="CampusConnect" class="login-card__logo">
+            <p class="login-card__tagline">A Collaborative Learning Platform</p>
+        </div>
+
+        <h2 class="login-card__title">Sign In</h2>
+
+        <div th:if="${param.logout}" class="alert alert-info alert-sm mb-3" role="alert">
+            You have been logged out.
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger alert-sm mb-3" role="alert">
+            Incorrect username or password. Please try again.
+        </div>
+
+        <form th:action="@{/authenticateTheUser}" method="POST">
+
+            <div class="login-field">
+                <label class="login-field__label" for="username">Username</label>
+                <input id="username" type="text" name="username"
+                       class="form-control login-field__input"
+                       placeholder="Enter your username" required autocomplete="username">
             </div>
+
+            <div class="login-field">
+                <label class="login-field__label" for="password">Password</label>
+                <div class="login-field__password-wrap">
+                    <input id="password" type="password" name="password"
+                           class="form-control login-field__input"
+                           placeholder="Enter your password" required autocomplete="current-password">
+                    <button type="button" class="login-field__eye" onclick="togglePassword()"
+                            aria-label="Toggle password visibility">
+                        <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn login-btn-submit">Sign In</button>
+
+        </form>
+
+        <div class="login-card__footer">
+            <a th:href="@{/}" class="login-card__home-link">&larr; Back to Home</a>
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById('password');
+        const icon = document.getElementById('eye-icon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        } else {
+            input.type = 'password';
+            icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+</script>
 </body>
 </html>
