@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <title>Teachers</title>
+    <title>Teachers &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
 </head>
 <body>
-<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-semibold" style="color: var(--clr-text);">Teachers</h2>
+<div th:replace="~{adminViewPages/sidebar :: sidebar}"></div>
+
+<div class="admin-page-content">
+<main class="admin-main">
+<div class="admin-container">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h2 class="fw-semibold mb-0" style="color: var(--clr-text);">Teachers</h2>
         <a th:href="@{/admin/add-user}" class="btn btn-primary btn-sm">+ Add User</a>
     </div>
 
@@ -19,7 +23,7 @@
     <div th:unless="${userTeachers.empty}"
          class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead style="background-color: var(--clr-primary-light);">
                 <tr>
                     <th scope="col">Username</th>
@@ -59,8 +63,12 @@
             </table>
         </div>
     </div>
+
 </div>
+</main>
 <div th:replace="~{adminViewPages/footer :: footer}"></div>
+</div>
+
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

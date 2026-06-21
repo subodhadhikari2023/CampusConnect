@@ -8,11 +8,14 @@
     <link rel="stylesheet" th:href="@{/CSS/admin/userAddForm.css}">
 </head>
 <body>
-<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
+<div th:replace="~{adminViewPages/sidebar :: sidebar}"></div>
 
-<div class="container mt-5">
+<div class="admin-page-content">
+<main class="admin-main">
+<div class="admin-container">
+
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
+        <div class="col-12 col-md-8 col-lg-6">
             <div class="form-card">
                 <div class="form-card-title"
                      th:text="${dept.id != null} ? 'Edit Department: ' + ${dept.name} : 'Add Department'">
@@ -35,7 +38,7 @@
                                th:field="*{name}" placeholder="Enter department name">
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button class="btn btn-primary" type="submit"
                                 th:text="${dept.id != null} ? 'Update Department' : 'Add Department'">
                             Add Department
@@ -46,9 +49,12 @@
             </div>
         </div>
     </div>
+
+</div>
+</main>
+<div th:replace="~{adminViewPages/footer :: footer}"></div>
 </div>
 
-<div th:replace="~{adminViewPages/footer :: footer}"></div>
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
