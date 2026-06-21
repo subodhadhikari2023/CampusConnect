@@ -10,6 +10,7 @@
     --clr-danger:         #dc3545;
     --clr-danger-dark:    #b02a37;
     --clr-success:        #198754;
+    --clr-warning:        #f59e0b;
 
     /* Surfaces */
     --clr-bg:             #f5f7fa;
@@ -33,20 +34,263 @@
 
     /* Motion */
     --transition-base:    0.3s ease;
+
+    /* Sidebar */
+    --sidebar-w:          240px;
+    --sidebar-bg:         #0f1f1f;
+    --sidebar-border:     rgba(255, 255, 255, 0.07);
+    --topbar-h:           56px;
 }
+
+/* ── Base ───────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--clr-bg);
     color: var(--clr-text);
-    min-height: 100vh;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout shell ───────────────────────────────────────────── */
+
+.admin-page-content {
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 .admin-main {
     flex: 1 0 auto;
+}
+
+/* Admin container: controlled padding instead of Bootstrap container */
+.admin-container {
+    padding: 1.25rem 1rem 2rem;
+}
+
+@media (min-width: 576px) {
+    .admin-container { padding: 1.5rem 1.5rem 2rem; }
+}
+
+/* ── Mobile topbar (visible only below lg) ──────────────────── */
+
+.admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    height: var(--topbar-h);
+    background: var(--clr-surface);
+    border-bottom: 1px solid var(--clr-border);
+    box-shadow: var(--shadow-sm);
+    padding: 0 1rem;
+    gap: 0.75rem;
+}
+
+.admin-topbar__toggle {
+    background: none;
+    border: none;
+    padding: 0.3rem;
+    cursor: pointer;
+    color: var(--clr-text);
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base);
+}
+
+.admin-topbar__toggle:hover {
+    background: var(--clr-bg);
+}
+
+.admin-topbar__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--clr-text);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.admin-topbar__brand img {
+    max-height: 32px;
+    width: auto;
+}
+
+/* ── Sidebar (off-canvas on mobile, fixed on desktop) ───────── */
+
+.admin-sidebar {
+    width: var(--sidebar-w) !important;
+    background: var(--sidebar-bg) !important;
+    border-right: 1px solid var(--sidebar-border);
+    display: flex !important;
+    flex-direction: column;
+}
+
+/* Desktop: always-visible fixed sidebar, override Bootstrap offcanvas */
+@media (min-width: 992px) {
+    .admin-sidebar {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        transform: none !important;
+        visibility: visible !important;
+        z-index: 100;
+        overflow-y: auto;
+    }
+
+    .admin-page-content {
+        margin-left: var(--sidebar-w);
+    }
+}
+
+/* Sidebar header */
+.admin-sidebar__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.1rem 1rem;
+    border-bottom: 1px solid var(--sidebar-border);
+    flex-shrink: 0;
+}
+
+.admin-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+}
+
+.admin-sidebar__brand img {
+    max-height: 34px;
+    width: auto;
+}
+
+.admin-sidebar__brand span {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.01em;
+}
+
+.admin-sidebar__close {
+    background: none;
+    border: none;
+    padding: 0.3rem;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.45);
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-base), background var(--transition-base);
+}
+
+.admin-sidebar__close:hover {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Sidebar nav */
+.admin-sidebar__nav {
+    flex: 1;
+    padding: 0.75rem 0;
+    overflow-y: auto;
+}
+
+.admin-sidebar__group-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 1rem 1.1rem 0.3rem;
+    user-select: none;
+}
+
+.admin-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 1.1rem;
+    color: rgba(255, 255, 255, 0.62);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background var(--transition-base), color var(--transition-base),
+                border-left-color var(--transition-base);
+}
+
+.admin-sidebar__link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    border-left-color: rgba(0, 122, 122, 0.5);
+}
+
+.admin-sidebar__link.is-active {
+    background: rgba(0, 122, 122, 0.18);
+    color: #ffffff;
+    border-left-color: var(--clr-primary);
+    font-weight: 600;
+}
+
+.admin-sidebar__link--dashboard {
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.75rem;
+}
+
+.admin-sidebar__link--warn {
+    color: rgba(245, 158, 11, 0.75);
+}
+
+.admin-sidebar__link--warn:hover,
+.admin-sidebar__link--warn.is-active {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    border-left-color: #f59e0b;
+}
+
+.admin-sidebar__divider {
+    height: 1px;
+    background: var(--sidebar-border);
+    margin: 0.5rem 1.1rem;
+}
+
+/* Sidebar footer */
+.admin-sidebar__foot {
+    padding: 0.85rem 1.1rem;
+    border-top: 1px solid var(--sidebar-border);
+    flex-shrink: 0;
+}
+
+.admin-sidebar__logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(220, 53, 69, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(220, 53, 69, 0.25);
+    border-radius: var(--radius-md);
+    padding: 0.55rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.admin-sidebar__logout:hover {
+    background: rgba(220, 53, 69, 0.22);
+    border-color: rgba(220, 53, 69, 0.45);
+    color: #fca5a5;
 }
 
 /* ── Section label ──────────────────────────────────────────── */

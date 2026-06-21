@@ -8,12 +8,14 @@
     <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
 </head>
 <body>
-<div th:replace="~{adminViewPages/navbar :: navbar}"></div>
+<div th:replace="~{adminViewPages/sidebar :: sidebar}"></div>
 
-<main class="admin-main container mt-4">
+<div class="admin-page-content">
+<main class="admin-main">
+<div class="admin-container">
 
     <!-- Welcome header -->
-    <div class="d-flex align-items-baseline justify-content-between mb-3">
+    <div class="d-flex align-items-baseline justify-content-between flex-wrap gap-2 mb-3">
         <h5 class="mb-0">Welcome, <strong sec:authentication="principal.username"></strong></h5>
         <span class="text-muted" style="font-size:0.85rem;"
               th:text="${totalUsers} + ' registered users'"></span>
@@ -111,14 +113,16 @@
                 </span>
             </li>
         </ul>
-        <p th:if="${#lists.isEmpty(recentFiles)}" class="text-muted mb-0 p-2">
+        <p th:if="${#lists.isEmpty(recentFiles)}" class="text-muted mb-0 p-3">
             No files uploaded yet.
         </p>
     </div>
 
+</div>
 </main>
-
 <div th:replace="~{adminViewPages/footer :: footer}"></div>
+</div>
+
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
