@@ -1,83 +1,279 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
-  <title>Home Page</title>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-  <link rel="stylesheet" th:href="@{loginResources/CSS/homepage.css}">
-
-
-  <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-
-
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-
-  <style>
-
-  </style>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>CampusConnect &mdash; Collaborative Learning Platform</title>
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/loginResources/CSS/homepage.css}">
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" th:href="@{/#}">
-      <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect Logo">
-    </a>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <span class="navbar-text mx-auto center-navbar-text">Welcome to CampusConnect</span>
-      <div class="login-btn">
-        <a th:href="@{/login}" class="btn btn-primary">Login</a>
-      </div>
+<!-- ── Navbar ───────────────────────────────────────────────── -->
+<nav class="lp-nav">
+    <div class="lp-nav__inner">
+        <a class="lp-nav__brand" th:href="@{/}">
+            <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect">
+        </a>
+        <div class="lp-nav__links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a th:href="@{/login}" class="lp-nav__login">Login &rarr;</a>
     </div>
-  </div>
 </nav>
 
-<!-- About Us Section -->
-<section id="about" class="about-section text-center">
-  <div class="container">
-    <h2>About Us</h2>
-    <div class="divider"></div>
-    <p>CampusConnect is a platform dedicated to fostering collaborative learning experiences for educational institutions. Our goal is to bridge the gap between students and faculty, ensuring seamless communication and growth for all users.</p>
-  </div>
-</section>
-
-<!-- Features Section -->
-<section id="features" class="features-section text-center py-5">
-  <div class="container">
-    <h2>Features</h2>
-    <div class="divider"></div>
-    <div class="row">
-      <div class="col-md-6">
-        <h4>Resource Hub</h4>
-        <p>Access a vast collection of study materials, past papers, and research guides.</p>
-      </div>
-      <div class="col-md-6">
-        <h4>Admin Tools</h4>
-        <p>Manage student records, academic progress, and classroom activities efficiently.</p>
-      </div>
+<!-- ── Hero ─────────────────────────────────────────────────── -->
+<section class="lp-hero">
+    <div class="lp-hero__shape lp-hero__shape--a"></div>
+    <div class="lp-hero__shape lp-hero__shape--b"></div>
+    <div class="lp-hero__shape lp-hero__shape--c"></div>
+    <div class="lp-hero__content">
+        <div class="lp-hero__badge">Academic Resource Platform</div>
+        <h1 class="lp-hero__title">
+            Collaborative Learning,<br>
+            <span class="lp-hero__title-accent">Simplified.</span>
+        </h1>
+        <p class="lp-hero__sub">
+            CampusConnect unifies students, teachers, heads of department, and administrators
+            on a single platform &mdash; bringing curriculum management, resource sharing,
+            and institutional oversight into one seamless experience.
+        </p>
+        <div class="lp-hero__actions">
+            <a th:href="@{/login}" class="lp-btn-white">Get Started &rarr;</a>
+            <a href="#features" class="lp-btn-ghost">Explore Features</a>
+        </div>
     </div>
-  </div>
 </section>
 
-<!-- Contact Section -->
-<section id="contact" class="contact-section text-center py-5">
-  <div class="container">
-    <h2>Contact Us</h2>
-    <div class="divider"></div>
-    <p>For inquiries, feel free to reach out to us at <a href="mailto:youremail@example.com">manav9981@outlook.com</a> or <a href="mailto:youremail@example.com">subodhadhikari2023@outlook.com</a> </p>
+<!-- ── Stats bar ─────────────────────────────────────────────── -->
+<div class="lp-stats">
+    <div class="lp-stats__item">
+        <span class="lp-stats__num">4</span>
+        <span class="lp-stats__label">User Roles</span>
+    </div>
+    <div class="lp-stats__divider"></div>
+    <div class="lp-stats__item">
+        <span class="lp-stats__num">5+</span>
+        <span class="lp-stats__label">Content Types</span>
+    </div>
+    <div class="lp-stats__divider"></div>
+    <div class="lp-stats__item">
+        <span class="lp-stats__num">HOD</span>
+        <span class="lp-stats__label">Curriculum Control</span>
+    </div>
+    <div class="lp-stats__divider"></div>
+    <div class="lp-stats__item">
+        <span class="lp-stats__num">1</span>
+        <span class="lp-stats__label">Unified Platform</span>
+    </div>
+</div>
 
-  </div>
+<!-- ── Features ──────────────────────────────────────────────── -->
+<section id="features" class="lp-features">
+    <div class="lp-section-header">
+        <p class="lp-section-header__tag">Capabilities</p>
+        <h2 class="lp-section-header__title">Built for Every Role</h2>
+        <p class="lp-section-header__sub">Each role gets a dedicated experience tailored to their responsibilities.</p>
+    </div>
+
+    <div class="lp-features__grid">
+        <div class="lp-feat-card lp-feat-card--students">
+            <div class="lp-feat-card__icon-wrap">
+                <span class="lp-feat-card__icon">&#127891;</span>
+            </div>
+            <h3 class="lp-feat-card__title">Students</h3>
+            <p class="lp-feat-card__desc">
+                Browse and download PPTs, lecture notes, reference books, videos, and audio books
+                — all organised by department, course, and semester.
+            </p>
+            <ul class="lp-feat-card__list">
+                <li>Subject-wise resource library</li>
+                <li>Search across all content types</li>
+                <li>Semester-filtered navigation</li>
+            </ul>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--teachers">
+            <div class="lp-feat-card__icon-wrap">
+                <span class="lp-feat-card__icon">&#128218;</span>
+            </div>
+            <h3 class="lp-feat-card__title">Teachers</h3>
+            <p class="lp-feat-card__desc">
+                Upload and manage course materials directly against your assigned subjects.
+                Keep content current with a clean, structured upload interface.
+            </p>
+            <ul class="lp-feat-card__list">
+                <li>Upload PPTs, notes &amp; videos</li>
+                <li>Manage reference books &amp; audio</li>
+                <li>Subject-specific file management</li>
+            </ul>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--hod">
+            <div class="lp-feat-card__icon-wrap">
+                <span class="lp-feat-card__icon">&#127963;</span>
+            </div>
+            <h3 class="lp-feat-card__title">Heads of Department</h3>
+            <p class="lp-feat-card__desc">
+                Own your department's academic structure. Define courses, map subjects
+                to semesters, and maintain a full curriculum view from a single dashboard.
+            </p>
+            <ul class="lp-feat-card__list">
+                <li>Course &amp; subject management</li>
+                <li>Curriculum overview</li>
+                <li>Department-level file visibility</li>
+            </ul>
+        </div>
+
+        <div class="lp-feat-card lp-feat-card--admin">
+            <div class="lp-feat-card__icon-wrap">
+                <span class="lp-feat-card__icon">&#9881;&#65039;</span>
+            </div>
+            <h3 class="lp-feat-card__title">Administrators</h3>
+            <p class="lp-feat-card__desc">
+                Oversee the entire institution. Manage users, departments, semesters,
+                HOD assignments, and file moderation from a centralised admin dashboard.
+            </p>
+            <ul class="lp-feat-card__list">
+                <li>User &amp; role management</li>
+                <li>Department &amp; semester setup</li>
+                <li>File moderation &amp; storage stats</li>
+            </ul>
+        </div>
+    </div>
 </section>
 
-<!-- Bootstrap JS -->
+<!-- ── How It Works ───────────────────────────────────────────── -->
+<section id="how-it-works" class="lp-how">
+    <div class="lp-section-header lp-section-header--dark">
+        <p class="lp-section-header__tag lp-section-header__tag--light">Process</p>
+        <h2 class="lp-section-header__title">How It Works</h2>
+        <p class="lp-section-header__sub lp-section-header__sub--light">
+            From institutional setup to resource access &mdash; four steps, four roles.
+        </p>
+    </div>
+    <div class="lp-how__steps">
+        <div class="lp-how__step">
+            <div class="lp-how__step-num">1</div>
+            <div class="lp-how__step-body">
+                <h4>Admin sets up the institution</h4>
+                <p>Create departments, add semesters, onboard all users, and assign HODs to their departments.</p>
+            </div>
+        </div>
+        <div class="lp-how__connector"></div>
+        <div class="lp-how__step">
+            <div class="lp-how__step-num">2</div>
+            <div class="lp-how__step-body">
+                <h4>HOD defines the curriculum</h4>
+                <p>Add courses, map subjects to the right semesters, and build out the full departmental structure.</p>
+            </div>
+        </div>
+        <div class="lp-how__connector"></div>
+        <div class="lp-how__step">
+            <div class="lp-how__step-num">3</div>
+            <div class="lp-how__step-body">
+                <h4>Teachers upload materials</h4>
+                <p>Upload PPTs, notes, videos, reference books, and audio books against their assigned subjects.</p>
+            </div>
+        </div>
+        <div class="lp-how__connector"></div>
+        <div class="lp-how__step">
+            <div class="lp-how__step-num">4</div>
+            <div class="lp-how__step-body">
+                <h4>Students access everything</h4>
+                <p>Browse the full resource library filtered by course, semester, and subject &mdash; all in one place.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── About ─────────────────────────────────────────────────── -->
+<section class="lp-about">
+    <div class="lp-about__inner">
+        <div class="lp-about__text">
+            <p class="lp-section-header__tag">About</p>
+            <h2 class="lp-section-header__title" style="text-align:left;">What is CampusConnect?</h2>
+            <div class="lp-divider" style="margin-left:0;"></div>
+            <p>
+                CampusConnect is a collaborative learning platform built for academic institutions
+                that need more than a file dump. It models the real structure of an institution:
+                departments, semesters, courses, and subjects &mdash; and gives each stakeholder
+                exactly the tools they need.
+            </p>
+            <p>
+                Whether you are an administrator maintaining user accounts, a HOD building a semester
+                curriculum, a teacher uploading this week's lecture, or a student looking for last
+                semester's reference material &mdash; CampusConnect puts the right information in
+                the right hands.
+            </p>
+            <a th:href="@{/login}" class="lp-btn-primary">Log In Now &rarr;</a>
+        </div>
+        <div class="lp-about__visual">
+            <div class="lp-about__card">
+                <div class="lp-about__card-row">
+                    <span class="lp-about__card-icon">&#127891;</span>
+                    <span>Students browse resources by subject</span>
+                </div>
+                <div class="lp-about__card-row">
+                    <span class="lp-about__card-icon">&#128218;</span>
+                    <span>Teachers upload to assigned courses</span>
+                </div>
+                <div class="lp-about__card-row">
+                    <span class="lp-about__card-icon">&#127963;</span>
+                    <span>HODs manage curriculum &amp; structure</span>
+                </div>
+                <div class="lp-about__card-row">
+                    <span class="lp-about__card-icon">&#9881;&#65039;</span>
+                    <span>Admins oversee the whole institution</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Contact ───────────────────────────────────────────────── -->
+<section id="contact" class="lp-contact">
+    <div class="lp-section-header lp-section-header--dark">
+        <p class="lp-section-header__tag lp-section-header__tag--light">Get In Touch</p>
+        <h2 class="lp-section-header__title">Contact Us</h2>
+        <div class="lp-divider lp-divider--light"></div>
+        <p class="lp-section-header__sub lp-section-header__sub--light">
+            Have questions or want to get CampusConnect deployed at your institution?<br>
+            Reach out to us.
+        </p>
+    </div>
+    <div class="lp-contact__cards">
+        <a href="mailto:manav9981@outlook.com" class="lp-contact__card">
+            <span class="lp-contact__card-icon">&#9993;&#65039;</span>
+            <span class="lp-contact__card-label">manav9981@outlook.com</span>
+        </a>
+        <a href="mailto:subodhadhikari2023@outlook.com" class="lp-contact__card">
+            <span class="lp-contact__card-icon">&#9993;&#65039;</span>
+            <span class="lp-contact__card-label">subodhadhikari2023@outlook.com</span>
+        </a>
+    </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer class="lp-footer">
+    <div class="lp-footer__inner">
+        <div class="lp-footer__brand">
+            <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect" class="lp-footer__logo">
+            <span>CampusConnect</span>
+        </div>
+        <nav class="lp-footer__nav">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#contact">Contact</a>
+            <a th:href="@{/login}">Login</a>
+        </nav>
+        <p class="lp-footer__copy">&copy; <span th:text="${currentYear}">2024</span> CampusConnect. All rights reserved.</p>
+    </div>
+</footer>
+
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

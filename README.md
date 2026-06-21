@@ -54,6 +54,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#screenshots">Screenshots</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#built-with">Built With</a></li>
     <li><a href="#getting-started">Getting Started</a>
@@ -75,6 +76,41 @@
 ## About The Project
 
 **Campus Connect** is a role-based academic management and collaborative learning platform designed for educational institutions. It provides a centralized hub where administrators, department heads, faculty, and students can manage academic workflows, share resources, and collaborate — all within a structured, permission-driven environment.
+
+---
+
+## Screenshots
+
+<div align="center">
+
+<!-- Row 1: Landing page full-width -->
+<table>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="docs/screenshots/landing-page.png" alt="Landing Page" width="860"/>
+      <br/>
+      <sub><b>Landing Page</b> &mdash; Hero, role-based feature cards, How It Works, and Contact sections</sub>
+    </td>
+  </tr>
+</table>
+
+<!-- Row 2: Login + Admin side by side -->
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/login-page.png" alt="Login Page" width="400"/>
+      <br/>
+      <sub><b>Login Page</b> &mdash; Clean sign-in card with password toggle</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="400"/>
+      <br/>
+      <sub><b>Admin Dashboard</b> &mdash; Live stats, quick actions, and recent uploads</sub>
+    </td>
+  </tr>
+</table>
+
+</div>
 
 ---
 
