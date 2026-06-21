@@ -9,51 +9,56 @@
 </head>
 <body>
 <div th:replace="~{adminViewPages/navbar :: navbar}"></div>
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Students</h2>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-semibold" style="color: var(--clr-text);">Students</h2>
         <a th:href="@{/admin/add-user}" class="btn btn-primary btn-sm">+ Add User</a>
     </div>
 
     <div th:if="${userStudents.empty}" class="alert alert-info">No students registered yet.</div>
-    <table th:unless="${userStudents.empty}" class="table table-bordered table-hover align-middle">
-        <thead class="table-dark">
-        <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Active</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="student : ${userStudents}">
-            <td th:text="${student.userId}"></td>
-            <td th:text="${student.email}"></td>
-            <td th:text="${student.department}"></td>
-            <td>
-                <form th:action="@{/admin/toggleActive}" method="POST" class="d-inline">
-                    <input type="hidden" name="userId" th:value="${student.userId}">
-                    <input type="hidden" name="redirectTo" value="/admin/students">
-                    <button type="submit"
-                            th:class="${student.active} ? 'badge border-0 bg-success' : 'badge border-0 bg-secondary'"
-                            th:text="${student.active} ? 'Active' : 'Inactive'"
-                            th:title="${student.active} ? 'Click to deactivate' : 'Click to activate'"></button>
-                </form>
-            </td>
-            <td>
-                <a th:href="@{/admin/editUser(userId=${student.userId})}"
-                   class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                <form th:action="@{/admin/deleteUser}" method="POST" class="d-inline">
-                    <input type="hidden" name="userId" th:value="${student.userId}">
-                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                            th:data-name="${student.userId}"
-                            onclick="return confirm('Delete user ' + this.dataset.name + '?')">Delete</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div th:unless="${userStudents.empty}"
+         class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background-color: var(--clr-primary-light);">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${userStudents}">
+                    <td th:text="${student.userId}"></td>
+                    <td th:text="${student.email}"></td>
+                    <td th:text="${student.department}"></td>
+                    <td>
+                        <form th:action="@{/admin/toggleActive}" method="POST" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${student.userId}">
+                            <input type="hidden" name="redirectTo" value="/admin/students">
+                            <button type="submit"
+                                    th:class="${student.active} ? 'badge border-0 bg-success' : 'badge border-0 bg-secondary'"
+                                    th:text="${student.active} ? 'Active' : 'Inactive'"
+                                    th:title="${student.active} ? 'Click to deactivate' : 'Click to activate'"></button>
+                        </form>
+                    </td>
+                    <td>
+                        <a th:href="@{/admin/editUser(userId=${student.userId})}"
+                           class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                        <form th:action="@{/admin/deleteUser}" method="POST" class="d-inline">
+                            <input type="hidden" name="userId" th:value="${student.userId}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    th:data-name="${student.userId}"
+                                    onclick="return confirm('Delete user ' + this.dataset.name + '?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div th:replace="~{adminViewPages/footer :: footer}"></div>
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
