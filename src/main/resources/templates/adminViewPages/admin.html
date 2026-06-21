@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
 </head>
 <body>
 <div th:replace="~{adminViewPages/navbar :: navbar}"></div>
-<div class="container mt-4">
-    <h5 class="mb-4 text-muted">Welcome, <span sec:authentication="principal.username"></span></h5>
 
+<main class="admin-main container mt-4">
+
+    <!-- Welcome header -->
+    <div class="d-flex align-items-baseline justify-content-between mb-3">
+        <h5 class="mb-0">Welcome, <strong sec:authentication="principal.username"></strong></h5>
+        <span class="text-muted" style="font-size:0.85rem;"
+              th:text="${totalUsers} + ' registered users'"></span>
+    </div>
+
+    <!-- Flash messages -->
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${successMessage}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -21,33 +29,96 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div class="stats-container">
-        <a th:href="@{/admin/students}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalStudents}">0</h3>
-            <h4>Students</h4>
+    <!-- People section -->
+    <p class="section-label">People</p>
+    <div class="stats-grid mb-4">
+        <a th:href="@{/admin/students}" class="stat-card stat-card--primary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalStudents}">0</div>
+            <div class="stat-card__label">Students</div>
         </a>
-        <a th:href="@{/admin/teachers}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalTeachers}">0</h3>
-            <h4>Teachers</h4>
+        <a th:href="@{/admin/teachers}" class="stat-card stat-card--primary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalTeachers}">0</div>
+            <div class="stat-card__label">Teachers</div>
         </a>
-        <a th:href="@{/admin/hods}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalHods}">0</h3>
-            <h4>HODs</h4>
+        <a th:href="@{/admin/hods}" class="stat-card stat-card--primary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalHods}">0</div>
+            <div class="stat-card__label">HODs</div>
         </a>
-        <a th:href="@{/admin/departments}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalDepartments}">0</h3>
-            <h4>Departments</h4>
-        </a>
-        <a th:href="@{/admin/semesters}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalSemesters}">0</h3>
-            <h4>Semesters</h4>
-        </a>
-        <a th:href="@{/admin/files}" class="stats-box text-decoration-none">
-            <h3 th:text="${totalUsers}">0</h3>
-            <h4>Total Users</h4>
+        <a th:href="@{/admin/inactive-users}" class="stat-card stat-card--warning text-decoration-none">
+            <div class="stat-card__num" th:text="${totalInactive}">0</div>
+            <div class="stat-card__label">Inactive</div>
         </a>
     </div>
-</div>
+
+    <!-- System section -->
+    <p class="section-label">System</p>
+    <div class="stats-grid mb-4">
+        <a th:href="@{/admin/departments}" class="stat-card stat-card--secondary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalDepartments}">0</div>
+            <div class="stat-card__label">Departments</div>
+        </a>
+        <a th:href="@{/admin/semesters}" class="stat-card stat-card--secondary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalSemesters}">0</div>
+            <div class="stat-card__label">Semesters</div>
+        </a>
+        <a th:href="@{/admin/courses}" class="stat-card stat-card--secondary text-decoration-none">
+            <div class="stat-card__num" th:text="${totalCourses}">0</div>
+            <div class="stat-card__label">Courses</div>
+        </a>
+        <a th:href="@{/admin/files}" class="stat-card stat-card--success text-decoration-none">
+            <div class="stat-card__num" th:text="${totalFiles}">0</div>
+            <div class="stat-card__label">Files</div>
+            <div class="stat-card__sub" th:text="${storageUsed}">0 B</div>
+        </a>
+    </div>
+
+    <!-- Quick Actions -->
+    <p class="section-label">Quick Actions</p>
+    <div class="action-grid mb-4">
+        <a th:href="@{/admin/add-user}" class="action-card text-decoration-none">
+            <div class="action-card__icon">+</div>
+            <div class="action-card__title">Add User</div>
+            <div class="action-card__desc">Create a student, teacher, or HOD account</div>
+        </a>
+        <a th:href="@{/admin/add-department}" class="action-card text-decoration-none">
+            <div class="action-card__icon">+</div>
+            <div class="action-card__title">Add Department</div>
+            <div class="action-card__desc">Register a new academic department</div>
+        </a>
+        <a th:href="@{/admin/add-semester}" class="action-card text-decoration-none">
+            <div class="action-card__icon">+</div>
+            <div class="action-card__title">Add Semester</div>
+            <div class="action-card__desc">Create a new semester entry</div>
+        </a>
+        <a th:href="@{/admin/files}" class="action-card action-card--files text-decoration-none">
+            <div class="action-card__icon">&equiv;</div>
+            <div class="action-card__title">Moderate Files</div>
+            <div class="action-card__desc">Review and delete uploaded resources</div>
+        </a>
+    </div>
+
+    <!-- Recent uploads -->
+    <p class="section-label">Recent Uploads</p>
+    <div class="activity-card mb-2">
+        <ul class="activity-list" th:if="${not #lists.isEmpty(recentFiles)}">
+            <li th:each="f : ${recentFiles}" class="activity-item">
+                <span class="activity-badge" th:text="${f.fileRole}">TYPE</span>
+                <span class="activity-filename text-truncate" th:text="${f.fileName}">file.pdf</span>
+                <span class="activity-meta">
+                    by <strong th:text="${f.ownersName}">user</strong>
+                    &middot;
+                    <span th:text="${#dates.format(f.uploadDate, 'dd MMM yyyy')}">date</span>
+                </span>
+            </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(recentFiles)}" class="text-muted mb-0 p-2">
+            No files uploaded yet.
+        </p>
+    </div>
+
+</main>
+
+<div th:replace="~{adminViewPages/footer :: footer}"></div>
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,15 +56,45 @@ public class AdminController {
      */
     @GetMapping("/admin")
     public String getAdminPage(Model model) {
-        model.addAttribute("users", userService.findAllUsers());
-        model.addAttribute("roles", userService.findAllRoles());
+        List<User> allUsers = userService.findAllUsers();
+        List<FileData> allFiles = storageService.findAll();
+
         model.addAttribute("totalUsers", userService.totalUsers());
         model.addAttribute("totalStudents", userService.totalUsers("ROLE_STUDENT"));
         model.addAttribute("totalTeachers", userService.totalUsers("ROLE_TEACHER"));
         model.addAttribute("totalHods", userService.totalUsers("ROLE_HOD"));
         model.addAttribute("totalDepartments", userService.getAllDepartments().size());
         model.addAttribute("totalSemesters", userService.getAllSemesters().size());
+        model.addAttribute("totalCourses", userService.getAllCourses().size());
+
+        long inactiveCount = allUsers.stream().filter(u -> !u.isActive()).count();
+        model.addAttribute("totalInactive", inactiveCount);
+
+        model.addAttribute("totalFiles", allFiles.size());
+        long totalBytes = allFiles.stream().mapToLong(FileData::getFileSize).sum();
+        model.addAttribute("storageUsed", formatBytes(totalBytes));
+
+        List<FileData> recentFiles = allFiles.stream()
+                .filter(f -> f.getUploadDate() != null)
+                .sorted(Comparator.comparing(FileData::getUploadDate).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
+        model.addAttribute("recentFiles", recentFiles);
+
         return "adminViewPages/admin";
+    }
+
+    /**
+     * Formats a byte count into a human-readable string (B, KB, MB, GB).
+     *
+     * @param bytes raw byte count
+     * @return formatted string such as {@code "4.2 MB"}
+     */
+    private static String formatBytes(long bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
+        if (bytes < 1024L * 1024 * 1024) return String.format("%.1f MB", bytes / (1024.0 * 1024));
+        return String.format("%.1f GB", bytes / (1024.0 * 1024 * 1024));
     }
 
     /**
@@ -194,12 +225,6 @@ public class AdminController {
      * @return redirect to the admin dashboard
      */
     @PostMapping("/admin/save")
-    /**
-     * TODO: describe this member.
-     *
-     * @param ("user" TODO
-     * @return TODO
-     */
     public String saveUser(@ModelAttribute("user") User user,
                            @ModelAttribute("roles") Roles roles,
                            RedirectAttributes redirectAttributes) {

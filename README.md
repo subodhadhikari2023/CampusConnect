@@ -81,15 +81,10 @@
 ## Features
 
 - **Role-Based Access Control** — Distinct roles (Admin, HOD, Teacher, Student) with scoped permissions across all platform actions
-- **Course and Subject Management** — HODs manage courses, subjects, and teacher assignments
-- **Syllabus Submission and Approval** — Teachers submit syllabi for HOD review before student distribution
-- **Syllabus Progress Tracking** — Teachers mark completion status; students acknowledge or raise feedback
-- **Resource Library** — Centralized repository for lecture slides, videos, and reference material organized by subject
-- **Student Note Contribution** — Students submit notes requiring teacher approval before peer visibility
-- **Collaboration Points System** — Metric rewarding active student participation and contributions
-- **Latest Approved Version Visibility** — Only the most recent approved version of contributed notes is visible, ensuring accuracy
-- **Discussion Forums** — Subject-level discussion threads for students and teachers
-- **File Compression Downloads** — Download resources in multiple compression formats
+- **Admin Dashboard** — System-wide stats (users by role, inactive accounts, departments, semesters, courses, file storage used) with a recent-uploads activity feed; full CRUD for users, departments, semesters; HOD assignment and file moderation
+- **Course and Subject Management** — HODs manage courses, subjects, and curriculum per semester; curriculum overview page
+- **Resource Library** — Teachers upload lecture slides, videos, notes, programs, audio books, and reference material organized by department / course / semester / subject
+- **File Compression Downloads** — Students download resources in original, GZIP, or ZIP format
 - **Customized Dashboards** — Role-specific dashboards providing immediate access to relevant tools and information
 
 ---
@@ -140,8 +135,8 @@ git clone https://github.com/subodhadhikari2023/CampusConnect.git
 cd CampusConnect
 
 # 2. Create your environment file and fill in your credentials
-cp Project/.env.example Project/.env
-# Open Project/.env and set DB_PASSWORD and MYSQL_ROOT_PASSWORD
+cp .env.example .env
+# Open .env and set DB_PASSWORD and MYSQL_ROOT_PASSWORD
 
 # 3. Build and start both containers (app + MySQL)
 docker compose up --build
@@ -203,14 +198,13 @@ The application will be available at `http://localhost:8080`.
 
 ## Testing
 
-The project includes **88 tests** covering all application layers.
+The project includes **128 tests** covering all application layers.
 
 | Layer | Tests | Framework | Notes |
 |---|---|---|---|
-| Security | 18 | Spring Security Test + MockMvc | Role isolation, unauthenticated redirects, public endpoint access, logout |
-| Controllers | 29 | @WebMvcTest + Mockito | Admin, HOD, Teacher, Student, Master controllers — views, model attributes, redirects |
-| Services | 26 | JUnit 5 + Mockito | UserService, StorageService — plain unit tests, no Spring context |
-| Repositories | 14 | @DataJpaTest + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
+| Controllers | 71+ | @WebMvcTest + Mockito | Admin, HOD, Teacher, Student, Master controllers — views, model attributes, redirects, flash messages |
+| Services | 33+ | JUnit 5 + Mockito | UserService — pure unit tests, no Spring context |
+| Repositories | 14+ | @DataJpaTest + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
 
 Tests use an **H2 in-memory database** via `application-test.properties`, ensuring no MySQL dependency in CI or local test runs.
 
