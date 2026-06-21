@@ -42,66 +42,144 @@ body {
     color: var(--clr-text);
 }
 
-/* ── Stats grid ────────────────────────────────────────────── */
+/* ── Section label ──────────────────────────────────────────── */
 
-.stats-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    width: 100%;
-    margin-top: 20px;
+.section-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+    border-bottom: 1px solid var(--clr-border);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.75rem;
 }
 
-.stats-box {
-    height: 150px;
-    background-color: var(--clr-primary);
-    border: 1px solid var(--clr-border);
+/* ── Stats grid ─────────────────────────────────────────────── */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.stat-card {
+    background: var(--clr-surface);
     border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
-    margin-bottom: 20px;
-    box-shadow: var(--shadow-md);
-    cursor: pointer;
-}
-
-.stats-box:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.stats-box h3,
-.stats-box h4 {
-    margin: 0;
-    color: var(--clr-text-white);
-}
-
-.stats-box h3 {
-    font-size: 2.5em;
-}
-
-.stats-box h4 {
-    font-size: 1.2em;
-}
-
-.stats-box tbody tr td {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--clr-primary);
-    background-color: var(--clr-primary-light);
-    padding: 8px;
-    border-radius: var(--radius-sm);
-    text-align: center;
-    width: 100%;
+    align-items: flex-start;
+    border-left: 4px solid var(--clr-primary);
     box-shadow: var(--shadow-sm);
-    transition: transform var(--transition-base), background-color var(--transition-base);
+    color: var(--clr-text);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
-.stats-box tbody tr td:hover {
-    background-color: var(--clr-primary-mid);
-    transform: translateY(-2px);
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    color: var(--clr-text);
+}
+
+.stat-card__num {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--clr-primary);
+}
+
+.stat-card__label {
+    font-size: 0.78rem;
+    color: var(--clr-text-muted);
+    margin-top: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.stat-card__sub {
+    font-size: 0.72rem;
+    color: var(--clr-text-muted);
+    margin-top: 0.4rem;
+}
+
+/* Colour variants */
+.stat-card--primary  { border-left-color: var(--clr-primary); }
+.stat-card--warning  { border-left-color: #f59e0b; }
+.stat-card--success  { border-left-color: var(--clr-success); }
+.stat-card--secondary { border-left-color: #6c757d; }
+
+.stat-card--primary  .stat-card__num { color: var(--clr-primary); }
+.stat-card--warning  .stat-card__num { color: #f59e0b; }
+.stat-card--success  .stat-card__num { color: var(--clr-success); }
+.stat-card--secondary .stat-card__num { color: #6c757d; }
+
+/* ── Activity feed ──────────────────────────────────────────── */
+
+.activity-card {
+    background: var(--clr-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.25rem;
+    border-bottom: 1px solid var(--clr-border);
+    font-size: 0.875rem;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-badge {
+    background: var(--clr-primary-light);
+    color: var(--clr-primary-dark);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.activity-filename {
+    flex: 1;
+    min-width: 0;
+    color: var(--clr-text);
+}
+
+.activity-meta {
+    margin-left: auto;
+    color: var(--clr-text-muted);
+    white-space: nowrap;
+    font-size: 0.8rem;
+    flex-shrink: 0;
 }
 
 /* ── Bootstrap primary colour override ─────────────────────── */

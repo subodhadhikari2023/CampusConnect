@@ -76,25 +76,73 @@ class AdminControllerTest {
 
     @Test
     void dashboardPopulatesAllStatsFromService() throws Exception {
-        Semester sem = new Semester();
-        when(userService.findAllUsers()).thenReturn(List.of(testUser));
-        when(userService.findAllRoles()).thenReturn(List.of(testRole));
-        when(userService.totalUsers()).thenReturn(5);
-        when(userService.totalUsers("ROLE_STUDENT")).thenReturn(2);
-        when(userService.totalUsers("ROLE_TEACHER")).thenReturn(2);
-        when(userService.totalUsers("ROLE_HOD")).thenReturn(1);
+        User inactiveUser = new User();
+        inactiveUser.setUserId("inactiveUser");
+        inactiveUser.setActive(false);
+
+        when(userService.findAllUsers()).thenReturn(List.of(testUser, inactiveUser));
+        when(userService.totalUsers()).thenReturn(2);
+        when(userService.totalUsers("ROLE_STUDENT")).thenReturn(1);
+        when(userService.totalUsers("ROLE_TEACHER")).thenReturn(1);
+        when(userService.totalUsers("ROLE_HOD")).thenReturn(0);
         when(userService.getAllDepartments()).thenReturn(List.of(testDept));
-        when(userService.getAllSemesters()).thenReturn(List.of(sem));
+        when(userService.getAllSemesters()).thenReturn(List.of(new Semester()));
+        when(userService.getAllCourses()).thenReturn(List.of());
+        when(storageService.findAll()).thenReturn(List.of());
 
         mockMvc.perform(get("/admin"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("adminViewPages/admin"))
-                .andExpect(model().attribute("totalUsers", 5))
-                .andExpect(model().attribute("totalStudents", 2))
-                .andExpect(model().attribute("totalTeachers", 2))
-                .andExpect(model().attribute("totalHods", 1))
+                .andExpect(model().attribute("totalUsers", 2))
+                .andExpect(model().attribute("totalStudents", 1))
+                .andExpect(model().attribute("totalTeachers", 1))
+                .andExpect(model().attribute("totalHods", 0))
                 .andExpect(model().attribute("totalDepartments", 1))
-                .andExpect(model().attribute("totalSemesters", 1));
+                .andExpect(model().attribute("totalSemesters", 1))
+                .andExpect(model().attribute("totalCourses", 0))
+                .andExpect(model().attribute("totalFiles", 0))
+                .andExpect(model().attribute("totalInactive", 1L))
+                .andExpect(model().attribute("storageUsed", "0 B"))
+                .andExpect(model().attributeExists("recentFiles"));
+    }
+
+    @Test
+    void dashboardComputesStorageUsedFromFileSizes() throws Exception {
+        com.bitsunisage.campusconnect.entities.FileData f1 = new com.bitsunisage.campusconnect.entities.FileData();
+        f1.setFileSize(512 * 1024);
+        com.bitsunisage.campusconnect.entities.FileData f2 = new com.bitsunisage.campusconnect.entities.FileData();
+        f2.setFileSize(512 * 1024);
+
+        when(userService.findAllUsers()).thenReturn(List.of());
+        when(userService.getAllDepartments()).thenReturn(List.of());
+        when(userService.getAllSemesters()).thenReturn(List.of());
+        when(userService.getAllCourses()).thenReturn(List.of());
+        when(storageService.findAll()).thenReturn(List.of(f1, f2));
+
+        mockMvc.perform(get("/admin"))
+                .andExpect(model().attribute("totalFiles", 2))
+                .andExpect(model().attribute("storageUsed", "1.0 MB"));
+    }
+
+    @Test
+    void dashboardRecentFilesAreOrderedByUploadDateDescending() throws Exception {
+        java.sql.Timestamp older = java.sql.Timestamp.valueOf("2025-01-01 00:00:00");
+        java.sql.Timestamp newer = java.sql.Timestamp.valueOf("2025-06-01 00:00:00");
+
+        com.bitsunisage.campusconnect.entities.FileData old = new com.bitsunisage.campusconnect.entities.FileData();
+        old.setUploadDate(older);
+        com.bitsunisage.campusconnect.entities.FileData recent = new com.bitsunisage.campusconnect.entities.FileData();
+        recent.setUploadDate(newer);
+
+        when(userService.findAllUsers()).thenReturn(List.of());
+        when(userService.getAllDepartments()).thenReturn(List.of());
+        when(userService.getAllSemesters()).thenReturn(List.of());
+        when(userService.getAllCourses()).thenReturn(List.of());
+        when(storageService.findAll()).thenReturn(List.of(old, recent));
+
+        mockMvc.perform(get("/admin"))
+                .andExpect(model().attribute("recentFiles",
+                        List.of(recent, old)));
     }
 
     // ---- User list pages (N+1 fix) ----

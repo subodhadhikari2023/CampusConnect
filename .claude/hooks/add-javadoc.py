@@ -113,8 +113,9 @@ def _process(lines):
         if not is_class and not is_method:
             continue
 
-        # Skip if Javadoc already present in the preceding 15 lines
-        window = lines[max(0, i - 15): i]
+        # Skip if Javadoc already present in the preceding 40 lines.
+        # 40 covers long Javadoc blocks (>5 @param lines) + multiple annotation lines.
+        window = lines[max(0, i - 40): i]
         if any('/**' in ln for ln in window):
             continue
 
