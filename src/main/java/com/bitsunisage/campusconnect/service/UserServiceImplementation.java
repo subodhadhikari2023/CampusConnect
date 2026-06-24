@@ -290,4 +290,14 @@ public class UserServiceImplementation implements UserService {
     public int countSubjectsBySemester(Long semesterId) {
         return subjectDetailsDAO.countBySemesterId(semesterId.intValue());
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<User> getMembersByDepartmentAndRole(Long deptId, String role) {
+        List<DepartmentDetails> records = departmentDetailsDAO.findByDepartmentIdAndRole(deptId.intValue(), role);
+        List<String> userIds = records.stream()
+                .map(DepartmentDetails::getUserName)
+                .toList();
+        return userDAO.findByUserIdIn(userIds);
+    }
 }

@@ -166,6 +166,10 @@ public class HodController {
     public String updateCourse(@RequestParam("courseId") Long courseId,
                                @RequestParam("courseName") String courseName,
                                RedirectAttributes redirectAttributes) {
+        if (courseName == null || courseName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Course name cannot be blank.");
+            return "redirect:/hod/manage-course";
+        }
         if (!ownsCourse(courseId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
@@ -354,6 +358,10 @@ public class HodController {
                               @RequestParam("courseId") int courseId,
                               @RequestParam("semesterId") int semesterId,
                               RedirectAttributes redirectAttributes) {
+        if (subjectName == null || subjectName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Subject name cannot be blank.");
+            return "redirect:/hod/curriculum?courseId=" + courseId;
+        }
         if (!ownsCourse((long) courseId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
@@ -406,6 +414,10 @@ public class HodController {
                                 @RequestParam("subjectName") String subjectName,
                                 @RequestParam("courseId") int courseId,
                                 RedirectAttributes redirectAttributes) {
+        if (subjectName == null || subjectName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Subject name cannot be blank.");
+            return "redirect:/hod/manage-subject?courseId=" + courseId;
+        }
         if (!ownsCourse((long) courseId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
@@ -423,15 +435,19 @@ public class HodController {
 
     /**
      * Deletes a subject after verifying it belongs to a course in the HOD's department.
+     * The {@code source} parameter controls where the user lands after deletion:
+     * {@code "manage"} returns to the manage-subjects page; anything else returns to curriculum.
      *
      * @param subjectId          primary key of the subject to delete
      * @param courseId           used for redirect and ownership check
+     * @param source             optional; {@code "manage"} to redirect to manage-subjects instead of curriculum
      * @param redirectAttributes used to pass success/error flash messages
-     * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
+     * @return redirect to manage-subject or curriculum, depending on {@code source}
      */
     @PostMapping("/hod/delete-subject")
     public String deleteSubject(@RequestParam("subjectId") Long subjectId,
                                 @RequestParam("courseId") int courseId,
+                                @RequestParam(value = "source", defaultValue = "curriculum") String source,
                                 RedirectAttributes redirectAttributes) {
         if (!ownsCourse((long) courseId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
@@ -439,7 +455,28 @@ public class HodController {
         }
         userService.deleteSubjectById(subjectId);
         redirectAttributes.addFlashAttribute("successMessage", "Subject removed successfully.");
+        if ("manage".equals(source)) {
+            return "redirect:/hod/manage-subject?courseId=" + courseId;
+        }
         return "redirect:/hod/curriculum?courseId=" + courseId;
+    }
+
+    // ── Department Members ───────────────────────────────────────────────────
+
+    /**
+     * Renders the department members view showing all teachers and students
+     * assigned to the HOD's department.
+     *
+     * @param model populated with {@code faculty} and {@code students} lists
+     * @return Thymeleaf template {@code hodViewPages/members}
+     */
+    @GetMapping("/hod/members")
+    public String showMembersPage(Model model) {
+        User hod = getLoggedInUser();
+        Long deptId = hod.getDeptID();
+        model.addAttribute("faculty",  userService.getMembersByDepartmentAndRole(deptId, "TEACHER"));
+        model.addAttribute("students", userService.getMembersByDepartmentAndRole(deptId, "STUDENT"));
+        return "hodViewPages/members";
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

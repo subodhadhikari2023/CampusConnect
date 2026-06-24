@@ -4,6 +4,8 @@ import com.bitsunisage.campusconnect.entities.DepartmentDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Repository for {@link DepartmentDetails} (the {@code department_details} table),
  * which maps each member to a department and records their role label (HOD, TEACHER, STUDENT, ADMIN).
@@ -43,4 +45,13 @@ public interface DepartmentDetailsDAO extends JpaRepository<DepartmentDetails, I
      * @return count of members in that department
      */
     int countByDepartmentId(int departmentId);
+
+    /**
+     * Returns all membership records in a department for the given role label.
+     *
+     * @param departmentId department primary key
+     * @param role         role label as stored in this table (e.g. {@code "TEACHER"}, {@code "STUDENT"})
+     * @return list of matching {@link DepartmentDetails}; empty if none
+     */
+    List<DepartmentDetails> findByDepartmentIdAndRole(Integer departmentId, String role);
 }

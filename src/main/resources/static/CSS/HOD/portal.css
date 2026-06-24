@@ -1,0 +1,351 @@
+/* ═══════════════════════════════════════════════════════════════
+   HOD Portal — top-navbar layout
+   Distinct from Admin's fixed left sidebar. The HOD works as an
+   academic authority: the UI is open and document-like, not a
+   management console.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Top navbar ──────────────────────────────────────────────── */
+
+.hod-navbar {
+    background: var(--clr-dark-nav);
+    padding: 0 1.5rem;
+    min-height: var(--topbar-h);
+    box-shadow: var(--shadow-md);
+}
+
+.hod-navbar .navbar-brand {
+    color: var(--clr-text-white);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.hod-navbar .navbar-brand img {
+    height: 28px;
+    filter: brightness(0) invert(1);
+}
+
+.hod-navbar .nav-link {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.875rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition-base), background var(--transition-base);
+}
+
+.hod-navbar .nav-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.hod-navbar .nav-link.active,
+.hod-navbar .nav-link.is-active {
+    color: #fff;
+    background: rgba(0, 122, 122, 0.45);
+}
+
+.hod-navbar .dropdown-toggle::after {
+    vertical-align: 0.15em;
+}
+
+.hod-navbar .dropdown-menu {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 180px;
+    padding: 0.35rem 0;
+}
+
+.hod-navbar .dropdown-item {
+    color: var(--clr-text);
+    font-size: 0.875rem;
+    padding: 0.45rem 1rem;
+    transition: background var(--transition-base);
+}
+
+.hod-navbar .dropdown-item:hover,
+.hod-navbar .dropdown-item:focus {
+    background: var(--clr-primary-light);
+    color: var(--clr-primary-dark);
+}
+
+.hod-navbar .dropdown-item.is-active {
+    background: var(--clr-primary-light);
+    color: var(--clr-primary-dark);
+    font-weight: 600;
+}
+
+.hod-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.hod-navbar .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+/* ── Role badge ──────────────────────────────────────────────── */
+
+.hod-role-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--clr-primary);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 0.1rem 0.55rem;
+    margin-left: 0.35rem;
+    line-height: 1.5;
+}
+
+/* ── Page content shell ──────────────────────────────────────── */
+
+.hod-page-content {
+    padding-top: calc(var(--topbar-h) + 2.5rem);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.hod-page-content main {
+    flex: 1;
+}
+
+.hod-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+}
+
+/* ── Section label (replicates admin-panel pattern) ─────────── */
+
+.hod-section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--clr-text-muted);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--clr-border);
+}
+
+/* ── Stat cards ──────────────────────────────────────────────── */
+
+.hod-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.hod-stat-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-top: 3px solid var(--clr-primary);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.hod-stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.hod-stat-card__num {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--clr-primary);
+}
+
+.hod-stat-card__label {
+    font-size: 0.8rem;
+    color: var(--clr-text-muted);
+    margin-top: 0.3rem;
+    font-weight: 500;
+}
+
+/* ── Action cards ────────────────────────────────────────────── */
+
+.hod-action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.hod-action-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    color: var(--clr-text);
+    text-decoration: none;
+    transition: box-shadow var(--transition-base), transform var(--transition-base),
+                border-color var(--transition-base);
+    display: block;
+}
+
+.hod-action-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--clr-primary);
+    color: var(--clr-text);
+    text-decoration: none;
+}
+
+.hod-action-card__icon {
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: var(--clr-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.hod-action-card__title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.hod-action-card__desc {
+    font-size: 0.78rem;
+    color: var(--clr-text-muted);
+    line-height: 1.4;
+}
+
+/* ── Form card (matches admin userAddForm.css pattern) ───────── */
+
+.hod-form-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.hod-form-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--clr-primary-light);
+}
+
+/* ── Password toggle (used in profile) ──────────────────────── */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .form-control {
+    padding-right: 2.75rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--clr-text-muted);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.password-toggle:hover {
+    color: var(--clr-primary);
+}
+
+/* ── Table card ──────────────────────────────────────────────── */
+
+.hod-table-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.hod-table-card thead {
+    background: var(--clr-primary-light);
+}
+
+/* ── Logout button (in top navbar) ───────────────────────────── */
+
+.hod-logout-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: var(--radius-md);
+    padding: 0.3rem 0.9rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background var(--transition-base), color var(--transition-base);
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+.hod-logout-btn:hover {
+    background: rgba(180, 30, 30, 0.65);
+    border-color: rgba(255, 100, 100, 0.5);
+    color: #fff;
+}
+
+/* ── Page header (title row on list/manage pages) ─────────────── */
+
+.hod-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.hod-page-header__title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    margin: 0;
+    line-height: 1.25;
+}
+
+.hod-page-header__sub {
+    font-size: 0.82rem;
+    color: var(--clr-text-muted);
+    margin-top: 0.15rem;
+}
+
+/* ── Course picker card (no-courseId landing state) ───────────── */
+
+.hod-picker-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    max-width: 500px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+
+.hod-footer {
+    background: var(--clr-dark-footer);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 0.78rem;
+    padding: 1rem 1.5rem;
+}

@@ -319,4 +319,14 @@ public interface UserService {
      * @return count of subjects in that semester
      */
     int countSubjectsBySemester(Long semesterId);
+
+    /**
+     * Returns all {@link User} records that belong to the given department with the given role label.
+     * Role labels are as stored in {@code department_details.role}, e.g. {@code "TEACHER"} or {@code "STUDENT"}.
+     *
+     * @param deptId department primary key
+     * @param role   role label in department_details
+     * @return list of matching users; empty if none
+     */
+    List<User> getMembersByDepartmentAndRole(Long deptId, String role);
 }

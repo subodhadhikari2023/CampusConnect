@@ -7,20 +7,20 @@
     <title th:text="${course != null} ? (${course.courseName} + ' — Curriculum') : 'Curriculum'">Curriculum</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
-    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
 </head>
 <body>
 <div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
 
-<div class="admin-page-content">
-<main class="admin-main">
-<div class="admin-container">
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div class="hod-page-header">
         <div>
-            <h2 class="fw-semibold mb-0" style="color: var(--clr-text);"
+            <h2 class="hod-page-header__title"
                 th:text="${course != null} ? ${course.courseName} : 'Curriculum'">Curriculum</h2>
-            <small class="text-muted" th:if="${course != null}">Curriculum &mdash; one section per semester</small>
+            <p class="hod-page-header__sub" th:if="${course != null}">Curriculum &mdash; one section per semester</p>
         </div>
         <a th:if="${course != null}" th:href="@{/hod/manage-course}" class="btn btn-outline-secondary btn-sm">Back to Courses</a>
     </div>
@@ -39,14 +39,16 @@
         <div th:if="${courses.empty}" class="alert alert-warning">
             No courses found. <a th:href="@{/hod/add-course}">Add a course first.</a>
         </div>
-        <form th:unless="${courses.empty}" th:action="@{/hod/curriculum}" method="get"
-              class="d-flex gap-2 align-items-center flex-wrap">
-            <select name="courseId" class="form-select" style="max-width:320px;" required>
-                <option value="" disabled selected>Select a course to view curriculum</option>
-                <option th:each="c : ${courses}" th:value="${c.courseId}" th:text="${c.courseName}"></option>
-            </select>
-            <button type="submit" class="btn btn-primary">View Curriculum</button>
-        </form>
+        <div th:unless="${courses.empty}" class="hod-picker-card">
+            <p class="hod-form-card__title">Select a Course</p>
+            <form th:action="@{/hod/curriculum}" method="get" class="d-flex gap-2 align-items-center flex-wrap">
+                <select name="courseId" class="form-select" required>
+                    <option value="" disabled selected>Select a course to view curriculum</option>
+                    <option th:each="c : ${courses}" th:value="${c.courseId}" th:text="${c.courseName}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">View</button>
+            </form>
+        </div>
     </div>
 
     <!-- Curriculum content shown when a course is selected -->
@@ -58,16 +60,14 @@
         </div>
 
         <div th:each="sem : ${semesters}" class="mb-4">
-            <p class="section-label" th:text="${sem.semesterName}">Semester I</p>
+            <p class="hod-section-label" th:text="${sem.semesterName}">Semester I</p>
 
             <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
 
-                <!-- Subjects table for this semester -->
-                <div th:unless="${semSubjects == null or semSubjects.empty}"
-                     class="card shadow-sm mb-2" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+                <div th:unless="${semSubjects == null or semSubjects.empty}" class="hod-table-card mb-2">
                     <div class="table-responsive">
                         <table class="table table-hover table-sm mb-0 align-middle">
-                            <thead style="background-color: var(--clr-primary-light);">
+                            <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Subject</th>
@@ -112,7 +112,7 @@
 
 </div>
 </main>
-<div th:replace="~{adminViewPages/footer :: footer}"></div>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
 </div>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
