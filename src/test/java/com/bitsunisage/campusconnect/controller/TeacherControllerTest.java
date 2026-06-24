@@ -1,5 +1,6 @@
 package com.bitsunisage.campusconnect.controller;
 
+import com.bitsunisage.campusconnect.config.TestWebConfig;
 import com.bitsunisage.campusconnect.entities.User;
 import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TeacherController.class)
+@Import(TestWebConfig.class)
 @WithMockUser(username = "teacher1", roles = "TEACHER")
 class TeacherControllerTest {
 
