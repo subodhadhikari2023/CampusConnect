@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * Global exception handler for the application.
@@ -47,6 +48,19 @@ public class CustomExceptionHandler {
     @ExceptionHandler(AccessDeniedCustomException.class)
     public ModelAndView handleAccessDeniedCustomException() {
         return errorView(HttpStatus.FORBIDDEN.value(), "You do not have permission to access this resource.");
+    }
+
+    /**
+     * Handles missing static resources (e.g. browser favicon.ico auto-requests).
+     * Returns HTTP 404 without logging a stack trace, since these are routine misses.
+     *
+     * @param e the {@link NoResourceFoundException} that was thrown
+     * @return {@link ModelAndView} with HTTP 404
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ModelAndView handleNoStaticResource(NoResourceFoundException e) {
+        log.debug("Static resource not found: {}", e.getResourcePath());
+        return errorView(HttpStatus.NOT_FOUND.value(), "Resource not found.");
     }
 
     /**

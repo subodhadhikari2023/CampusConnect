@@ -2,7 +2,10 @@ package com.bitsunisage.campusconnect.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
@@ -87,20 +90,41 @@ public class SecurityConfiguration {
     }
 
     /**
+     * Exposes the application-wide {@link AuthenticationManager} as a bean so it
+     * can be injected into {@link JdbcUserDetailsManager} for password re-authentication.
+     *
+     * @param config the {@link AuthenticationConfiguration} provided by Spring Boot
+     * @return the configured {@link AuthenticationManager}
+     * @throws Exception if the manager cannot be built
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    /**
      * Configures JDBC-backed authentication against the application's custom schema.
      * Custom queries map Spring Security's expected column names to the actual
      * {@code members} and {@code roles} table columns.
      *
-     * @param dataSource the application {@link DataSource} injected by Spring Boot
+     * <p>{@code @Lazy} on the {@link AuthenticationManager} parameter breaks the
+     * circular dependency: {@link JdbcUserDetailsManager} is a {@code UserDetailsService}
+     * used by the {@link AuthenticationManager}, while also needing it for
+     * password re-authentication.</p>
+     *
+     * @param dataSource            the application {@link DataSource} injected by Spring Boot
+     * @param authenticationManager the {@link AuthenticationManager} for re-auth on password change
      * @return a configured {@link UserDetailsManager}
      */
     @Bean
-    public UserDetailsManager userDetailsManager(DataSource dataSource) {
+    public UserDetailsManager userDetailsManager(DataSource dataSource,
+                                                 @Lazy AuthenticationManager authenticationManager) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
         jdbcUserDetailsManager.setUsersByUsernameQuery(
                 "SELECT user_id, pw, active FROM members WHERE user_id=?");
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
                 "SELECT user_id, role FROM roles WHERE user_id=?");
+        jdbcUserDetailsManager.setAuthenticationManager(authenticationManager);
         return jdbcUserDetailsManager;
     }
 }
