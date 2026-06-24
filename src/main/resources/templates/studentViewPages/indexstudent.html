@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
 </head>
 <style>
     .sidebar {
@@ -12,7 +13,7 @@
         top: 0;
         height: 100%;
         width: 200px;
-        background-color: #f8f9fa;
+        background-color: var(--clr-bg);
         padding-top: 60px;
         padding-left: 15px;
         padding-right: 15px;
@@ -51,22 +52,22 @@
             <h4 class="text-center">Available Resources</h4>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/PPTs}" class="btn btn-outline-success w-100">Access PPTs</a>
+            <a th:href="@{/student/PPTs}" class="btn btn-outline-primary w-100">Access PPTs</a>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/notes}" class="btn btn-outline-success w-100">Access Lecture Notes</a>
+            <a th:href="@{/student/notes}" class="btn btn-outline-primary w-100">Access Lecture Notes</a>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/programs}" class="btn btn-outline-success w-100">Access Sample Programs</a>
+            <a th:href="@{/student/programs}" class="btn btn-outline-primary w-100">Access Sample Programs</a>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/audiobooks}" class="btn btn-outline-success w-100">Access Audio Books</a>
+            <a th:href="@{/student/audiobooks}" class="btn btn-outline-primary w-100">Access Audio Books</a>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/referencebooks}" class="btn btn-outline-success w-100">Access Reference Books</a>
+            <a th:href="@{/student/referencebooks}" class="btn btn-outline-primary w-100">Access Reference Books</a>
         </div>
         <div class="col-md-4 mb-3">
-            <a th:href="@{/student/video}" class="btn btn-outline-success w-100">Access Video Tutorials</a>
+            <a th:href="@{/student/video}" class="btn btn-outline-primary w-100">Access Video Tutorials</a>
         </div>
     </div>
 </div>

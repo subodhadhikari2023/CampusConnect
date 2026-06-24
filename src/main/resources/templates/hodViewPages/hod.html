@@ -2,79 +2,74 @@
 <html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org/">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <title>HOD Admin Page</title>
+    <title>HOD Dashboard &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/CSS/HOD/main.css}">
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
 </head>
 <body>
-<div th:replace="hodViewPages/hodnavbar :: navbar"></div>
-<div class="main-content">
-    <div class="stats-container">
-        <table class="stats-box">
-            <thead>
-            <tr>
-                <td><h4><img th:src="@{SVGs/building-solid.svg}"> Department Name</h4></td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:text="${departmentName}"></td>
-            </tr>
-            </tbody>
-        </table>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
 
-        <table class="stats-box">
-            <thead>
-            <tr>
-                <td><h4><img th:src="@{SVGs/chalkboard-user-solid.svg}"> Total Faculty</h4></td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:text="${totalFaculty}"></td>
-            </tr>
-            </tbody>
-        </table>
+<div class="admin-page-content">
+<main class="admin-main">
+<div class="admin-container">
 
-        <table class="stats-box">
-            <thead>
-            <tr>
-                <td><h4><img th:src="@{SVGs/user-graduate-solid.svg}"> Total Students</h4></td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:text="${totalStudents}"></td>
-            </tr>
-            </tbody>
-        </table>
-
-        <table class="stats-box">
-            <thead>
-            <tr>
-                <td><h4><img th:src="@{SVGs/gears-solid.svg}"> Total Courses</h4></td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:text="${totalCourses}"></td>
-            </tr>
-            </tbody>
-        </table>
+    <!-- Welcome header -->
+    <div class="d-flex align-items-baseline justify-content-between flex-wrap gap-2 mb-3">
+        <h5 class="mb-0">Welcome, <strong sec:authentication="principal.username"></strong></h5>
+        <span class="text-muted" style="font-size:0.85rem;"
+              th:text="'Department: ' + ${departmentName}"></span>
     </div>
 
-    <div class="action-buttons">
-        <a class="text-white" th:href="@{/hod/add-course}">
-            <button class="action-button">Add Course</button>
+    <!-- Department overview -->
+    <p class="section-label">Department Overview</p>
+    <div class="stats-grid mb-4">
+        <div class="stat-card stat-card--primary">
+            <div class="stat-card__num" th:text="${totalFaculty}">0</div>
+            <div class="stat-card__label">Faculty</div>
+        </div>
+        <div class="stat-card stat-card--primary">
+            <div class="stat-card__num" th:text="${totalStudents}">0</div>
+            <div class="stat-card__label">Students</div>
+        </div>
+        <div class="stat-card stat-card--success">
+            <div class="stat-card__num" th:text="${totalCourses}">0</div>
+            <div class="stat-card__label">Courses</div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <p class="section-label">Quick Actions</p>
+    <div class="action-grid mb-4">
+        <a th:href="@{/hod/add-course}" class="action-card text-decoration-none">
+            <div class="action-card__icon">+</div>
+            <div class="action-card__title">Add Course</div>
+            <div class="action-card__desc">Register a new course for your department</div>
         </a>
-        <a class="text-white" th:href="@{/hod/manage-course}">
-            <button class="action-button">Manage Courses</button>
+        <a th:href="@{/hod/manage-course}" class="action-card text-decoration-none">
+            <div class="action-card__icon">&equiv;</div>
+            <div class="action-card__title">Manage Courses</div>
+            <div class="action-card__desc">Edit or remove existing department courses</div>
         </a>
-        <a class="text-white" th:href="@{/hod/manage-subject}">
-            <button class="action-button">Manage Subjects</button>
+        <a th:href="@{/hod/add-subject}" class="action-card text-decoration-none">
+            <div class="action-card__icon">+</div>
+            <div class="action-card__title">Add Subject</div>
+            <div class="action-card__desc">Add a subject to a course and semester</div>
+        </a>
+        <a th:href="@{/hod/manage-subject}" class="action-card action-card--files text-decoration-none">
+            <div class="action-card__icon">&equiv;</div>
+            <div class="action-card__title">Manage Subjects</div>
+            <div class="action-card__desc">Review and delete subject entries</div>
         </a>
     </div>
+
 </div>
+</main>
+<div th:replace="~{adminViewPages/footer :: footer}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
