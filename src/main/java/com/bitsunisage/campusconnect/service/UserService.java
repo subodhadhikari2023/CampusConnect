@@ -117,6 +117,14 @@ public interface UserService {
     List<Semester> getAllSemesters();
 
     /**
+     * Returns all semesters belonging to the given course, ordered by ID.
+     *
+     * @param courseId the course primary key
+     * @return list of semesters for that course; empty if none defined
+     */
+    List<Semester> getSemestersByCourseId(Long courseId);
+
+    /**
      * Returns all subjects across all courses and semesters.
      *
      * @return list of all {@link SubjectDetails} records; empty list if none

@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * Repository for {@link Semester} (the {@code semester} table).
- * Semesters are global — they are not scoped to a particular department or course.
+ * Semesters are course-scoped — each course has its own set of semesters
+ * defined by the HOD responsible for that course.
  */
 @Repository
 public interface SemesterDAO extends JpaRepository<Semester, Integer> {
@@ -20,4 +21,19 @@ public interface SemesterDAO extends JpaRepository<Semester, Integer> {
      * @return list of matching {@link Semester} entities; may be empty
      */
     List<Semester> findBySemesterIdIn(List<Long> semesterIds);
+
+    /**
+     * Returns all semesters belonging to the given course, ordered by ID.
+     *
+     * @param courseId the course primary key
+     * @return list of semesters for that course; empty if none defined
+     */
+    List<Semester> findByCourseIdOrderBySemesterIdAsc(Long courseId);
+
+    /**
+     * Deletes a semester by its primary key.
+     *
+     * @param semesterId the semester ID to delete
+     */
+    void deleteBySemesterId(Long semesterId);
 }

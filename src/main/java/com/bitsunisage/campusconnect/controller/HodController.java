@@ -1,6 +1,7 @@
 package com.bitsunisage.campusconnect.controller;
 
 import com.bitsunisage.campusconnect.entities.CourseDetails;
+import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.SubjectDetails;
 import com.bitsunisage.campusconnect.entities.User;
 import com.bitsunisage.campusconnect.service.UserService;
@@ -121,7 +122,7 @@ public class HodController {
      *
      * @param courseName         name of the new course
      * @param redirectAttributes used to pass error flash messages on failure
-     * @return redirect to {@code /hod/curriculum?courseId=<id>}
+     * @return redirect to {@code /hod/semesters?courseId=<id>} so the HOD can define semesters next
      */
     @PostMapping("/hod/save-course")
     public String saveCourse(@RequestParam("courseName") String courseName,
@@ -135,7 +136,9 @@ public class HodController {
         course.setCourseName(courseName);
         course.setDepartmentId(hod.getDeptID());
         CourseDetails saved = userService.saveCourse(course);
-        return "redirect:/hod/curriculum?courseId=" + saved.getCourseId();
+        redirectAttributes.addFlashAttribute("successMessage",
+                "Course created. Now define the semesters for it.");
+        return "redirect:/hod/semesters?courseId=" + saved.getCourseId();
     }
 
     /**
@@ -197,6 +200,88 @@ public class HodController {
         return "redirect:/hod/manage-course";
     }
 
+    // ── Semesters ────────────────────────────────────────────────────────────
+
+    /**
+     * Renders the semester management page for a single course.
+     * When {@code courseId} is absent a course picker is shown.
+     *
+     * @param courseId optional course to manage semesters for
+     * @param model    populated with {@code courses}, and optionally {@code course} and {@code semesters}
+     * @return Thymeleaf template {@code hodViewPages/manage-semester}
+     */
+    @GetMapping("/hod/semesters")
+    public String manageSemesters(@RequestParam(value = "courseId", required = false) Long courseId,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        if (courseId != null) {
+            if (!ownsCourse(courseId)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+                return "redirect:/hod/manage-course";
+            }
+            model.addAttribute("course", userService.getCourseById(courseId));
+            model.addAttribute("semesters", userService.getSemestersByCourseId(courseId));
+        }
+        return "hodViewPages/manage-semester";
+    }
+
+    /**
+     * Creates a new semester for the given course.
+     *
+     * @param courseId           the course this semester belongs to
+     * @param semesterName       display name (e.g. "Semester I")
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/semesters?courseId=<courseId>}
+     */
+    @PostMapping("/hod/save-semester")
+    public String saveSemester(@RequestParam("courseId") Long courseId,
+                               @RequestParam("semesterName") String semesterName,
+                               RedirectAttributes redirectAttributes) {
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied.");
+            return "redirect:/hod/manage-course";
+        }
+        if (semesterName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Semester name cannot be blank.");
+            return "redirect:/hod/semesters?courseId=" + courseId;
+        }
+        Semester semester = new Semester();
+        semester.setSemesterName(semesterName);
+        semester.setCourseId(courseId);
+        userService.saveSemester(semester);
+        redirectAttributes.addFlashAttribute("successMessage", "Semester '" + semesterName + "' added.");
+        return "redirect:/hod/semesters?courseId=" + courseId;
+    }
+
+    /**
+     * Deletes a semester after verifying it has no subjects assigned.
+     *
+     * @param semesterId         the semester to delete
+     * @param courseId           used for ownership check and redirect
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/semesters?courseId=<courseId>}
+     */
+    @PostMapping("/hod/delete-semester")
+    public String deleteSemester(@RequestParam("semesterId") Long semesterId,
+                                 @RequestParam("courseId") Long courseId,
+                                 RedirectAttributes redirectAttributes) {
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied.");
+            return "redirect:/hod/manage-course";
+        }
+        if (userService.countSubjectsBySemester(semesterId) > 0) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Cannot delete a semester that has subjects assigned. Remove all subjects first.");
+            return "redirect:/hod/semesters?courseId=" + courseId;
+        }
+        Semester semester = userService.getSemesterById(semesterId);
+        userService.deleteSemester(semester);
+        redirectAttributes.addFlashAttribute("successMessage", "Semester deleted.");
+        return "redirect:/hod/semesters?courseId=" + courseId;
+    }
+
     // ── Curriculum ───────────────────────────────────────────────────────────
 
     /**
@@ -227,7 +312,7 @@ public class HodController {
                 .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
                          LinkedHashMap::new, Collectors.toList()));
         model.addAttribute("course", userService.getCourseById(courseId));
-        model.addAttribute("semesters", userService.getAllSemesters());
+        model.addAttribute("semesters", userService.getSemestersByCourseId(courseId));
         model.addAttribute("subjectsBySemester", grouped);
         return "hodViewPages/curriculum";
     }
@@ -235,16 +320,22 @@ public class HodController {
     // ── Subjects ─────────────────────────────────────────────────────────────
 
     /**
-     * Renders the add-subject form with the HOD's courses and all available semesters.
+     * Renders the add-subject form. When {@code courseId} is provided the semesters for
+     * that course are loaded; otherwise only the course selector is shown.
      *
-     * @param model populated with the HOD's course list and all semesters
+     * @param courseId           optional course pre-selection; triggers semester load when present
+     * @param model              populated with courses, and optionally selectedCourse + semesters
      * @return Thymeleaf template {@code hodViewPages/add-subject}
      */
     @GetMapping("/hod/add-subject")
-    public String showAddSubjectPage(Model model) {
+    public String showAddSubjectPage(@RequestParam(value = "courseId", required = false) Long courseId,
+                                     Model model) {
         User hod = getLoggedInUser();
         model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
-        model.addAttribute("semesters", userService.getAllSemesters());
+        if (courseId != null) {
+            model.addAttribute("selectedCourse", userService.getCourseById(courseId));
+            model.addAttribute("semesters", userService.getSemestersByCourseId(courseId));
+        }
         return "hodViewPages/add-subject";
     }
 
@@ -288,7 +379,6 @@ public class HodController {
                                         Model model) {
         User hod = getLoggedInUser();
         model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
-        model.addAttribute("semesters", userService.getAllSemesters());
         if (courseId != null) {
             List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId);
             Map<Long, List<SubjectDetails>> grouped = subjects.stream()
@@ -297,6 +387,7 @@ public class HodController {
             model.addAttribute("subjects", subjects);
             model.addAttribute("subjectsBySemester", grouped);
             model.addAttribute("selectedCourseId", courseId);
+            model.addAttribute("semesters", userService.getSemestersByCourseId((long) courseId));
         }
         return "hodViewPages/manage-subject";
     }

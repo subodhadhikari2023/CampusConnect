@@ -4,7 +4,6 @@ import com.bitsunisage.campusconnect.entities.Department;
 import com.bitsunisage.campusconnect.entities.DepartmentDetails;
 import com.bitsunisage.campusconnect.entities.FileData;
 import com.bitsunisage.campusconnect.entities.Roles;
-import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.User;
 import com.bitsunisage.campusconnect.exceptions.DepartmentNotFoundException;
 import com.bitsunisage.campusconnect.exceptions.UserNotFoundException;
@@ -29,7 +28,8 @@ import java.util.stream.Collectors;
 /**
  * Handles HTTP requests for the Admin role.
  * Provides dashboard statistics, full user management (create, update, delete),
- * department and semester management, file moderation, and course/inactive-user views.
+ * department management, file moderation, and course/inactive-user views.
+ * Semester management has been delegated to HODs ({@code /hod/semesters}).
  * All routes under {@code /admin/**} require {@code ROLE_ADMIN} authority.
  */
 @Controller
@@ -53,7 +53,7 @@ public class AdminController {
     /**
      * Renders the admin dashboard with user, department, and semester counts.
      *
-     * @param model populated with per-role user counts, department count, and semester count
+     * @param model populated with per-role user counts, department count, and course count
      * @return Thymeleaf template {@code adminViewPages/admin}
      */
     @GetMapping("/admin")
@@ -66,7 +66,6 @@ public class AdminController {
         model.addAttribute("totalTeachers", userService.totalUsers("ROLE_TEACHER"));
         model.addAttribute("totalHods", userService.totalUsers("ROLE_HOD"));
         model.addAttribute("totalDepartments", userService.getAllDepartments().size());
-        model.addAttribute("totalSemesters", userService.getAllSemesters().size());
         model.addAttribute("totalCourses", userService.getAllCourses().size());
 
         long inactiveCount = allUsers.stream().filter(u -> !u.isActive()).count();
@@ -385,92 +384,6 @@ public class AdminController {
         userService.deleteDepartment(dept);
         redirectAttributes.addFlashAttribute("successMessage", "Department deleted successfully.");
         return "redirect:/admin/departments";
-    }
-
-    // ── Semesters ────────────────────────────────────────────────────────────
-
-    /**
-     * Lists all semesters.
-     *
-     * @param model populated with {@code semesters} — list of all {@link Semester} records
-     * @return Thymeleaf template {@code adminViewPages/semesters}
-     */
-    @GetMapping("/admin/semesters")
-    public String listSemesters(Model model) {
-        model.addAttribute("semesters", userService.getAllSemesters());
-        return "adminViewPages/semesters";
-    }
-
-    /**
-     * Renders the add-semester form with an empty {@link Semester}.
-     *
-     * @param model populated with an empty {@code semester} and the full {@code semesters} list
-     * @return Thymeleaf template {@code adminViewPages/add-semester}
-     */
-    @GetMapping("/admin/add-semester")
-    public String addSemesterForm(Model model) {
-        model.addAttribute("semester", new Semester());
-        model.addAttribute("semesters", userService.getAllSemesters());
-        return "adminViewPages/add-semester";
-    }
-
-    /**
-     * Loads an existing semester into the add-semester form for editing.
-     * Redirects with an error flash if the semester ID does not exist.
-     *
-     * @param semesterId         the semester primary key
-     * @param model              populated with the existing {@code semester}
-     * @param redirectAttributes used to pass an error flash if the semester is not found
-     * @return Thymeleaf template {@code adminViewPages/add-semester}, or redirect to {@code /admin/semesters}
-     */
-    @GetMapping("/admin/editSemester")
-    public String editSemesterForm(@RequestParam("semesterId") Long semesterId,
-                                   Model model,
-                                   RedirectAttributes redirectAttributes) {
-        Semester semester = userService.getSemesterById(semesterId);
-        if (semester == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Semester not found.");
-            return "redirect:/admin/semesters";
-        }
-        model.addAttribute("semester", semester);
-        return "adminViewPages/add-semester";
-    }
-
-    /**
-     * Creates or updates a semester and redirects back to the semester list.
-     *
-     * @param semester           the semester bound from the form
-     * @param redirectAttributes used to pass a success flash across the redirect
-     * @return redirect to {@code /admin/semesters}
-     */
-    @PostMapping("/admin/save-semester")
-    public String saveSemester(@ModelAttribute("semester") Semester semester,
-                               RedirectAttributes redirectAttributes) {
-        userService.saveSemester(semester);
-        redirectAttributes.addFlashAttribute("successMessage", "Semester saved successfully.");
-        return "redirect:/admin/semesters";
-    }
-
-    /**
-     * Deletes a semester after verifying it has no subjects assigned.
-     * Redirects with an error flash if subjects exist; otherwise deletes and flashes success.
-     *
-     * @param semesterId         the semester primary key
-     * @param redirectAttributes used to pass success/error flash messages across the redirect
-     * @return redirect to {@code /admin/semesters}
-     */
-    @PostMapping("/admin/delete-semester")
-    public String deleteSemester(@RequestParam("semesterId") Long semesterId,
-                                 RedirectAttributes redirectAttributes) {
-        if (userService.countSubjectsBySemester(semesterId) > 0) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Cannot delete a semester that has subjects assigned.");
-            return "redirect:/admin/semesters";
-        }
-        Semester semester = userService.getSemesterById(semesterId);
-        userService.deleteSemester(semester);
-        redirectAttributes.addFlashAttribute("successMessage", "Semester deleted successfully.");
-        return "redirect:/admin/semesters";
     }
 
     // ── Files (moderation) ───────────────────────────────────────────────────

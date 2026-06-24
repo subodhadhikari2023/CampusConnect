@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 /**
  * JPA entity for the {@code semester} table.
- * Semesters are global — they are shared across all departments and courses.
+ * Semesters are scoped to a single course — the HOD for that course defines them.
  */
 @Entity(name = "semester")
 public class Semester {
@@ -16,6 +16,9 @@ public class Semester {
 
     @Column(name = "semester_name")
     private String semesterName;
+
+    @Column(name = "course_id")
+    private Long courseId;
 
     /** @return numeric semester ID (primary key) */
     public Long getSemesterId() {
@@ -37,11 +40,22 @@ public class Semester {
         this.semesterName = semesterName;
     }
 
+    /** @return ID of the course this semester belongs to */
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    /** @param courseId course ID */
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
+
     @Override
     public String toString() {
         return "Semester{" +
                 "semesterId=" + semesterId +
                 ", semesterName='" + semesterName + '\'' +
+                ", courseId=" + courseId +
                 '}';
     }
 }

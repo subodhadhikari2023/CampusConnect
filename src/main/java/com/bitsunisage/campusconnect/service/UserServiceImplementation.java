@@ -137,6 +137,12 @@ public class UserServiceImplementation implements UserService {
 
     /** {@inheritDoc} */
     @Override
+    public List<Semester> getSemestersByCourseId(Long courseId) {
+        return semesterDAO.findByCourseIdOrderBySemesterIdAsc(courseId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<SubjectDetails> getAllSubjects() {
         return subjectDetailsDAO.findAll();
     }
