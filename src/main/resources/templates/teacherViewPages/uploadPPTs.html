@@ -1,143 +1,79 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
-
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Upload PowerPoint Presentations</title>
-
-    <!-- Bootstrap CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Upload Presentations &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--clr-bg);
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: var(--clr-surface);
-            border: 1px solid var(--clr-border);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .header {
-            text-align: center;
-            font-size: 24px;
-        }
-
-        .highlight {
-            color: orange;
-            font-weight: bold;
-        }
-
-        .divider {
-            margin: 10px 0;
-            border: 0;
-            border-top: 2px solid orange;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: var(--clr-text);
-        }
-
-        select, input[type="file"] {
-            height: 35px;
-            padding: 5px 10px;
-            border: 1px solid var(--clr-border);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            width: 100%;
-        }
-
-        .btn {
-            margin-top: 20px;
-            text-decoration: none;
-            padding: 10px 20px;
-            color: var(--clr-text-white);
-            background-color: var(--clr-primary);
-            border: none;
-            border-radius: var(--radius-sm);
-        }
-
-        .btn:hover {
-            background-color: var(--clr-primary-dark);
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/CSS/teacher/portal.css}">
 </head>
 <body>
-<h1 class="header">Campus<span class="highlight">Connect</span></h1>
-<hr class="divider">
+<div th:replace="~{teacherViewPages/teachersidebar :: teachersidebar}"></div>
 
-<div class="container">
-    <form action="#" enctype="multipart/form-data" th:action="@{/teacher/upload}" th:method="POST"
-          th:object="${fileUploadDTO}">
-        <input th:field="*{fileRole}" type="hidden"/>
-        <div class="form-group">
-            <label for="department">Department</label>
-            <select class="form-control" id="department" required th:field="*{departmentId}">
-                <option selected value="">Select</option>
-                <option th:each="dept: ${departments}" th:text="${dept.name}" th:value="${dept.id}">
-                </option>
-            </select>
-        </div>
+<div class="teacher-page-content">
+<main>
+<div class="teacher-container">
 
-        <div class="form-group">
-            <label for="course">Courses</label>
-            <select class="form-control" id="course" required th:field="*{courseId}">
-                <option selected value="">Select</option>
-                <option th:each="course : ${courses}" th:text="${course.courseName}"
-                        th:value="${course.courseId}"></option>
-            </select>
-        </div>
+    <div class="teacher-upload-card">
+        <div class="teacher-upload-card__title">&#128196; Upload Presentations</div>
 
-        <div class="form-group">
-            <label for="semester">Semester</label>
-            <select class="form-control" id="semester" required th:field="*{semesterId}">
-                <option selected value="">Select</option>
-                <option th:each="semester : ${semesterList}" th:text="${semester.semesterName}"
-                        th:value="${semester.semesterId}"></option>
-            </select>
-        </div>
+        <form th:action="@{/teacher/upload}" method="POST" enctype="multipart/form-data"
+              th:object="${fileUploadDTO}">
+            <input type="hidden" th:field="*{fileRole}"/>
 
-        <div class="form-group">
-            <label for="subject">Subject</label>
-            <select class="form-control" id="subject" required th:field="*{subjectId}">
-                <option selected value="">Select</option>
-                <option th:each="subject : ${subjectList}" th:text="${subject.subjectName}"
-                        th:value="${subject.subjectId}"></option>
-            </select>
-        </div>
-
-        <div class="container mt-5">
-            <h2>Select Presentations </h2>
-            <div class="form-group">
-                <label for="file">Files accepted (.pptx,.ppt)</label>
-                <input class="form-control-file" id="file" name="file" th:accept="'.pptx,.ppt'" type="file">
+            <div class="mb-3">
+                <label for="departmentId" class="form-label fw-semibold">Department</label>
+                <select id="departmentId" class="form-select" th:field="*{departmentId}" required>
+                    <option value="" disabled selected>Select department</option>
+                    <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
+                </select>
             </div>
-            <button class="btn btn-primary" type="submit">Upload</button>
-        </div>
 
+            <div class="mb-3">
+                <label for="courseId" class="form-label fw-semibold">Course</label>
+                <select id="courseId" class="form-select" th:field="*{courseId}" required>
+                    <option value="" disabled selected>Select course</option>
+                    <option th:each="course : ${courses}" th:value="${course.courseId}" th:text="${course.courseName}"></option>
+                </select>
+            </div>
 
-    </form>
+            <div class="mb-3">
+                <label for="semesterId" class="form-label fw-semibold">Semester</label>
+                <select id="semesterId" class="form-select" th:field="*{semesterId}" required>
+                    <option value="" disabled selected>Select semester</option>
+                    <option th:each="sem : ${semesterList}" th:value="${sem.semesterId}" th:text="${sem.semesterName}"></option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="subjectId" class="form-label fw-semibold">Subject</label>
+                <select id="subjectId" class="form-select" th:field="*{subjectId}" required>
+                    <option value="" disabled selected>Select subject</option>
+                    <option th:each="sub : ${subjectList}" th:value="${sub.subjectId}" th:text="${sub.subjectName}"></option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="file" class="form-label fw-semibold">File</label>
+                <small class="text-muted d-block mb-1">Accepted: .pptx, .ppt</small>
+                <input type="file" id="file" name="file" class="form-control"
+                       accept=".pptx,.ppt" required>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">Upload</button>
+                <a th:href="@{/teacher}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+</main>
+<footer class="teacher-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
 </div>
 
-<!-- Bootstrap JS -->
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
