@@ -82,34 +82,22 @@
 ## Screenshots
 
 <div align="center">
-
-<!-- Row 1: Landing page full-width -->
 <table>
   <tr>
-    <td align="center" colspan="2">
-      <img src="docs/screenshots/landing-page.png" alt="Landing Page" width="860"/>
-      <br/>
-      <sub><b>Landing Page</b> &mdash; Hero, role-based feature cards, How It Works, and Contact sections</sub>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/landing-page.png" alt="Landing Page" width="260"/>
+      <br/><sub><b>Landing Page</b><br/>Hero, feature cards, How It Works</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/login-page.png" alt="Login Page" width="260"/>
+      <br/><sub><b>Login Page</b><br/>Clean sign-in card with password toggle</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="260"/>
+      <br/><sub><b>Admin Dashboard</b><br/>Live stats, quick actions, recent uploads</sub>
     </td>
   </tr>
 </table>
-
-<!-- Row 2: Login + Admin side by side -->
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/login-page.png" alt="Login Page" width="400"/>
-      <br/>
-      <sub><b>Login Page</b> &mdash; Clean sign-in card with password toggle</sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="400"/>
-      <br/>
-      <sub><b>Admin Dashboard</b> &mdash; Live stats, quick actions, and recent uploads</sub>
-    </td>
-  </tr>
-</table>
-
 </div>
 
 ---
