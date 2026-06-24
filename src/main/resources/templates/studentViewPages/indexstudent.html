@@ -1,98 +1,79 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Student Dashboard &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/student/portal.css}">
 </head>
-<style>
-    .sidebar {
-        position: fixed;
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 200px;
-        background-color: var(--clr-bg);
-        padding-top: 60px;
-        padding-left: 15px;
-        padding-right: 15px;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    }
-    .content {
-        margin-right: 260px; /* Account for the sidebar width */
-        margin-top: 20px;
-    }
-    .logout-btn {
-        position: absolute;
-        bottom: 20px;
-        left: 15px;
-        right: 15px;
-    }
-    .header-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        margin-bottom: 20px;
-    }
-    .header-container img {
-        position: absolute;
-        left: 0;
-        margin-left: 10px; /* Adjust the margin if needed */
-    }
-</style>
 <body>
-<div class="container content">
-    <div class="header-container">
-        <h1>Welcome to the Student's Dashboard</h1>
-    </div>
-    <div class="row mt-5">
-        <div class="col-12">
-            <h4 class="text-center">Available Resources</h4>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/PPTs}" class="btn btn-outline-primary w-100">Access PPTs</a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/notes}" class="btn btn-outline-primary w-100">Access Lecture Notes</a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/programs}" class="btn btn-outline-primary w-100">Access Sample Programs</a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/audiobooks}" class="btn btn-outline-primary w-100">Access Audio Books</a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/referencebooks}" class="btn btn-outline-primary w-100">Access Reference Books</a>
-        </div>
-        <div class="col-md-4 mb-3">
-            <a th:href="@{/student/video}" class="btn btn-outline-primary w-100">Access Video Tutorials</a>
-        </div>
-    </div>
-</div>
+<div th:replace="~{studentViewPages/studentheader :: studentheader}"></div>
 
-<div class="sidebar">
-    <div>
-        <h5>Quick Links</h5>
-        <ul class="list-unstyled">
-            <li><a th:href="@{/dashboard}" class="btn btn-outline-primary w-100 mb-2">Go to Dashboard</a></li>
-            <li><a th:href="@{/profile}" class="btn btn-outline-primary w-100 mb-2">View Profile</a></li>
-        </ul>
-    </div>
-    <form action="#" th:action="@{/logout}" method="POST" class="logout-btn">
-        <button type="submit" class="btn btn-danger w-100">Logout</button>
-    </form>
-</div>
+<div class="student-page-content">
 
-<script>
-    function showLogoutMessage() {
-        alert('You have logged out successfully!');
-    }
-</script>
+    <!-- Hero banner -->
+    <div class="student-hero">
+        <div class="student-hero__title">
+            Welcome, <sec:authentication property="principal.username"/>
+        </div>
+        <div class="student-hero__sub">Browse and download study materials for your course</div>
+    </div>
+
+    <div class="student-container">
+
+        <h6 style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+                   color:var(--clr-text-muted); margin-bottom:1rem; padding-bottom:0.4rem;
+                   border-bottom:1px solid var(--clr-border);">Available Resources</h6>
+
+        <div class="student-resources-grid">
+
+            <a th:href="@{/student/PPTs}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#128196;</div>
+                <div class="student-resource-card__title">Presentations</div>
+                <div class="student-resource-card__desc">Lecture slide decks in PPT / PPTX format</div>
+            </a>
+
+            <a th:href="@{/student/notes}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#128221;</div>
+                <div class="student-resource-card__title">Lecture Notes</div>
+                <div class="student-resource-card__desc">PDF and Word documents from your teachers</div>
+            </a>
+
+            <a th:href="@{/student/programs}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#128187;</div>
+                <div class="student-resource-card__title">Sample Programs</div>
+                <div class="student-resource-card__desc">Code examples in Java, Python, C, and more</div>
+            </a>
+
+            <a th:href="@{/student/audiobooks}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#127911;</div>
+                <div class="student-resource-card__title">Audio Books</div>
+                <div class="student-resource-card__desc">Audio recordings and textbooks in MP3 format</div>
+            </a>
+
+            <a th:href="@{/student/referencebooks}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#128218;</div>
+                <div class="student-resource-card__title">Reference Books</div>
+                <div class="student-resource-card__desc">Textbooks and reference materials in PDF or Word</div>
+            </a>
+
+            <a th:href="@{/student/video}" class="student-resource-card">
+                <div class="student-resource-card__icon">&#127909;</div>
+                <div class="student-resource-card__title">Video Tutorials</div>
+                <div class="student-resource-card__desc">Recorded lectures and tutorial videos</div>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+<footer class="student-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
-
-
