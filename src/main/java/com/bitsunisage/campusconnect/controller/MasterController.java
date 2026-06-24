@@ -1,13 +1,16 @@
 package com.bitsunisage.campusconnect.controller;
 
 import com.bitsunisage.campusconnect.exceptions.AccessDeniedCustomException;
+import com.bitsunisage.campusconnect.exceptions.ErrorResponse;
 import com.bitsunisage.campusconnect.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Handles public and cross-cutting HTTP routes: the landing page, login, error pages,
@@ -63,12 +66,29 @@ public class MasterController implements ErrorController {
     }
 
     /**
-     * Triggers a 500 error view by throwing a {@link RuntimeException},
-     * which is handled by {@link com.bitsunisage.campusconnect.exceptions.CustomExceptionHandler}.
+     * Renders a generic 500 error page. Spring Boot routes unhandled servlet errors here
+     * because this controller implements {@link ErrorController}.
+     *
+     * @return {@link ModelAndView} with HTTP 500 and a generic error message
      */
     @GetMapping("/error")
-    public void error() {
-        throw new RuntimeException();
+    public ModelAndView error() {
+        ModelAndView mav = new ModelAndView("securityViewPages/errorStatus");
+        mav.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        mav.addObject("error", new ErrorResponse(500, "An unexpected error occurred. Please try again later."));
+        return mav;
+    }
+
+    /**
+     * Handles the redirect target for unauthenticated users who try to access a
+     * protected URL. Security is configured to send them here; this mapping
+     * forwards them to the login page.
+     *
+     * @return redirect to {@code /login}
+     */
+    @GetMapping("/NoUrlFound")
+    public String noUrlFound() {
+        return "redirect:/login";
     }
 
     /**
