@@ -60,10 +60,6 @@
             <div class="stat-card__num" th:text="${totalDepartments}">0</div>
             <div class="stat-card__label">Departments</div>
         </a>
-        <a th:href="@{/admin/semesters}" class="stat-card stat-card--secondary text-decoration-none">
-            <div class="stat-card__num" th:text="${totalSemesters}">0</div>
-            <div class="stat-card__label">Semesters</div>
-        </a>
         <a th:href="@{/admin/courses}" class="stat-card stat-card--secondary text-decoration-none">
             <div class="stat-card__num" th:text="${totalCourses}">0</div>
             <div class="stat-card__label">Courses</div>
@@ -87,11 +83,6 @@
             <div class="action-card__icon">+</div>
             <div class="action-card__title">Add Department</div>
             <div class="action-card__desc">Register a new academic department</div>
-        </a>
-        <a th:href="@{/admin/add-semester}" class="action-card text-decoration-none">
-            <div class="action-card__icon">+</div>
-            <div class="action-card__title">Add Semester</div>
-            <div class="action-card__desc">Create a new semester entry</div>
         </a>
         <a th:href="@{/admin/files}" class="action-card action-card--files text-decoration-none">
             <div class="action-card__icon">&equiv;</div>

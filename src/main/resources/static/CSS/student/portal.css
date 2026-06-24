@@ -1,0 +1,223 @@
+/* ═══════════════════════════════════════════════════════════════
+   Student Portal — top header + full-width card grid
+   Students are resource consumers. The UI is open and welcoming,
+   closer to a library portal than a management console.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Top header bar ───────────────────────────────────────────── */
+
+.student-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--clr-surface);
+    border-bottom: 3px solid var(--clr-primary);
+    box-shadow: var(--shadow-sm);
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 56px;
+}
+
+.student-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.student-header__brand img {
+    height: 28px;
+}
+
+.student-header__brand-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    letter-spacing: 0.01em;
+}
+
+.student-role-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--clr-primary-light);
+    color: var(--clr-primary-dark);
+    border-radius: var(--radius-pill);
+    padding: 0.1rem 0.55rem;
+    margin-left: 0.25rem;
+}
+
+.student-header__username {
+    font-size: 0.82rem;
+    color: var(--clr-text-muted);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.student-logout-btn {
+    background: none;
+    border: 1px solid var(--clr-border);
+    color: var(--clr-text);
+    border-radius: var(--radius-md);
+    padding: 0.3rem 0.85rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background var(--transition-base), color var(--transition-base);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.student-logout-btn:hover {
+    background: var(--clr-danger);
+    color: #fff;
+    border-color: var(--clr-danger);
+}
+
+/* ── Hero banner (dashboard only) ────────────────────────────── */
+
+.student-hero {
+    background: linear-gradient(135deg, var(--clr-primary) 0%, var(--clr-primary-dark) 100%);
+    color: #fff;
+    padding: 3rem 1.5rem 2.5rem;
+    text-align: center;
+}
+
+.student-hero__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.student-hero__sub {
+    font-size: 0.95rem;
+    opacity: 0.82;
+}
+
+/* ── Page content shell ───────────────────────────────────────── */
+
+.student-page-content {
+    min-height: 100vh;
+}
+
+.student-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+}
+
+.student-container--narrow {
+    max-width: 720px;
+}
+
+/* ── Resource category cards (dashboard grid) ─────────────────── */
+
+.student-resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.student-resource-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    text-decoration: none;
+    color: var(--clr-text);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-base), transform var(--transition-base),
+                border-color var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.student-resource-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    border-color: var(--clr-primary);
+    text-decoration: none;
+    color: var(--clr-text);
+}
+
+.student-resource-card__icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+}
+
+.student-resource-card__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.student-resource-card__desc {
+    font-size: 0.8rem;
+    color: var(--clr-text-muted);
+    line-height: 1.45;
+}
+
+/* ── Search / filter form card ────────────────────────────────── */
+
+.student-search-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.student-search-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--clr-primary-light);
+}
+
+/* ── Results table card ───────────────────────────────────────── */
+
+.student-results-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-top: 2rem;
+}
+
+.student-results-card thead {
+    background: var(--clr-primary);
+    color: #fff;
+}
+
+.student-results-card thead th {
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    padding: 0.75rem 1rem;
+    text-align: center;
+}
+
+.student-results-card tbody td {
+    font-size: 0.875rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+
+.student-footer {
+    background: var(--clr-dark-footer);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 0.78rem;
+    padding: 1rem 1.5rem;
+}

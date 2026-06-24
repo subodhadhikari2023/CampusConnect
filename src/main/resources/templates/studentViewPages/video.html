@@ -1,42 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Video Tutorials &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-    <title>Access PPTs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/student/portal.css}">
+    <meta http-equiv="refresh" content="0;url=/student/video">
 </head>
 <body>
-<div class ="container">
-    <h1>Video Resources</h1>
-    <p>Here are the available Videos:</p>
-    <ul>
-        <li>
-            <span>Video 1</span>
-            <!-- View button -->
-            <a href="/view/ppt1.pptx" target="_blank" class="btn">
-                <i class="fas fa-eye"></i> View
-            </a>
-            <!-- Download button -->
-            <a href="/files/ppt1.pptx" download class="btn">
-                <i class="fas fa-download"></i> Download
-            </a>
-        </li>
-        <li>
-            <span>Video 2</span>
-            <!-- View button -->
-            <a href="/view/ppt2.pptx" target="_blank" class="btn">
-                <i class="fas fa-eye"></i> View
-            </a>
-            <!-- Download button -->
-            <a href="/files/ppt2.pptx" download class="btn">
-                <i class="fas fa-download"></i> Download
-            </a>
-        </li>
-    </ul>
-    <a href="/indexstudent" class="btn">Back to Dashboard</a>
+<div th:replace="~{studentViewPages/studentheader :: studentheader}"></div>
+<div class="student-page-content">
+<div class="student-container student-container--narrow">
+    <p class="text-muted">Redirecting&hellip;</p>
 </div>
+</div>
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

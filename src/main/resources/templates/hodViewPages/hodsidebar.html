@@ -1,138 +1,126 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <div th:fragment="hodsidebar">
 
-    <!-- ── Mobile topbar (hidden on lg+) ──────────────────── -->
-    <nav class="admin-topbar d-flex d-lg-none align-items-center">
-        <button class="admin-topbar__toggle" type="button"
-                data-bs-toggle="offcanvas" data-bs-target="#hodSidebar"
-                aria-controls="hodSidebar" aria-label="Open navigation">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-            </svg>
-        </button>
-        <a class="admin-topbar__brand" th:href="@{/hod}">
-            <img th:src="@{/loginResources/images/main-logo-black-transparent.png}" alt="CampusConnect">
-            <span>HOD Panel</span>
-        </a>
+    <nav class="navbar navbar-expand-lg hod-navbar fixed-top">
+        <div class="container-fluid">
+
+            <!-- Brand -->
+            <a class="navbar-brand" th:href="@{/hod}">
+                <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect">
+                HOD Portal
+                <span class="hod-role-badge">HOD</span>
+            </a>
+
+            <!-- Mobile toggle -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#hodNavCollapse"
+                    aria-controls="hodNavCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="hodNavCollapse">
+
+                <!-- Primary nav links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri == '/hod'} ? ' is-active'"
+                           th:href="@{/hod}">Dashboard</a>
+                    </li>
+
+                    <!-- Courses dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           th:classappend="${currentUri.startsWith('/hod/add-course') or
+                                            currentUri.startsWith('/hod/manage-course') or
+                                            currentUri.startsWith('/hod/semesters') or
+                                            currentUri.startsWith('/hod/curriculum')} ? ' is-active'"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Courses
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/add-course')} ? ' is-active'"
+                                   th:href="@{/hod/add-course}">Add Course</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/manage-course')} ? ' is-active'"
+                                   th:href="@{/hod/manage-course}">Manage Courses</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/semesters')} ? ' is-active'"
+                                   th:href="@{/hod/semesters}">Semesters</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/curriculum')} ? ' is-active'"
+                                   th:href="@{/hod/curriculum}">Curriculum</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Subjects dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           th:classappend="${currentUri.startsWith('/hod/add-subject') or
+                                            currentUri.startsWith('/hod/manage-subject')} ? ' is-active'"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Subjects
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/add-subject')} ? ' is-active'"
+                                   th:href="@{/hod/add-subject}">Add Subject</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/manage-subject')} ? ' is-active'"
+                                   th:href="@{/hod/manage-subject}">Manage Subjects</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Members link -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/hod/members')} ? ' is-active'"
+                           th:href="@{/hod/members}">Members</a>
+                    </li>
+
+                </ul>
+
+                <!-- Right: username · profile · logout -->
+                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                    <li class="nav-item d-none d-lg-block">
+                        <span class="nav-link pe-1" style="color:rgba(255,255,255,0.45); font-size:0.78rem; cursor:default;">
+                            <sec:authentication property="principal.username"/>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/hod/profile')} ? ' is-active'"
+                           th:href="@{/hod/profile}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="POST">
+                            <button type="submit" class="hod-logout-btn">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
     </nav>
 
-    <!-- ── Sidebar (off-canvas on mobile, fixed on desktop) ── -->
-    <aside class="admin-sidebar offcanvas offcanvas-start"
-           tabindex="-1" id="hodSidebar" aria-labelledby="hodSidebarLabel">
-
-        <!-- Sidebar header -->
-        <div class="admin-sidebar__head">
-            <a class="admin-sidebar__brand" th:href="@{/hod}" id="hodSidebarLabel">
-                <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect">
-                <span>HOD Panel</span>
-            </a>
-            <button type="button" class="admin-sidebar__close d-lg-none"
-                    data-bs-dismiss="offcanvas" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854z"/>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="admin-sidebar__nav" aria-label="HOD navigation">
-
-            <!-- Dashboard -->
-            <a th:href="@{/hod}"
-               th:classappend="${currentUri == '/hod'} ? ' is-active'"
-               class="admin-sidebar__link admin-sidebar__link--dashboard">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4zM3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"/>
-                    <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A7.988 7.988 0 0 1 0 10zm8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3z"/>
-                </svg>
-                Dashboard
-            </a>
-
-            <!-- Academic group -->
-            <div class="admin-sidebar__group-label">Courses</div>
-
-            <a th:href="@{/hod/add-course}"
-               th:classappend="${currentUri.startsWith('/hod/add-course') or currentUri.startsWith('/hod/save-course')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
-                </svg>
-                Add Course
-            </a>
-
-            <a th:href="@{/hod/manage-course}"
-               th:classappend="${currentUri.startsWith('/hod/manage-course') or currentUri.startsWith('/hod/update-course') or currentUri.startsWith('/hod/delete-course')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
-                    <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
-                </svg>
-                Manage Courses
-            </a>
-
-            <!-- Subjects group -->
-            <div class="admin-sidebar__group-label">Subjects</div>
-
-            <a th:href="@{/hod/add-subject}"
-               th:classappend="${currentUri.startsWith('/hod/add-subject') or currentUri.startsWith('/hod/save-subject')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2z"/>
-                </svg>
-                Add Subject
-            </a>
-
-            <a th:href="@{/hod/manage-subject}"
-               th:classappend="${currentUri.startsWith('/hod/manage-subject') or currentUri.startsWith('/hod/delete-subject')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v2.764c0 .408-.21.807-.523 1.029L9 9.05v6.95a.5.5 0 0 1-.724.447l-3-1.5A.5.5 0 0 1 5 14.5V9.05L1.523 6.293A1.25 1.25 0 0 1 1 5.264V2.5zM2.5 2a.5.5 0 0 0-.5.5v2.764a.25.25 0 0 0 .104.206l4.896 3.264V14l2 1V8.734l4.896-3.264A.25.25 0 0 0 14 5.264V2.5a.5.5 0 0 0-.5-.5h-11z"/>
-                </svg>
-                Manage Subjects
-            </a>
-
-            <!-- Divider -->
-            <div class="admin-sidebar__divider"></div>
-
-            <a th:href="@{/hod/curriculum}"
-               th:classappend="${currentUri.startsWith('/hod/curriculum')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
-                </svg>
-                Curriculum
-            </a>
-
-            <!-- Account -->
-            <div class="admin-sidebar__divider"></div>
-
-            <a th:href="@{/hod/profile}"
-               th:classappend="${currentUri.startsWith('/hod/profile')} ? ' is-active'"
-               class="admin-sidebar__link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.029 10 8 10c-2.029 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                </svg>
-                My Profile
-            </a>
-
-        </nav>
-
-        <!-- Logout -->
-        <div class="admin-sidebar__foot">
-            <form th:action="@{/logout}" method="POST">
-                <button type="submit" class="admin-sidebar__logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
-                        <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                    </svg>
-                    Logout
-                </button>
-            </form>
-        </div>
-
-    </aside>
 </div>
 </body>
 </html>

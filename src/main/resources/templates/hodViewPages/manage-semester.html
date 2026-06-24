@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Manage Semesters &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
+
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
+
+    <div class="hod-page-header">
+        <div>
+            <h2 class="hod-page-header__title">Manage Semesters</h2>
+            <p class="hod-page-header__sub" th:if="${course != null}" th:text="${course.courseName}"></p>
+        </div>
+        <a th:if="${course != null}"
+           th:href="@{/hod/curriculum(courseId=${course.courseId})}"
+           class="btn btn-outline-primary btn-sm">View Curriculum</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Course picker when arriving with no courseId -->
+    <div th:if="${course == null}">
+        <div th:if="${courses.empty}" class="alert alert-warning">
+            No courses found. <a th:href="@{/hod/add-course}">Add a course first.</a>
+        </div>
+        <div th:unless="${courses.empty}" class="hod-picker-card">
+            <p class="hod-form-card__title">Select a Course</p>
+            <form th:action="@{/hod/semesters}" method="get" class="d-flex gap-2 align-items-center flex-wrap">
+                <select name="courseId" class="form-select" required>
+                    <option value="" disabled selected>Select a course to manage semesters</option>
+                    <option th:each="c : ${courses}" th:value="${c.courseId}" th:text="${c.courseName}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">Manage</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Semester management when a course is selected -->
+    <div th:if="${course != null}">
+
+        <div th:if="${not semesters.empty}" class="hod-table-card mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Semester Name</th>
+                        <th style="width:90px;">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="sem, stat : ${semesters}">
+                        <td th:text="${stat.count}" class="text-muted"></td>
+                        <td th:text="${sem.semesterName}"></td>
+                        <td>
+                            <form th:action="@{/hod/delete-semester}" method="post"
+                                  th:data-name="${sem.semesterName}"
+                                  onsubmit="return confirm('Delete ' + this.dataset.name + '? This cannot be undone.')">
+                                <input type="hidden" name="semesterId" th:value="${sem.semesterId}">
+                                <input type="hidden" name="courseId"   th:value="${course.courseId}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p th:if="${semesters.empty}" class="text-muted small mb-3">
+            No semesters defined yet for this course.
+        </p>
+
+        <!-- Add semester -->
+        <div class="hod-form-card" style="max-width:480px;">
+            <p class="hod-form-card__title">Add Semester</p>
+            <form th:action="@{/hod/save-semester}" method="post"
+                  class="d-flex gap-2 align-items-center flex-wrap">
+                <input type="hidden" name="courseId" th:value="${course.courseId}">
+                <input type="text" name="semesterName" class="form-control"
+                       style="max-width:260px;" placeholder="e.g. Semester I" required>
+                <button type="submit" class="btn btn-primary">+ Add</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+</main>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

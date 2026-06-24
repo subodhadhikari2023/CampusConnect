@@ -4,85 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <title th:text="${course.courseName} + ' — Curriculum'">Curriculum</title>
+    <title th:text="${course != null} ? (${course.courseName} + ' — Curriculum') : 'Curriculum'">Curriculum</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
-    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
 </head>
 <body>
 <div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
 
-<div class="admin-page-content">
-<main class="admin-main">
-<div class="admin-container">
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div class="hod-page-header">
         <div>
-            <h2 class="fw-semibold mb-0" style="color: var(--clr-text);" th:text="${course.courseName}">Course Name</h2>
-            <small class="text-muted">Curriculum &mdash; one section per semester</small>
+            <h2 class="hod-page-header__title"
+                th:text="${course != null} ? ${course.courseName} : 'Curriculum'">Curriculum</h2>
+            <p class="hod-page-header__sub" th:if="${course != null}">Curriculum &mdash; one section per semester</p>
         </div>
-        <a th:href="@{/hod/manage-course}" class="btn btn-outline-secondary btn-sm">Back to Courses</a>
+        <a th:if="${course != null}" th:href="@{/hod/manage-course}" class="btn btn-outline-secondary btn-sm">Back to Courses</a>
     </div>
 
-    <div th:if="${semesters.empty}" class="alert alert-warning">
-        No semesters have been defined yet.
-        Contact the Admin to add semesters before setting up the curriculum.
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div th:each="sem : ${semesters}" class="mb-4">
-        <p class="section-label" th:text="${sem.semesterName}">Semester I</p>
+    <!-- Course picker when arriving with no courseId -->
+    <div th:if="${course == null}">
+        <div th:if="${courses.empty}" class="alert alert-warning">
+            No courses found. <a th:href="@{/hod/add-course}">Add a course first.</a>
+        </div>
+        <div th:unless="${courses.empty}" class="hod-picker-card">
+            <p class="hod-form-card__title">Select a Course</p>
+            <form th:action="@{/hod/curriculum}" method="get" class="d-flex gap-2 align-items-center flex-wrap">
+                <select name="courseId" class="form-select" required>
+                    <option value="" disabled selected>Select a course to view curriculum</option>
+                    <option th:each="c : ${courses}" th:value="${c.courseId}" th:text="${c.courseName}"></option>
+                </select>
+                <button type="submit" class="btn btn-primary">View</button>
+            </form>
+        </div>
+    </div>
 
-        <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
+    <!-- Curriculum content shown when a course is selected -->
+    <div th:if="${course != null}">
 
-            <!-- Subjects table for this semester -->
-            <div th:unless="${semSubjects == null or semSubjects.empty}"
-                 class="card shadow-sm mb-2" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm mb-0 align-middle">
-                        <thead style="background-color: var(--clr-primary-light);">
-                        <tr>
-                            <th>#</th>
-                            <th>Subject</th>
-                            <th style="width:90px;"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="sub, stat : ${semSubjects}">
-                            <td th:text="${stat.count}" class="text-muted"></td>
-                            <td th:text="${sub.subjectName}"></td>
-                            <td>
-                                <form th:action="@{/hod/delete-subject}" method="post"
-                                      th:data-name="${sub.subjectName}"
-                                      onsubmit="return confirm('Remove ' + this.dataset.name + ' from this semester?')">
-                                    <input type="hidden" name="subjectId" th:value="${sub.subjectId}">
-                                    <input type="hidden" name="courseId" th:value="${course.courseId}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+        <div th:if="${semesters.empty}" class="alert alert-warning">
+            No semesters defined for this course yet.
+            <a th:href="@{/hod/semesters(courseId=${course.courseId})}">Add semesters first.</a>
+        </div>
+
+        <div th:each="sem : ${semesters}" class="mb-4">
+            <p class="hod-section-label" th:text="${sem.semesterName}">Semester I</p>
+
+            <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
+
+                <div th:unless="${semSubjects == null or semSubjects.empty}" class="hod-table-card mb-2">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0 align-middle">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Subject</th>
+                                <th style="width:90px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="sub, stat : ${semSubjects}">
+                                <td th:text="${stat.count}" class="text-muted"></td>
+                                <td th:text="${sub.subjectName}"></td>
+                                <td>
+                                    <form th:action="@{/hod/delete-subject}" method="post"
+                                          th:data-name="${sub.subjectName}"
+                                          onsubmit="return confirm('Remove ' + this.dataset.name + ' from this semester?')">
+                                        <input type="hidden" name="subjectId" th:value="${sub.subjectId}">
+                                        <input type="hidden" name="courseId" th:value="${course.courseId}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <p th:if="${semSubjects == null or semSubjects.empty}"
-               class="text-muted small ms-1 mb-2">No subjects assigned yet.</p>
+                <p th:if="${semSubjects == null or semSubjects.empty}"
+                   class="text-muted small ms-1 mb-2">No subjects assigned yet.</p>
 
-        </th:block>
+            </th:block>
 
-        <!-- Inline add-subject form -->
-        <form th:action="@{/hod/save-subject}" method="post" class="d-flex gap-2 align-items-center flex-wrap">
-            <input type="hidden" name="courseId" th:value="${course.courseId}">
-            <input type="hidden" name="semesterId" th:value="${sem.semesterId}">
-            <input type="text" name="subjectName" class="form-control form-control-sm"
-                   placeholder="Add a subject…" required style="max-width:320px;">
-            <button type="submit" class="btn btn-sm btn-primary">+ Add</button>
-        </form>
+            <!-- Inline add-subject form -->
+            <form th:action="@{/hod/save-subject}" method="post" class="d-flex gap-2 align-items-center flex-wrap">
+                <input type="hidden" name="courseId" th:value="${course.courseId}">
+                <input type="hidden" name="semesterId" th:value="${sem.semesterId}">
+                <input type="text" name="subjectName" class="form-control form-control-sm"
+                       placeholder="Add a subject…" required style="max-width:320px;">
+                <button type="submit" class="btn btn-sm btn-primary">+ Add</button>
+            </form>
+        </div>
+
     </div>
 
 </div>
 </main>
-<div th:replace="~{adminViewPages/footer :: footer}"></div>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
 </div>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>

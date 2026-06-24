@@ -1,159 +1,106 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher's Dashboard - Upload Resources</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Teacher Dashboard &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
-
-    <style>
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 250px;
-            background-color: var(--clr-bg);
-            padding-top: 60px;
-            padding-left: 15px;
-            padding-right: 15px;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .content {
-            margin-right: 260px; /* Account for the sidebar width */
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .header-container img {
-            position: absolute;
-            left: 0;
-            margin-left: 10px; /* Adjust the margin if needed */
-        }
-
-        .alert {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20%;
-            z-index: 1050; 
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/CSS/teacher/portal.css}">
 </head>
 <body>
-<div class="container content mt-5">
-    <div class="header-container">
-        <img th:src="@{/images/main-logo-black-transparent.png}" alt="Main Logo">
-        <h1>Welcome to the Teacher's Dashboard</h1>
+<div th:replace="~{teacherViewPages/teachersidebar :: teachersidebar}"></div>
+
+<div class="teacher-page-content">
+<main>
+<div class="teacher-container">
+
+    <div class="d-flex align-items-baseline justify-content-between flex-wrap gap-2 mb-4">
+        <h5 class="mb-0">Welcome, <strong><sec:authentication property="principal.username"/></strong></h5>
     </div>
 
-    <div class="alert alert-success" th:if="${message}">
-        <i class="bi bi-check-circle"></i>
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${message}"></span>
-        <button type="button" class="btn-close" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
+    <!-- Upload Resources -->
+    <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+              color:var(--clr-text-muted); margin-bottom:0.75rem; padding-bottom:0.4rem;
+              border-bottom:1px solid var(--clr-border);">Upload Resources</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem;">
 
-    <div class="row mt-5">
-        <div class="col-md-6">
-            <h5>Size Before Compression</h5>
-            <canvas id="sizeBeforeChart"></canvas>
-        </div>
-        <div class="col-md-6">
-            <h5>Size After Compression</h5>
-            <canvas id="sizeAfterChart"></canvas>
-        </div>
+        <a th:href="@{/teacher/uploadPPTs}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128196;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Presentations</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">Upload PPT / PPTX slide decks</div>
+        </a>
+
+        <a th:href="@{/teacher/uploadNotes}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128221;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Lecture Notes</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">PDF, Word, Markdown, plain text</div>
+        </a>
+
+        <a th:href="@{/teacher/uploadsampleprograms}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128187;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Sample Programs</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">Java, C, Python, and more</div>
+        </a>
+
+        <a th:href="@{/teacher/uploadaudiobooks}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#127911;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Audio Books</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">MP3 audio recordings</div>
+        </a>
+
+        <a th:href="@{/teacher/uploadReferenceBooks}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128218;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Reference Books</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">PDF or Word reference materials</div>
+        </a>
+
+        <a th:href="@{/teacher/uploadVideos}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#127909;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Videos</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">MP4, WebM, MKV tutorials</div>
+        </a>
+
     </div>
+
+    <!-- Manage -->
+    <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+              color:var(--clr-text-muted); margin-bottom:0.75rem; padding-bottom:0.4rem;
+              border-bottom:1px solid var(--clr-border);">Manage</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem;">
+
+        <a th:href="@{/teacher/viewUploadedResources}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128449;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Uploaded Resources</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">View and delete your uploads</div>
+        </a>
+
+    </div>
+
 </div>
-
-<!-- Add Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Example data
-    const labels = ['PPTs', 'Videos', 'Audios', 'Reference Books']; // Types of resources
-    const sizeBeforeData = [50, 300, 120, 80]; // Example sizes before compression (in MB)
-    const sizeAfterData = [30, 200, 80, 50]; // Example sizes after compression (in MB)
-
-    // Chart for Size Before Compression
-    const ctxBefore = document.getElementById('sizeBeforeChart').getContext('2d');
-    new Chart(ctxBefore, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Size (MB)',
-                data: sizeBeforeData,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)', // Light red
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {display: false},
-                tooltip: {callbacks: {label: ctx => `${ctx.raw} MB`}}
-            },
-            scales: {
-                y: {beginAtZero: true, title: {display: true, text: 'Size (MB)'}},
-                x: {title: {display: true, text: 'Resource Types'}}
-            }
-        }
-    });
-
-    // Chart for Size After Compression
-    const ctxAfter = document.getElementById('sizeAfterChart').getContext('2d');
-    new Chart(ctxAfter, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Size (MB)',
-                data: sizeAfterData,
-                backgroundColor: 'rgba(54, 162, 235, 0.5)', // Light blue
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {display: false},
-                tooltip: {callbacks: {label: ctx => `${ctx.raw} MB`}}
-            },
-            scales: {
-                y: {beginAtZero: true, title: {display: true, text: 'Size (MB)'}},
-                x: {title: {display: true, text: 'Resource Types'}}
-            }
-        }
-    });
-</script>
-
-<div class="sidebar">
-    <div>
-        <h5>Upload Resources</h5>
-        <div class="mb-3">
-            <a href="#" th:href="@{/teacher/uploadPPTs}" class="btn btn-outline-primary w-100 mb-2">Upload PPTs</a>
-            <a href="#" th:href="@{/teacher/uploadNotes}" class="btn btn-outline-primary w-100 mb-2">Upload Lecture Notes</a>
-            <a href="#" th:href="@{/teacher/uploadsampleprograms}" class="btn btn-outline-primary w-100 mb-2">Upload Sample Programs</a>
-            <a href="#" th:href="@{/teacher/uploadaudiobooks}" class="btn btn-outline-primary w-100 mb-2">Upload Audio Books</a>
-            <a href="#" th:href="@{/teacher/uploadReferenceBooks}" class="btn btn-outline-primary w-100 mb-2">Upload Reference Books</a>
-            <a href="#" th:href="@{/teacher/uploadVideos}" class="btn btn-outline-primary w-100 mb-2">Upload Videos</a>
-            <a href="#" th:href="@{/teacher/viewUploadedResources}" class="btn btn-outline-primary w-100 mb-2">View Uploaded Resources</a>
-        </div>
-    </div>
-    <form action="#" th:action="@{/logout}" method="POST" class="logout-btn">
-        <button type="submit" class="btn btn-danger w-100">Logout</button>
-    </form>
+</main>
+<footer class="teacher-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
 </div>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="teachersidebar">
+
+    <!-- ── Desktop: fixed left sidebar ───────────────────────── -->
+    <aside class="teacher-sidebar d-none d-lg-flex">
+
+        <a class="teacher-sidebar__brand" th:href="@{/teacher}">
+            <img th:src="@{/loginResources/images/main-logo-white-transparent.png}" alt="CampusConnect">
+            <div>
+                <div class="teacher-sidebar__brand-text">Teacher Portal</div>
+                <span class="teacher-role-badge">Teacher</span>
+            </div>
+        </a>
+
+        <nav class="teacher-sidebar__nav">
+
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri == '/teacher'} ? ' is-active'"
+               th:href="@{/teacher}">
+                <span class="link-icon">&#9632;</span> Dashboard
+            </a>
+
+            <div class="teacher-sidebar__group-label">Upload Resources</div>
+
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadPPTs')} ? ' is-active'"
+               th:href="@{/teacher/uploadPPTs}">
+                <span class="link-icon">&#128196;</span> Presentations
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadNotes')} ? ' is-active'"
+               th:href="@{/teacher/uploadNotes}">
+                <span class="link-icon">&#128221;</span> Lecture Notes
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadsampleprograms')} ? ' is-active'"
+               th:href="@{/teacher/uploadsampleprograms}">
+                <span class="link-icon">&#128187;</span> Sample Programs
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadaudiobooks')} ? ' is-active'"
+               th:href="@{/teacher/uploadaudiobooks}">
+                <span class="link-icon">&#127911;</span> Audio Books
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadReferenceBooks')} ? ' is-active'"
+               th:href="@{/teacher/uploadReferenceBooks}">
+                <span class="link-icon">&#128218;</span> Reference Books
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/uploadVideos')} ? ' is-active'"
+               th:href="@{/teacher/uploadVideos}">
+                <span class="link-icon">&#127909;</span> Videos
+            </a>
+
+            <div class="teacher-sidebar__group-label">Manage</div>
+
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/viewUploadedResources')} ? ' is-active'"
+               th:href="@{/teacher/viewUploadedResources}">
+                <span class="link-icon">&#128449;</span> Uploaded Resources
+            </a>
+
+        </nav>
+
+        <div class="teacher-sidebar__footer">
+            <div style="font-size:0.78rem; color:rgba(255,255,255,0.55); margin-bottom:0.6rem; text-align:center;">
+                <sec:authentication property="principal.username"/>
+            </div>
+            <form th:action="@{/logout}" method="POST">
+                <button type="submit" class="teacher-logout-btn">Logout</button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ── Mobile: top bar + offcanvas ───────────────────────── -->
+    <div class="teacher-topbar d-lg-none">
+        <button class="teacher-topbar__toggle"
+                data-bs-toggle="offcanvas" data-bs-target="#teacherOffcanvas"
+                aria-controls="teacherOffcanvas" aria-label="Open menu">&#9776;</button>
+        <a class="teacher-topbar__brand" th:href="@{/teacher}">Teacher Portal</a>
+        <form th:action="@{/logout}" method="POST" class="ms-auto">
+            <button type="submit" style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.3);
+                    color:#fff; border-radius:var(--radius-md); padding:0.3rem 0.8rem; font-size:0.8rem;">Logout</button>
+        </form>
+    </div>
+
+    <div class="offcanvas offcanvas-start teacher-offcanvas" tabindex="-1" id="teacherOffcanvas"
+         aria-labelledby="teacherOffcanvasLabel">
+        <div class="offcanvas-header">
+            <span class="offcanvas-title" id="teacherOffcanvasLabel">Teacher Portal</span>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri == '/teacher'} ? ' is-active'"
+                   th:href="@{/teacher}">
+                    <span class="link-icon">&#9632;</span> Dashboard
+                </a>
+                <div class="teacher-sidebar__group-label">Upload Resources</div>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadPPTs')} ? ' is-active'"
+                   th:href="@{/teacher/uploadPPTs}">
+                    <span class="link-icon">&#128196;</span> Presentations
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadNotes')} ? ' is-active'"
+                   th:href="@{/teacher/uploadNotes}">
+                    <span class="link-icon">&#128221;</span> Lecture Notes
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadsampleprograms')} ? ' is-active'"
+                   th:href="@{/teacher/uploadsampleprograms}">
+                    <span class="link-icon">&#128187;</span> Sample Programs
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadaudiobooks')} ? ' is-active'"
+                   th:href="@{/teacher/uploadaudiobooks}">
+                    <span class="link-icon">&#127911;</span> Audio Books
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadReferenceBooks')} ? ' is-active'"
+                   th:href="@{/teacher/uploadReferenceBooks}">
+                    <span class="link-icon">&#128218;</span> Reference Books
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/uploadVideos')} ? ' is-active'"
+                   th:href="@{/teacher/uploadVideos}">
+                    <span class="link-icon">&#127909;</span> Videos
+                </a>
+                <div class="teacher-sidebar__group-label">Manage</div>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/viewUploadedResources')} ? ' is-active'"
+                   th:href="@{/teacher/viewUploadedResources}">
+                    <span class="link-icon">&#128449;</span> Uploaded Resources
+                </a>
+            </nav>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

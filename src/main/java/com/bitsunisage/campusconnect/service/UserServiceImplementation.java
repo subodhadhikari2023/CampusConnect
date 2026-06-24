@@ -137,6 +137,12 @@ public class UserServiceImplementation implements UserService {
 
     /** {@inheritDoc} */
     @Override
+    public List<Semester> getSemestersByCourseId(Long courseId) {
+        return semesterDAO.findByCourseIdOrderBySemesterIdAsc(courseId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<SubjectDetails> getAllSubjects() {
         return subjectDetailsDAO.findAll();
     }
@@ -215,6 +221,12 @@ public class UserServiceImplementation implements UserService {
 
     /** {@inheritDoc} */
     @Override
+    public SubjectDetails getSubjectById(Long subjectId) {
+        return subjectDetailsDAO.findBySubjectId(subjectId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void deleteSubjectById(Long subjectId) {
         subjectDetailsDAO.deleteBySubjectId(subjectId);
     }
@@ -277,5 +289,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     public int countSubjectsBySemester(Long semesterId) {
         return subjectDetailsDAO.countBySemesterId(semesterId.intValue());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<User> getMembersByDepartmentAndRole(Long deptId, String role) {
+        List<DepartmentDetails> records = departmentDetailsDAO.findByDepartmentIdAndRole(deptId.intValue(), role);
+        List<String> userIds = records.stream()
+                .map(DepartmentDetails::getUserName)
+                .toList();
+        return userDAO.findByUserIdIn(userIds);
     }
 }

@@ -117,6 +117,14 @@ public interface UserService {
     List<Semester> getAllSemesters();
 
     /**
+     * Returns all semesters belonging to the given course, ordered by ID.
+     *
+     * @param courseId the course primary key
+     * @return list of semesters for that course; empty if none defined
+     */
+    List<Semester> getSemestersByCourseId(Long courseId);
+
+    /**
      * Returns all subjects across all courses and semesters.
      *
      * @return list of all {@link SubjectDetails} records; empty list if none
@@ -219,6 +227,14 @@ public interface UserService {
     SubjectDetails saveSubject(SubjectDetails subject);
 
     /**
+     * Looks up a subject by its primary key.
+     *
+     * @param subjectId the subject ID
+     * @return the matching {@link SubjectDetails}, or {@code null} if not found
+     */
+    SubjectDetails getSubjectById(Long subjectId);
+
+    /**
      * Deletes a subject by its primary key.
      *
      * @param subjectId the subject ID to delete
@@ -303,4 +319,14 @@ public interface UserService {
      * @return count of subjects in that semester
      */
     int countSubjectsBySemester(Long semesterId);
+
+    /**
+     * Returns all {@link User} records that belong to the given department with the given role label.
+     * Role labels are as stored in {@code department_details.role}, e.g. {@code "TEACHER"} or {@code "STUDENT"}.
+     *
+     * @param deptId department primary key
+     * @param role   role label in department_details
+     * @return list of matching users; empty if none
+     */
+    List<User> getMembersByDepartmentAndRole(Long deptId, String role);
 }

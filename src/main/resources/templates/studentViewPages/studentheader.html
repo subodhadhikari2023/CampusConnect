@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<div th:fragment="studentheader">
+
+    <header class="student-header">
+        <a class="student-header__brand" th:href="@{/student}">
+            <img th:src="@{/loginResources/images/main-logo-black-transparent.png}" alt="CampusConnect">
+            <span class="student-header__brand-name">CampusConnect</span>
+            <span class="student-role-badge">Student</span>
+        </a>
+
+        <nav class="d-none d-md-flex align-items-center gap-3 ms-4">
+            <a th:href="@{/student}"
+               style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
+               th:classappend="${currentUri == '/student'} ? 'fw-semibold' + ' ' + 'clr-primary' : ''">
+                Dashboard</a>
+        </nav>
+
+        <span class="student-header__username d-none d-sm-inline">
+            <sec:authentication property="principal.username"/>
+        </span>
+
+        <form th:action="@{/logout}" method="POST" class="ms-2">
+            <button type="submit" class="student-logout-btn">Logout</button>
+        </form>
+    </header>
+
+</div>
+</body>
+</html>

@@ -126,25 +126,19 @@ CREATE TABLE IF NOT EXISTS `course_details`
   COLLATE = utf8mb4_unicode_ci;
 
 -- Table structure for table `semester`
+-- Semesters are now course-scoped: each HOD defines the semesters for their own courses.
 DROP TABLE IF EXISTS `semester`;
 CREATE TABLE IF NOT EXISTS `semester`
 (
     `semester_id`   INT         NOT NULL AUTO_INCREMENT,
     `semester_name` VARCHAR(50) NOT NULL,
-    PRIMARY KEY (`semester_id`)
+    `course_id`     INT         NOT NULL,
+    PRIMARY KEY (`semester_id`),
+    CONSTRAINT `fk_course_semester` FOREIGN KEY (`course_id`) REFERENCES `course_details` (`course_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
-
--- Seed data for `semester`
-INSERT INTO `semester` (`semester_name`)
-VALUES ('Semester I'),
-       ('Semester II'),
-       ('Semester III'),
-       ('Semester IV'),
-       ('Semester V'),
-       ('Semester VI');
 
 -- Table structure for table `subject_details`
 DROP TABLE IF EXISTS `subject_details`;

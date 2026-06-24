@@ -3,16 +3,17 @@ package com.bitsunisage.campusconnect.controller;
 import com.bitsunisage.campusconnect.entities.Department;
 import com.bitsunisage.campusconnect.entities.DepartmentDetails;
 import com.bitsunisage.campusconnect.entities.Roles;
-import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.User;
 import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import com.bitsunisage.campusconnect.config.TestWebConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminController.class)
+@Import(TestWebConfig.class)
 @WithMockUser(username = "admin1", roles = "ADMIN")
 class AdminControllerTest {
 
@@ -66,8 +68,6 @@ class AdminControllerTest {
         lenient().when(userService.save(any(Roles.class))).thenReturn(testRole);
         lenient().when(userService.saveDepartmentDetails(any(DepartmentDetails.class))).thenReturn(new DepartmentDetails());
         lenient().when(userService.saveDepartment(any(Department.class))).thenReturn(testDept);
-        lenient().when(userService.getSemesterById(anyLong())).thenReturn(new Semester());
-        lenient().when(userService.saveSemester(any(Semester.class))).thenReturn(new Semester());
         lenient().when(storageService.findAll()).thenReturn(List.of());
         lenient().doNothing().when(storageService).deleteResource(anyLong());
     }
@@ -86,7 +86,6 @@ class AdminControllerTest {
         when(userService.totalUsers("ROLE_TEACHER")).thenReturn(1);
         when(userService.totalUsers("ROLE_HOD")).thenReturn(0);
         when(userService.getAllDepartments()).thenReturn(List.of(testDept));
-        when(userService.getAllSemesters()).thenReturn(List.of(new Semester()));
         when(userService.getAllCourses()).thenReturn(List.of());
         when(storageService.findAll()).thenReturn(List.of());
 
@@ -98,7 +97,6 @@ class AdminControllerTest {
                 .andExpect(model().attribute("totalTeachers", 1))
                 .andExpect(model().attribute("totalHods", 0))
                 .andExpect(model().attribute("totalDepartments", 1))
-                .andExpect(model().attribute("totalSemesters", 1))
                 .andExpect(model().attribute("totalCourses", 0))
                 .andExpect(model().attribute("totalFiles", 0))
                 .andExpect(model().attribute("totalInactive", 1L))
@@ -442,57 +440,6 @@ class AdminControllerTest {
         verify(userService).deleteDepartment(testDept);
     }
 
-    // ---- Semesters ----
-
-    @Test
-    void semestersPageListsAllSemesters() throws Exception {
-        Semester sem = new Semester();
-        sem.setSemesterId(1L);
-        sem.setSemesterName("Semester I");
-        when(userService.getAllSemesters()).thenReturn(List.of(sem));
-
-        mockMvc.perform(get("/admin/semesters"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("adminViewPages/semesters"))
-                .andExpect(model().attributeExists("semesters"));
-    }
-
-    @Test
-    void saveSemesterRedirectsWithSuccess() throws Exception {
-        mockMvc.perform(post("/admin/save-semester").with(csrf())
-                        .param("semesterName", "Semester I"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/semesters"))
-                .andExpect(flash().attributeExists("successMessage"));
-    }
-
-    @Test
-    void deleteSemesterWithSubjectsRedirectsWithError() throws Exception {
-        when(userService.countSubjectsBySemester(1L)).thenReturn(2);
-
-        mockMvc.perform(post("/admin/delete-semester").with(csrf())
-                        .param("semesterId", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/semesters"))
-                .andExpect(flash().attributeExists("errorMessage"));
-    }
-
-    @Test
-    void deleteSemesterWithNoSubjectsSucceeds() throws Exception {
-        when(userService.countSubjectsBySemester(1L)).thenReturn(0);
-        Semester sem = new Semester();
-        sem.setSemesterId(1L);
-        when(userService.getSemesterById(1L)).thenReturn(sem);
-
-        mockMvc.perform(post("/admin/delete-semester").with(csrf())
-                        .param("semesterId", "1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/semesters"))
-                .andExpect(flash().attributeExists("successMessage"));
-
-        verify(userService).deleteSemester(sem);
-    }
-
     // ---- Files ----
 
     @Test
@@ -528,31 +475,6 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("adminViewPages/courses"))
                 .andExpect(model().attributeExists("courses", "deptNames"));
-    }
-
-    // ---- Edit Semester ----
-
-    @Test
-    void editSemesterFormLoadsWithExistingData() throws Exception {
-        Semester sem = new Semester();
-        sem.setSemesterId(1L);
-        sem.setSemesterName("Semester I");
-        when(userService.getSemesterById(1L)).thenReturn(sem);
-
-        mockMvc.perform(get("/admin/editSemester").param("semesterId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("adminViewPages/add-semester"))
-                .andExpect(model().attribute("semester", sem));
-    }
-
-    @Test
-    void editSemesterWithUnknownIdRedirectsWithError() throws Exception {
-        when(userService.getSemesterById(99L)).thenReturn(null);
-
-        mockMvc.perform(get("/admin/editSemester").param("semesterId", "99"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/semesters"))
-                .andExpect(flash().attributeExists("errorMessage"));
     }
 
     // ---- HOD Assignment ----

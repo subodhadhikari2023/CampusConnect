@@ -7,18 +7,29 @@
     <title>Manage Subjects &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
-    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
 </head>
 <body>
 <div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
 
-<div class="admin-page-content">
-<main class="admin-main">
-<div class="admin-container">
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h2 class="fw-semibold mb-0" style="color: var(--clr-text);">Manage Subjects</h2>
+    <div class="hod-page-header">
+        <div>
+            <h2 class="hod-page-header__title">Manage Subjects</h2>
+        </div>
         <a th:href="@{/hod/add-subject}" class="btn btn-primary btn-sm">+ Add Subject</a>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
     <div th:if="${courses.empty}" class="alert alert-warning">
@@ -35,7 +46,7 @@
                     th:text="${course.courseName}"
                     th:selected="${course.courseId == selectedCourseId}"></option>
         </select>
-        <button type="submit" class="btn btn-secondary">View Subjects</button>
+        <button type="submit" class="btn btn-primary">View Subjects</button>
     </form>
 
     <!-- Subject tables grouped by semester -->
@@ -47,15 +58,16 @@
         <div th:unless="${subjects.empty}" th:each="sem : ${semesters}">
             <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
                 <div th:unless="${semSubjects == null or semSubjects.empty}" class="mb-4">
-                    <p class="section-label" th:text="${sem.semesterName}">Semester</p>
-                    <div class="card shadow-sm" style="border-radius: var(--radius-md); border-color: var(--clr-border);">
+                    <p class="hod-section-label" th:text="${sem.semesterName}">Semester</p>
+                    <div class="hod-table-card">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0 align-middle">
-                                <thead style="background-color: var(--clr-primary-light);">
+                                <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Subject Name</th>
-                                    <th style="width:100px;"></th>
+                                    <th style="min-width:240px;">Rename</th>
+                                    <th style="width:90px;">Delete</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,11 +75,21 @@
                                     <td th:text="${stat.count}" class="text-muted"></td>
                                     <td th:text="${subject.subjectName}"></td>
                                     <td>
+                                        <form th:action="@{/hod/update-subject}" method="post" class="d-flex gap-1">
+                                            <input type="hidden" name="subjectId" th:value="${subject.subjectId}">
+                                            <input type="hidden" name="courseId"  th:value="${selectedCourseId}">
+                                            <input type="text" name="subjectName" th:value="${subject.subjectName}"
+                                                   class="form-control form-control-sm" required>
+                                            <button type="submit" class="btn btn-sm btn-success text-nowrap">Save</button>
+                                        </form>
+                                    </td>
+                                    <td>
                                         <form th:action="@{/hod/delete-subject}" method="post"
                                               th:data-name="${subject.subjectName}"
                                               onsubmit="return confirm('Delete ' + this.dataset.name + '? This cannot be undone.')">
                                             <input type="hidden" name="subjectId" th:value="${subject.subjectId}">
-                                            <input type="hidden" name="courseId" th:value="${selectedCourseId}">
+                                            <input type="hidden" name="courseId"  th:value="${selectedCourseId}">
+                                            <input type="hidden" name="source"    value="manage">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>
                                     </td>
@@ -83,7 +105,7 @@
 
 </div>
 </main>
-<div th:replace="~{adminViewPages/footer :: footer}"></div>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
 </div>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>

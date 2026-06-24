@@ -1,0 +1,265 @@
+/* ═══════════════════════════════════════════════════════════════
+   Teacher Portal — primary-teal left sidebar
+   Teachers are content contributors. The UI is task-focused:
+   sidebar groups uploads logically, content area is clean.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+
+.teacher-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--clr-primary);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.teacher-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.25rem 1.25rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    text-decoration: none;
+}
+
+.teacher-sidebar__brand img {
+    height: 26px;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+}
+
+.teacher-sidebar__brand-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.teacher-role-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 0.08rem 0.5rem;
+    margin-top: 0.15rem;
+}
+
+/* ── Sidebar navigation ───────────────────────────────────────── */
+
+.teacher-sidebar__nav {
+    padding: 0.75rem 0;
+    flex: 1;
+}
+
+.teacher-sidebar__group-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 0.75rem 1.25rem 0.3rem;
+}
+
+.teacher-sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    border-radius: 0;
+    transition: background var(--transition-base), color var(--transition-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.teacher-sidebar__link:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    text-decoration: none;
+}
+
+.teacher-sidebar__link.is-active {
+    background: rgba(0, 0, 0, 0.22);
+    color: #fff;
+    font-weight: 600;
+}
+
+.teacher-sidebar__link .link-icon {
+    font-size: 0.9rem;
+    width: 1.1rem;
+    text-align: center;
+    flex-shrink: 0;
+    opacity: 0.75;
+}
+
+.teacher-sidebar__link.is-active .link-icon {
+    opacity: 1;
+}
+
+/* ── Sidebar footer (logout) ──────────────────────────────────── */
+
+.teacher-sidebar__footer {
+    padding: 0.75rem 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.teacher-logout-btn {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.teacher-logout-btn:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* ── Mobile top bar (offcanvas trigger) ───────────────────────── */
+
+.teacher-topbar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-h);
+    background: var(--clr-primary);
+    align-items: center;
+    padding: 0 1rem;
+    gap: 0.75rem;
+    z-index: 1040;
+    box-shadow: var(--shadow-md);
+}
+
+.teacher-topbar__brand {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex: 1;
+    text-decoration: none;
+}
+
+.teacher-topbar__toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+}
+
+@media (max-width: 991.98px) {
+    .teacher-sidebar {
+        display: none;
+    }
+    .teacher-topbar {
+        display: flex;
+    }
+    .teacher-page-content {
+        margin-left: 0 !important;
+        padding-top: calc(var(--topbar-h) + 1.5rem) !important;
+    }
+}
+
+/* ── Offcanvas sidebar (mobile) ───────────────────────────────── */
+
+.teacher-offcanvas {
+    background: var(--clr-primary) !important;
+}
+
+.teacher-offcanvas .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 1rem 1.25rem;
+}
+
+.teacher-offcanvas .offcanvas-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.teacher-offcanvas .btn-close {
+    filter: invert(1);
+    opacity: 0.7;
+}
+
+.teacher-offcanvas .offcanvas-body {
+    padding: 0.5rem 0;
+}
+
+/* ── Page content shell ───────────────────────────────────────── */
+
+.teacher-page-content {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    padding-top: 2.5rem;
+}
+
+.teacher-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+}
+
+/* ── Upload form card ─────────────────────────────────────────── */
+
+.teacher-upload-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    max-width: 680px;
+}
+
+.teacher-upload-card__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--clr-primary-light);
+}
+
+/* ── Table card (view resources) ──────────────────────────────── */
+
+.teacher-table-card {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.teacher-table-card thead {
+    background: var(--clr-primary-light);
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+
+.teacher-footer {
+    background: var(--clr-dark-footer);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 0.78rem;
+    padding: 1rem 1.5rem;
+}
