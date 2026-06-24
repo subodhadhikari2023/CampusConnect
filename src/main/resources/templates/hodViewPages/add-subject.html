@@ -2,49 +2,71 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
-    <title>Add Subject</title>
+    <title>Add Subject &mdash; CampusConnect</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/admin/main.css}">
+    <link rel="stylesheet" th:href="@{/CSS/admin/userAddForm.css}">
 </head>
 <body>
-<div th:replace="~{hodViewPages/hodnavbar :: navbar}"></div>
-<div class="container mt-5" style="max-width: 600px;">
-    <h2 class="mb-4">Add New Subject</h2>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
 
-    <div th:if="${courses.empty}" class="alert alert-warning">
-        No courses found for your department. <a th:href="@{/hod/add-course}">Add a course first.</a>
+<div class="admin-page-content">
+<main class="admin-main">
+<div class="admin-container">
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <div th:if="${courses.empty}" class="alert alert-warning">
+                No courses found for your department.
+                <a th:href="@{/hod/add-course}">Add a course first.</a>
+            </div>
+
+            <div th:unless="${courses.empty}" class="form-card">
+                <div class="form-card-title">Add New Subject</div>
+
+                <form th:action="@{/hod/save-subject}" method="post">
+                    <div class="mb-3">
+                        <label for="courseId" class="form-label fw-semibold">Course</label>
+                        <select id="courseId" name="courseId" class="form-select" required>
+                            <option value="" disabled selected>Select a course</option>
+                            <option th:each="course : ${courses}"
+                                    th:value="${course.courseId}"
+                                    th:text="${course.courseName}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="semesterId" class="form-label fw-semibold">Semester</label>
+                        <select id="semesterId" name="semesterId" class="form-select" required>
+                            <option value="" disabled selected>Select a semester</option>
+                            <option th:each="sem : ${semesters}"
+                                    th:value="${sem.semesterId}"
+                                    th:text="${sem.semesterName}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="subjectName" class="form-label fw-semibold">Subject Name</label>
+                        <input type="text" id="subjectName" name="subjectName" class="form-control"
+                               placeholder="e.g. Data Structures and Algorithms" required>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn btn-primary">Save Subject</button>
+                        <a th:href="@{/hod/manage-subject}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
     </div>
 
-    <form th:unless="${courses.empty}" th:action="@{/hod/save-subject}" method="post">
-        <div class="mb-3">
-            <label for="courseId" class="form-label fw-semibold">Course</label>
-            <select id="courseId" name="courseId" class="form-select" required>
-                <option value="" disabled selected>Select a course</option>
-                <option th:each="course : ${courses}"
-                        th:value="${course.courseId}"
-                        th:text="${course.courseName}"></option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="semesterId" class="form-label fw-semibold">Semester</label>
-            <select id="semesterId" name="semesterId" class="form-select" required>
-                <option value="" disabled selected>Select a semester</option>
-                <option th:each="sem : ${semesters}"
-                        th:value="${sem.semesterId}"
-                        th:text="${sem.semesterName}"></option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="subjectName" class="form-label fw-semibold">Subject Name</label>
-            <input type="text" id="subjectName" name="subjectName" class="form-control"
-                   placeholder="e.g. Data Structures and Algorithms" required>
-        </div>
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Save Subject</button>
-            <a th:href="@{/hod/manage-subject}" class="btn btn-outline-secondary">Cancel</a>
-        </div>
-    </form>
 </div>
+</main>
+<div th:replace="~{adminViewPages/footer :: footer}"></div>
+</div>
+
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
