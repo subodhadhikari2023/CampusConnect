@@ -215,6 +215,12 @@ public class UserServiceImplementation implements UserService {
 
     /** {@inheritDoc} */
     @Override
+    public SubjectDetails getSubjectById(Long subjectId) {
+        return subjectDetailsDAO.findBySubjectId(subjectId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void deleteSubjectById(Long subjectId) {
         subjectDetailsDAO.deleteBySubjectId(subjectId);
     }

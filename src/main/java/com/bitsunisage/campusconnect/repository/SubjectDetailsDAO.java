@@ -37,6 +37,14 @@ public interface SubjectDetailsDAO extends JpaRepository<SubjectDetails, String>
     void deleteBySubjectId(Long subjectId);
 
     /**
+     * Returns a single subject by its primary key.
+     *
+     * @param subjectId the subject primary key
+     * @return the matching {@link SubjectDetails}, or {@code null} if not found
+     */
+    SubjectDetails findBySubjectId(Long subjectId);
+
+    /**
      * Counts all subjects assigned to the given semester.
      *
      * @param semesterId the semester primary key

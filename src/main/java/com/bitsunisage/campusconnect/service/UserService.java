@@ -219,6 +219,14 @@ public interface UserService {
     SubjectDetails saveSubject(SubjectDetails subject);
 
     /**
+     * Looks up a subject by its primary key.
+     *
+     * @param subjectId the subject ID
+     * @return the matching {@link SubjectDetails}, or {@code null} if not found
+     */
+    SubjectDetails getSubjectById(Long subjectId);
+
+    /**
      * Deletes a subject by its primary key.
      *
      * @param subjectId the subject ID to delete
