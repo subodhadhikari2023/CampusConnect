@@ -21,6 +21,15 @@
         <a th:href="@{/hod/add-subject}" class="btn btn-primary btn-sm">+ Add Subject</a>
     </div>
 
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div th:if="${courses.empty}" class="alert alert-warning">
         No courses found. <a th:href="@{/hod/add-course}">Add a course first.</a>
     </div>
@@ -55,7 +64,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Subject Name</th>
-                                    <th style="width:100px;"></th>
+                                    <th style="min-width:240px;">Rename</th>
+                                    <th style="width:90px;">Delete</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -63,11 +73,20 @@
                                     <td th:text="${stat.count}" class="text-muted"></td>
                                     <td th:text="${subject.subjectName}"></td>
                                     <td>
+                                        <form th:action="@{/hod/update-subject}" method="post" class="d-flex gap-1">
+                                            <input type="hidden" name="subjectId" th:value="${subject.subjectId}">
+                                            <input type="hidden" name="courseId"  th:value="${selectedCourseId}">
+                                            <input type="text" name="subjectName" th:value="${subject.subjectName}"
+                                                   class="form-control form-control-sm" required>
+                                            <button type="submit" class="btn btn-sm btn-success text-nowrap">Save</button>
+                                        </form>
+                                    </td>
+                                    <td>
                                         <form th:action="@{/hod/delete-subject}" method="post"
                                               th:data-name="${subject.subjectName}"
                                               onsubmit="return confirm('Delete ' + this.dataset.name + '? This cannot be undone.')">
                                             <input type="hidden" name="subjectId" th:value="${subject.subjectId}">
-                                            <input type="hidden" name="courseId" th:value="${selectedCourseId}">
+                                            <input type="hidden" name="courseId"  th:value="${selectedCourseId}">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>
                                     </td>

@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Handles HTTP requests for the Head of Department (HOD) role.
  * All routes are under {@code /hod/**}, enforced by Spring Security with {@code ROLE_HOD}.
- * The HOD can manage courses and subjects scoped to their own department.
+ * The HOD can manage courses and subjects scoped to their own department, and edit their profile.
  */
 @Controller
 public class HodController {
@@ -35,6 +36,8 @@ public class HodController {
     public HodController(UserService userService) {
         this.userService = userService;
     }
+
+    // ── Dashboard ────────────────────────────────────────────────────────────
 
     /**
      * Renders the HOD dashboard populated with department statistics.
@@ -53,6 +56,54 @@ public class HodController {
         return "hodViewPages/hod";
     }
 
+    // ── Profile ──────────────────────────────────────────────────────────────
+
+    /**
+     * Renders the HOD's own profile page for editing their email and password.
+     * Clears the stored password so it is never exposed in the form.
+     *
+     * @param model populated with {@code hod} — the current HOD's {@link User} record
+     * @return Thymeleaf template {@code hodViewPages/profile}
+     */
+    @GetMapping("/hod/profile")
+    public String profilePage(Model model) {
+        User hod = getLoggedInUser();
+        hod.setPassword("");
+        model.addAttribute("hod", hod);
+        return "hodViewPages/profile";
+    }
+
+    /**
+     * Saves the HOD's updated email and optional new password.
+     * A blank new-password field preserves the existing password.
+     *
+     * @param email           new email address
+     * @param newPassword     new password; blank means keep current
+     * @param confirmPassword must match {@code newPassword} when provided
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/profile}
+     */
+    @PostMapping("/hod/save-profile")
+    public String saveProfile(@RequestParam("email") String email,
+                              @RequestParam("newPassword") String newPassword,
+                              @RequestParam("confirmPassword") String confirmPassword,
+                              RedirectAttributes redirectAttributes) {
+        if (!newPassword.isBlank() && !newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
+            return "redirect:/hod/profile";
+        }
+        User hod = getLoggedInUser();
+        hod.setEmail(email);
+        if (!newPassword.isBlank()) {
+            hod.setPassword("{noop}" + newPassword);
+        }
+        userService.save(hod);
+        redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        return "redirect:/hod/profile";
+    }
+
+    // ── Courses ──────────────────────────────────────────────────────────────
+
     /**
      * Renders the add-course form. The department is pre-set from the HOD's own department.
      *
@@ -68,11 +119,17 @@ public class HodController {
     /**
      * Saves a new course bound to the HOD's department and redirects to its curriculum page.
      *
-     * @param courseName name of the new course
+     * @param courseName         name of the new course
+     * @param redirectAttributes used to pass error flash messages on failure
      * @return redirect to {@code /hod/curriculum?courseId=<id>}
      */
     @PostMapping("/hod/save-course")
-    public String saveCourse(@RequestParam("courseName") String courseName) {
+    public String saveCourse(@RequestParam("courseName") String courseName,
+                             RedirectAttributes redirectAttributes) {
+        if (courseName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Course name cannot be blank.");
+            return "redirect:/hod/add-course";
+        }
         User hod = getLoggedInUser();
         CourseDetails course = new CourseDetails();
         course.setCourseName(courseName);
@@ -82,15 +139,89 @@ public class HodController {
     }
 
     /**
+     * Renders the manage-courses page listing all courses for the HOD's department.
+     *
+     * @param model populated with the department's course list and any flash messages
+     * @return Thymeleaf template {@code hodViewPages/manage-course}
+     */
+    @GetMapping("/hod/manage-course")
+    public String showManageCoursePage(Model model) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        return "hodViewPages/manage-course";
+    }
+
+    /**
+     * Updates the name of an existing course after verifying it belongs to the HOD's department.
+     *
+     * @param courseId           primary key of the course to rename
+     * @param courseName         new course name
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/manage-course}
+     */
+    @PostMapping("/hod/update-course")
+    public String updateCourse(@RequestParam("courseId") Long courseId,
+                               @RequestParam("courseName") String courseName,
+                               RedirectAttributes redirectAttributes) {
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
+        CourseDetails course = userService.getCourseById(courseId);
+        course.setCourseName(courseName);
+        userService.saveCourse(course);
+        redirectAttributes.addFlashAttribute("successMessage", "Course renamed successfully.");
+        return "redirect:/hod/manage-course";
+    }
+
+    /**
+     * Deletes a course after verifying ownership. Redirects with an error if subjects still exist.
+     *
+     * @param courseId           primary key of the course to delete
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/manage-course}
+     */
+    @PostMapping("/hod/delete-course")
+    public String deleteCourse(@RequestParam("courseId") Long courseId,
+                               RedirectAttributes redirectAttributes) {
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
+        try {
+            userService.deleteCourseById(courseId);
+            redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully.");
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete a course that still has subjects. Remove all subjects first.");
+        }
+        return "redirect:/hod/manage-course";
+    }
+
+    // ── Curriculum ───────────────────────────────────────────────────────────
+
+    /**
      * Renders the curriculum management page for a single course, showing all semesters
      * and their subjects with inline forms to add or remove subjects.
+     * When {@code courseId} is absent the page shows a course picker instead.
      *
-     * @param courseId ID of the course whose curriculum is being managed
-     * @param model    populated with {@code course}, {@code semesters}, and {@code subjectsBySemester}
-     * @return Thymeleaf template {@code hodViewPages/curriculum}
+     * @param courseId optional course ID; when absent only the course selector is shown
+     * @param model    populated with {@code courses}, and optionally {@code course},
+     *                 {@code semesters}, and {@code subjectsBySemester}
+     * @return Thymeleaf template {@code hodViewPages/curriculum}, or redirect on ownership failure
      */
     @GetMapping("/hod/curriculum")
-    public String showCurriculumPage(@RequestParam("courseId") Long courseId, Model model) {
+    public String showCurriculumPage(@RequestParam(value = "courseId", required = false) Long courseId,
+                                     Model model,
+                                     RedirectAttributes redirectAttributes) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        if (courseId == null) {
+            return "hodViewPages/curriculum";
+        }
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
         List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId.intValue());
         Map<Long, List<SubjectDetails>> grouped = subjects.stream()
                 .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
@@ -101,56 +232,7 @@ public class HodController {
         return "hodViewPages/curriculum";
     }
 
-    /**
-     * Renders the manage-courses page listing all courses for the HOD's department.
-     *
-     * @param model     populated with the department's course list
-     * @param error     optional error key shown when a deletion could not be completed
-     * @return Thymeleaf template {@code hodViewPages/manage-course}
-     */
-    @GetMapping("/hod/manage-course")
-    public String showManageCoursePage(Model model,
-                                       @RequestParam(value = "error", required = false) String error) {
-        User hod = getLoggedInUser();
-        List<CourseDetails> courses = userService.getCoursesByDepartmentId(hod.getDeptID());
-        model.addAttribute("courses", courses);
-        if ("has-subjects".equals(error)) {
-            model.addAttribute("errorMessage", "Cannot delete a course that still has subjects. Remove all subjects first.");
-        }
-        return "hodViewPages/manage-course";
-    }
-
-    /**
-     * Updates the name of an existing course and redirects to manage-course.
-     *
-     * @param courseId   primary key of the course to rename
-     * @param courseName new course name
-     * @return redirect to {@code /hod/manage-course}
-     */
-    @PostMapping("/hod/update-course")
-    public String updateCourse(@RequestParam("courseId") Long courseId,
-                               @RequestParam("courseName") String courseName) {
-        CourseDetails course = userService.getCourseById(courseId);
-        course.setCourseName(courseName);
-        userService.saveCourse(course);
-        return "redirect:/hod/manage-course";
-    }
-
-    /**
-     * Deletes a course. If the course still has subjects attached, redirects with an error.
-     *
-     * @param courseId primary key of the course to delete
-     * @return redirect to {@code /hod/manage-course}, with {@code ?error=has-subjects} on failure
-     */
-    @PostMapping("/hod/delete-course")
-    public String deleteCourse(@RequestParam("courseId") Long courseId) {
-        try {
-            userService.deleteCourseById(courseId);
-        } catch (DataIntegrityViolationException e) {
-            return "redirect:/hod/manage-course?error=has-subjects";
-        }
-        return "redirect:/hod/manage-course";
-    }
+    // ── Subjects ─────────────────────────────────────────────────────────────
 
     /**
      * Renders the add-subject form with the HOD's courses and all available semesters.
@@ -167,17 +249,24 @@ public class HodController {
     }
 
     /**
-     * Saves a new subject and redirects back to the course curriculum page.
+     * Saves a new subject after verifying the target course belongs to the HOD's department.
+     * Redirects back to the course curriculum page on success.
      *
-     * @param subjectName name of the new subject
-     * @param courseId    course this subject belongs to
-     * @param semesterId  semester this subject is taught in
+     * @param subjectName        name of the new subject
+     * @param courseId           course this subject belongs to
+     * @param semesterId         semester this subject is taught in
+     * @param redirectAttributes used to pass error flash messages
      * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
      */
     @PostMapping("/hod/save-subject")
     public String saveSubject(@RequestParam("subjectName") String subjectName,
                               @RequestParam("courseId") int courseId,
-                              @RequestParam("semesterId") int semesterId) {
+                              @RequestParam("semesterId") int semesterId,
+                              RedirectAttributes redirectAttributes) {
+        if (!ownsCourse((long) courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-subject";
+        }
         SubjectDetails subject = new SubjectDetails();
         subject.setSubjectName(subjectName);
         subject.setCourseId(courseId);
@@ -213,18 +302,56 @@ public class HodController {
     }
 
     /**
-     * Deletes a subject and redirects back to the course curriculum page.
+     * Renames a subject after verifying it belongs to a course in the HOD's department.
      *
-     * @param subjectId primary key of the subject to delete
-     * @param courseId  the course to return to after deletion
+     * @param subjectId          primary key of the subject to rename
+     * @param subjectName        new subject name
+     * @param courseId           the course this subject belongs to (used for redirect and ownership check)
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/manage-subject?courseId=<courseId>}
+     */
+    @PostMapping("/hod/update-subject")
+    public String updateSubject(@RequestParam("subjectId") Long subjectId,
+                                @RequestParam("subjectName") String subjectName,
+                                @RequestParam("courseId") int courseId,
+                                RedirectAttributes redirectAttributes) {
+        if (!ownsCourse((long) courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-subject";
+        }
+        SubjectDetails subject = userService.getSubjectById(subjectId);
+        if (subject == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Subject not found.");
+            return "redirect:/hod/manage-subject?courseId=" + courseId;
+        }
+        subject.setSubjectName(subjectName);
+        userService.saveSubject(subject);
+        redirectAttributes.addFlashAttribute("successMessage", "Subject renamed successfully.");
+        return "redirect:/hod/manage-subject?courseId=" + courseId;
+    }
+
+    /**
+     * Deletes a subject after verifying it belongs to a course in the HOD's department.
+     *
+     * @param subjectId          primary key of the subject to delete
+     * @param courseId           used for redirect and ownership check
+     * @param redirectAttributes used to pass success/error flash messages
      * @return redirect to {@code /hod/curriculum?courseId=<courseId>}
      */
     @PostMapping("/hod/delete-subject")
     public String deleteSubject(@RequestParam("subjectId") Long subjectId,
-                                @RequestParam("courseId") int courseId) {
+                                @RequestParam("courseId") int courseId,
+                                RedirectAttributes redirectAttributes) {
+        if (!ownsCourse((long) courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-subject";
+        }
         userService.deleteSubjectById(subjectId);
+        redirectAttributes.addFlashAttribute("successMessage", "Subject removed successfully.");
         return "redirect:/hod/curriculum?courseId=" + courseId;
     }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
     /**
      * Returns the {@link User} entity for the currently authenticated principal.
@@ -234,5 +361,18 @@ public class HodController {
     private User getLoggedInUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findUserByUserId(username);
+    }
+
+    /**
+     * Returns {@code true} if the given course belongs to the logged-in HOD's department.
+     * Used to guard all write operations so a HOD cannot modify another department's data.
+     *
+     * @param courseId course to check
+     * @return {@code true} if ownership is confirmed, {@code false} otherwise
+     */
+    private boolean ownsCourse(Long courseId) {
+        CourseDetails course = userService.getCourseById(courseId);
+        if (course == null) return false;
+        return course.getDepartmentId().equals(getLoggedInUser().getDeptID());
     }
 }
