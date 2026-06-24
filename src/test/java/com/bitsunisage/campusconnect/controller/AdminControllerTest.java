@@ -659,4 +659,122 @@ class AdminControllerTest {
                 .andExpect(view().name("adminViewPages/inactive-users"))
                 .andExpect(model().attribute("inactiveUsers", List.of(inactiveUser)));
     }
+
+    // ---- Exception handling (admin role) ----
+
+    @Test
+    void saveHodAssignment_whenHodUserNotFound_redirectsWithError() throws Exception {
+        when(userService.getDepartmentNameByDepartmentId(1001)).thenReturn(testDept);
+        when(userService.findUserByUserId("missingHod")).thenReturn(null);
+
+        mockMvc.perform(post("/admin/save-hod-assignment").with(csrf())
+                        .param("deptId", "1001")
+                        .param("hodUserId", "missingHod"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/assign-hod?deptId=1001"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
+    @Test
+    void saveHodAssignment_whenDepartmentNotFound_redirectsWithError() throws Exception {
+        when(userService.getDepartmentNameByDepartmentId(9999)).thenReturn(null);
+
+        mockMvc.perform(post("/admin/save-hod-assignment").with(csrf())
+                        .param("deptId", "9999")
+                        .param("hodUserId", "hod1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/departments"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
+    @Test
+    void profilePage_whenAdminAccountNotFound_returns404() throws Exception {
+        when(userService.findUserByUserId("admin1")).thenReturn(null);
+
+        mockMvc.perform(get("/admin/profile"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void saveProfile_whenAdminAccountNotFound_returns404() throws Exception {
+        when(userService.findUserByUserId("admin1")).thenReturn(null);
+
+        mockMvc.perform(post("/admin/save-profile").with(csrf())
+                        .param("email", "admin@test.com")
+                        .param("newPassword", "")
+                        .param("confirmPassword", ""))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void saveProfile_whenPasswordsMismatch_redirectsWithError() throws Exception {
+        when(userService.findUserByUserId("admin1")).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/save-profile").with(csrf())
+                        .param("email", "admin@test.com")
+                        .param("newPassword", "newpass")
+                        .param("confirmPassword", "different"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/profile"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
+    @Test
+    void resetPasswordForm_whenSelfReset_redirectsToProfile() throws Exception {
+        mockMvc.perform(get("/admin/reset-password")
+                        .param("userId", "admin1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/profile"));
+    }
+
+    @Test
+    void resetPassword_whenPasswordIsBlank_redirectsWithError() throws Exception {
+        when(userService.findUserByUserId("testUser")).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/reset-password").with(csrf())
+                        .param("userId", "testUser")
+                        .param("newPassword", "")
+                        .param("confirmPassword", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/reset-password?userId=testUser"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
+    @Test
+    void resetPassword_whenPasswordsMismatch_redirectsWithError() throws Exception {
+        when(userService.findUserByUserId("testUser")).thenReturn(testUser);
+
+        mockMvc.perform(post("/admin/reset-password").with(csrf())
+                        .param("userId", "testUser")
+                        .param("newPassword", "pass1")
+                        .param("confirmPassword", "pass2"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/reset-password?userId=testUser"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
+
+    @Test
+    void resetPassword_whenUserNotFound_redirectsWithError() throws Exception {
+        when(userService.findUserByUserId("ghost")).thenReturn(null);
+
+        mockMvc.perform(post("/admin/reset-password").with(csrf())
+                        .param("userId", "ghost")
+                        .param("newPassword", "secret")
+                        .param("confirmPassword", "secret"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).save(any(User.class));
+    }
 }

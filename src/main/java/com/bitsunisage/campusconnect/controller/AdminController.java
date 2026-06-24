@@ -6,6 +6,8 @@ import com.bitsunisage.campusconnect.entities.FileData;
 import com.bitsunisage.campusconnect.entities.Roles;
 import com.bitsunisage.campusconnect.entities.Semester;
 import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.exceptions.DepartmentNotFoundException;
+import com.bitsunisage.campusconnect.exceptions.UserNotFoundException;
 import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -544,18 +546,27 @@ public class AdminController {
     /**
      * Saves the HOD-to-department assignment by updating the chosen HOD's {@code deptID}
      * and denormalised {@code department} name, then redirecting to the departments list.
+     * Redirects with an error flash if the department or HOD user cannot be found.
      *
      * @param deptId             the department to assign the HOD to
      * @param hodUserId          the login username of the HOD to assign
-     * @param redirectAttributes used to pass a success flash across the redirect
-     * @return redirect to {@code /admin/departments}
+     * @param redirectAttributes used to pass a success/error flash across the redirect
+     * @return redirect to {@code /admin/departments}, or back to the assign form on failure
      */
     @PostMapping("/admin/save-hod-assignment")
     public String saveHodAssignment(@RequestParam("deptId") Long deptId,
                                     @RequestParam("hodUserId") String hodUserId,
                                     RedirectAttributes redirectAttributes) {
         Department dept = userService.getDepartmentNameByDepartmentId(deptId.intValue());
+        if (dept == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Department not found.");
+            return "redirect:/admin/departments";
+        }
         User hod = userService.findUserByUserId(hodUserId);
+        if (hod == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Selected HOD user not found: " + hodUserId);
+            return "redirect:/admin/assign-hod?deptId=" + deptId;
+        }
         hod.setDeptID(deptId);
         hod.setDepartment(dept.getName());
         userService.save(hod);
@@ -680,6 +691,9 @@ public class AdminController {
     @GetMapping("/admin/profile")
     public String profilePage(Authentication authentication, Model model) {
         User admin = userService.findUserByUserId(authentication.getName());
+        if (admin == null) {
+            throw new UserNotFoundException(authentication.getName());
+        }
         admin.setPassword("");
         model.addAttribute("admin", admin);
         return "adminViewPages/profile";
@@ -708,6 +722,9 @@ public class AdminController {
             return "redirect:/admin/profile";
         }
         User admin = userService.findUserByUserId(authentication.getName());
+        if (admin == null) {
+            throw new UserNotFoundException(authentication.getName());
+        }
         admin.setEmail(email);
         if (!newPassword.isBlank()) {
             admin.setPassword("{noop}" + newPassword);
