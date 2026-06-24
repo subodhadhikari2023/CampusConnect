@@ -211,13 +211,10 @@ public class AdminController {
 
     /**
      * Creates or updates a user.
-     * <p>
      * Password rules: if the submitted password is blank, the existing stored password is
      * preserved (update case). If it is blank and no existing user is found (new user), the
      * request is rejected. A non-blank password is wrapped with {@code {noop}} unless already
-     * prefixed.
-     * <p>
-     * Redirects with an error flash if the department selection or password is missing.
+     * prefixed. Redirects with an error flash if the department selection or password is missing.
      *
      * @param user               the user bound from the form
      * @param roles              the role assignment bound from the form
@@ -598,6 +595,126 @@ public class AdminController {
         String status = user.isActive() ? "activated" : "deactivated";
         redirectAttributes.addFlashAttribute("successMessage", userId + " has been " + status + ".");
         return "redirect:" + redirectTo;
+    }
+
+    // ── Password reset ───────────────────────────────────────────────────────────
+
+    /**
+     * Renders the password-reset form for the given user.
+     * Redirects to the profile page if the admin tries to reset their own password.
+     *
+     * @param userId             login username of the user whose password will be reset
+     * @param model              populated with {@code targetUser}
+     * @param authentication     the currently authenticated admin, used to block self-reset
+     * @param redirectAttributes used to pass error/info flash messages across the redirect
+     * @return Thymeleaf template {@code adminViewPages/reset-password}, or a redirect
+     */
+    @GetMapping("/admin/reset-password")
+    public String resetPasswordForm(@RequestParam("userId") String userId,
+                                    Model model,
+                                    Authentication authentication,
+                                    RedirectAttributes redirectAttributes) {
+        if (authentication.getName().equals(userId)) {
+            redirectAttributes.addFlashAttribute("infoMessage", "Use the Profile page to change your own password.");
+            return "redirect:/admin/profile";
+        }
+        User user = userService.findUserByUserId(userId);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found: " + userId);
+            return "redirect:/admin";
+        }
+        model.addAttribute("targetUser", user);
+        return "adminViewPages/reset-password";
+    }
+
+    /**
+     * Applies a new password for the target user after the two entries are confirmed to match.
+     * Rejects blank passwords and self-reset attempts.
+     *
+     * @param userId             login username of the user to update
+     * @param newPassword        the desired new password
+     * @param confirmPassword    must equal {@code newPassword}
+     * @param authentication     the currently authenticated admin
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
+     * @return redirect to the admin dashboard, or back to the form on validation failure
+     */
+    @PostMapping("/admin/reset-password")
+    public String resetPassword(@RequestParam("userId") String userId,
+                                @RequestParam("newPassword") String newPassword,
+                                @RequestParam("confirmPassword") String confirmPassword,
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes) {
+        if (authentication.getName().equals(userId)) {
+            redirectAttributes.addFlashAttribute("infoMessage", "Use the Profile page to change your own password.");
+            return "redirect:/admin/profile";
+        }
+        if (newPassword.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Password cannot be blank.");
+            return "redirect:/admin/reset-password?userId=" + userId;
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
+            return "redirect:/admin/reset-password?userId=" + userId;
+        }
+        User user = userService.findUserByUserId(userId);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found: " + userId);
+            return "redirect:/admin";
+        }
+        user.setPassword("{noop}" + newPassword);
+        userService.save(user);
+        redirectAttributes.addFlashAttribute("successMessage", "Password for " + userId + " has been reset.");
+        return "redirect:/admin";
+    }
+
+    // ── Admin profile ─────────────────────────────────────────────────────────
+
+    /**
+     * Renders the admin's own profile page for editing their email and password.
+     * Clears the password field so the stored encoded value is never exposed to the browser.
+     *
+     * @param authentication the currently authenticated admin
+     * @param model          populated with {@code admin} — the current admin's {@link User} record
+     * @return Thymeleaf template {@code adminViewPages/profile}
+     */
+    @GetMapping("/admin/profile")
+    public String profilePage(Authentication authentication, Model model) {
+        User admin = userService.findUserByUserId(authentication.getName());
+        admin.setPassword("");
+        model.addAttribute("admin", admin);
+        return "adminViewPages/profile";
+    }
+
+    /**
+     * Saves changes to the admin's own email and, optionally, their password.
+     * A blank new-password field leaves the existing password unchanged.
+     * Redirects back to the profile page with a validation error if the two password entries differ.
+     *
+     * @param email              the updated email address
+     * @param newPassword        optional new password; blank means no change
+     * @param confirmPassword    must equal {@code newPassword} when non-blank
+     * @param authentication     the currently authenticated admin
+     * @param redirectAttributes used to pass success/error flash messages across the redirect
+     * @return redirect to {@code /admin/profile}
+     */
+    @PostMapping("/admin/save-profile")
+    public String saveProfile(@RequestParam("email") String email,
+                              @RequestParam("newPassword") String newPassword,
+                              @RequestParam("confirmPassword") String confirmPassword,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
+        if (!newPassword.isBlank() && !newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
+            return "redirect:/admin/profile";
+        }
+        User admin = userService.findUserByUserId(authentication.getName());
+        admin.setEmail(email);
+        if (!newPassword.isBlank()) {
+            admin.setPassword("{noop}" + newPassword);
+        }
+        userService.save(admin);
+        redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        return "redirect:/admin/profile";
     }
 
     // ── Courses (read-only) ───────────────────────────────────────────────────
