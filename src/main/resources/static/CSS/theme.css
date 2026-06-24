@@ -1,0 +1,176 @@
+/* ═══════════════════════════════════════════════════════════════════
+   CampusConnect — Master Theme
+   Single source of truth for all design tokens.
+
+   Usage: add this <link> BEFORE any role-specific stylesheet in every
+   Thymeleaf template:
+     <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+
+   Role CSS files may override individual tokens in their own :root
+   blocks if the role genuinely needs a different value. Everything
+   else should use the variables defined here.
+   ═══════════════════════════════════════════════════════════════════ */
+
+
+/* ── Light mode (default) ───────────────────────────────────────── */
+
+:root {
+
+    /* ── Brand — teal palette ─────────────────────────────────── */
+    --clr-primary:        #007a7a;
+    --clr-primary-dark:   #005d5d;
+    --clr-primary-mid:    #006666;
+    --clr-primary-light:  #d6e6e6;
+    --clr-primary-focus:  rgba(0, 122, 122, 0.25);
+
+    /* ── Semantic feedback ────────────────────────────────────── */
+    --clr-danger:         #dc3545;
+    --clr-danger-dark:    #b02a37;
+    --clr-success:        #198754;
+    --clr-success-dark:   #146c43;
+    --clr-warning:        #f59e0b;
+    --clr-warning-dark:   #d97706;
+
+    /* ── Surfaces ─────────────────────────────────────────────── */
+    --clr-bg:             #f5f7fa;
+    --clr-surface:        #ffffff;
+    --clr-border:         #dee2e6;
+
+    /* ── Text ─────────────────────────────────────────────────── */
+    --clr-text:           #1a2a2a;   /* teal-tinted dark, on-brand */
+    --clr-text-muted:     #5a6e6e;   /* teal-tinted grey */
+    --clr-text-white:     #ffffff;
+
+    /* ── Dark surfaces (sidebar, navbar, footer) ──────────────── */
+    --clr-dark-nav:       #122020;
+    --clr-dark-sidebar:   #0f1f1f;
+    --clr-dark-footer:    #0d1a1a;
+    --clr-dark-border:    rgba(255, 255, 255, 0.07);
+
+    /* ── Gradient palette (hero, section backgrounds) ─────────── */
+    --clr-gradient-start: #003d3d;
+    --clr-gradient-mid:   #006060;
+    --clr-gradient-end:   #007a7a;
+    --clr-accent-light:   #7fe8e8;   /* hero title accent */
+
+    /* ── Shape ────────────────────────────────────────────────── */
+    --radius-sm:          4px;
+    --radius-md:          8px;
+    --radius-lg:          12px;
+    --radius-xl:          20px;
+    --radius-pill:        999px;
+
+    /* ── Elevation ────────────────────────────────────────────── */
+    --shadow-sm:          0 2px 4px  rgba(0, 0, 0, 0.08);
+    --shadow-md:          0 4px 8px  rgba(0, 0, 0, 0.10);
+    --shadow-lg:          0 6px 12px rgba(0, 0, 0, 0.20);
+    --shadow-xl:          0 16px 48px rgba(0, 0, 0, 0.22);
+
+    /* ── Motion ───────────────────────────────────────────────── */
+    --transition-base:    0.3s ease;
+
+    /* ── Layout shell (shared by all role dashboards) ─────────── */
+    --sidebar-w:          240px;
+    --sidebar-bg:         var(--clr-dark-sidebar);
+    --sidebar-border:     var(--clr-dark-border);
+    --topbar-h:           56px;
+}
+
+
+/* ── Dark mode — reserved for future toggle implementation ──────── */
+/*
+   Not yet active. Will be enabled by a JS toggle that sets
+   data-theme="dark" on the <html> element. All variables below
+   override the light-mode defaults. Role-specific CSS does NOT
+   need to redeclare dark-mode values unless a component behaves
+   differently from these base tokens.
+*/
+[data-theme="dark"] {
+
+    /* Surfaces */
+    --clr-bg:             #0d1a1a;
+    --clr-surface:        #122020;
+    --clr-border:         #1e3030;
+
+    /* Text */
+    --clr-text:           #e0ecec;
+    --clr-text-muted:     #8aadad;
+
+    /* Brand — keeps the same primary but adjusts supporting tones */
+    --clr-primary-light:  #1a3535;
+    --clr-primary-focus:  rgba(0, 122, 122, 0.35);
+
+    /* Semantic — slightly muted on dark backgrounds */
+    --clr-danger:         #f87171;
+    --clr-success:        #4ade80;
+    --clr-warning:        #fbbf24;
+
+    /* Dark surfaces become slightly lighter on dark backgrounds */
+    --clr-dark-nav:       #0a1515;
+    --clr-dark-sidebar:   #091414;
+    --clr-dark-footer:    #060e0e;
+}
+
+
+/* ── Base reset ─────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--clr-bg);
+    color: var(--clr-text);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* ── Bootstrap primary colour overrides ────────────────────────── */
+/*
+   Keeps Bootstrap component colours (buttons, inputs, focus rings)
+   aligned with the teal brand palette without touching Bootstrap
+   source or adding a custom build step.
+*/
+
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color:     var(--clr-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus-visible {
+    background-color: var(--clr-primary-dark);
+    border-color:     var(--clr-primary-dark);
+}
+
+.btn-primary:focus-visible {
+    box-shadow: 0 0 0 0.2rem var(--clr-primary-focus);
+}
+
+.btn-outline-primary {
+    color:        var(--clr-primary);
+    border-color: var(--clr-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--clr-primary);
+    border-color:     var(--clr-primary);
+    color:            var(--clr-text-white);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow:   0 0 0 0.2rem var(--clr-primary-focus);
+}
+
+.form-control[readonly] {
+    background-color: var(--clr-bg);
+    color:            var(--clr-text-muted);
+    cursor:           not-allowed;
+}

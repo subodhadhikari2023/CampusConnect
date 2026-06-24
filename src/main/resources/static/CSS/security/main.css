@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: var(--clr-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,10 +10,10 @@ body {
 
 .access-denied-container {
     text-align: center;
-    background-color: white;
+    background-color: var(--clr-surface);
     padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
 }
 
 .access-denied-image {
@@ -23,13 +23,13 @@ body {
 
 .access-denied-title {
     font-size: 36px;
-    color: #333;
+    color: var(--clr-text);
     margin-top: 20px;
 }
 
 .access-denied-message {
     font-size: 18px;
-    color: #666;
+    color: var(--clr-text-muted);
     margin-top: 10px;
 }
 
@@ -37,14 +37,14 @@ body {
     display: inline-block;
     margin-top: 30px;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--clr-primary);
+    color: var(--clr-text-white);
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
 .home-button:hover {
-    background-color: #0056b3;
+    background-color: var(--clr-primary-dark);
 }

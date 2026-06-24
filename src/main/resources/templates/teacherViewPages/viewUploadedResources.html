@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>View Uploaded Resources</title>
-    <!-- Add your CSS file if needed -->
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
 
     <style>
         .container {
@@ -17,52 +17,51 @@
         }
 
         table th, table td {
-            border: 1px solid #ddd;
+            border: 1px solid var(--clr-border);
             padding: 8px;
             text-align: center;
         }
 
         table th {
-            background-color: #f4f4f4;
+            background-color: var(--clr-bg);
             font-weight: bold;
         }
 
         .delete-btn {
-            color: white;
-            background-color: red;
+            color: var(--clr-text-white);
+            background-color: var(--clr-danger);
             border: none;
             padding: 5px 10px;
             cursor: pointer;
         }
 
         .delete-btn:hover {
-            background-color: darkred;
+            background-color: var(--clr-danger-dark);
         }
 
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% from the top and centered */
+            background-color: var(--clr-surface);
+            margin: 15% auto;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
+            border: 1px solid var(--clr-border);
+            width: 80%;
             text-align: center;
         }
 
         .close {
-            color: #aaa;
+            color: var(--clr-text-muted);
             float: right;
             font-size: 28px;
             font-weight: bold;
@@ -71,7 +70,7 @@
         .alert {
             padding: 10px;
             margin: 10px 0;
-            border-radius: 5px;
+            border-radius: var(--radius-sm);
         }
 
         .alert-success {
@@ -82,7 +81,7 @@
 
         .close:hover,
         .close:focus {
-            color: black;
+            color: var(--clr-text);
             text-decoration: none;
             cursor: pointer;
         }

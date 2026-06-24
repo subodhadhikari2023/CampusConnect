@@ -5,22 +5,23 @@
     <title>Resources</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            background-color: var(--clr-bg);
         }
 
         .container {
             max-width: 900px;
             margin: 50px auto;
             padding: 20px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--clr-surface);
+            border: 1px solid var(--clr-border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
         }
 
         .header {
@@ -51,14 +52,14 @@
         label {
             font-size: 14px;
             margin-bottom: 5px;
-            color: #333;
+            color: var(--clr-text);
         }
 
         select {
             height: 35px;
             padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid var(--clr-border);
+            border-radius: var(--radius-sm);
             font-size: 14px;
         }
 
@@ -73,22 +74,22 @@
         }
 
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid var(--clr-border);
             padding: 8px;
             text-align: left;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: var(--clr-bg);
             font-weight: bold;
         }
 
         .btn {
             text-decoration: none;
             padding: 5px 10px;
-            color: white;
-            background-color: #007bff;
-            border-radius: 4px;
+            color: var(--clr-text-white);
+            background-color: var(--clr-primary);
+            border-radius: var(--radius-sm);
         }
 
         .btn i {
