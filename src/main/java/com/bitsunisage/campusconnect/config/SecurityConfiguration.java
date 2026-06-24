@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -17,29 +16,18 @@ import javax.sql.DataSource;
  * Spring Security configuration for CampusConnect.
  *
  * <p>Configures URL-based role authorization, form login with a custom success handler,
- * JDBC-backed authentication against the {@code members} and {@code roles} tables,
- * and static resource bypass for the login page assets.</p>
+ * and JDBC-backed authentication against the {@code members} and {@code roles} tables.
+ * Static assets and public paths are opened via {@code permitAll()} inside the filter chain
+ * rather than {@code WebSecurityCustomizer#ignoring}, so security headers still apply.</p>
  */
 @Configuration
 public class SecurityConfiguration {
 
     /**
-     * Bypasses the security filter chain for all static assets and the debug data view,
-     * so they are accessible without authentication.
-     *
-     * @return customizer that excludes static resource paths from security
-     */
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(
-                "/loginResources/**", "/vendor/**", "/images/**", "/CSS/**", "/JS/**", "view-data");
-    }
-
-    /**
      * Defines the main security filter chain.
      *
      * <ul>
-     *   <li>{@code /} — public</li>
+     *   <li>Static assets and public paths — {@code permitAll()}</li>
      *   <li>{@code /student/**} — requires {@code ROLE_STUDENT}</li>
      *   <li>{@code /teacher/**} — requires {@code ROLE_TEACHER}</li>
      *   <li>{@code /admin/**}   — requires {@code ROLE_ADMIN}</li>
@@ -57,6 +45,9 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(configurer -> configurer
+                        .requestMatchers(
+                                "/loginResources/**", "/vendor/**",
+                                "/images/**", "/CSS/**", "/JS/**", "/view-data").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/student/**").hasRole("STUDENT")
                         .requestMatchers("/teacher/**").hasRole("TEACHER")
@@ -74,12 +65,10 @@ public class SecurityConfiguration {
                 .logout(logout -> logout.permitAll()
                         .logoutSuccessUrl("/"))
                 .exceptionHandling(configurer -> configurer
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.sendRedirect("/access-denied");
-                        })
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendRedirect("/NoUrlFound");
-                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendRedirect("/access-denied"))
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendRedirect("/login"))
                 )
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable);
