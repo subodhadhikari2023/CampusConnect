@@ -28,16 +28,36 @@
             <div th:unless="${courses.empty}" class="form-card">
                 <div class="form-card-title">Add New Subject</div>
 
-                <form th:action="@{/hod/save-subject}" method="post">
-                    <div class="mb-3">
-                        <label for="courseId" class="form-label fw-semibold">Course</label>
-                        <select id="courseId" name="courseId" class="form-select" required>
-                            <option value="" disabled selected>Select a course</option>
-                            <option th:each="course : ${courses}"
-                                    th:value="${course.courseId}"
-                                    th:text="${course.courseName}"></option>
-                        </select>
-                    </div>
+                <div th:if="${errorMessage}" class="alert alert-danger mb-3" th:text="${errorMessage}"></div>
+
+                <!-- Step 1: Course selector (GET form — reloads page with per-course semesters) -->
+                <form th:action="@{/hod/add-subject}" method="get" class="mb-4">
+                    <label for="courseSelect" class="form-label fw-semibold">Course</label>
+                    <select id="courseSelect" name="courseId" class="form-select" required
+                            onchange="this.form.submit()">
+                        <option value="" disabled th:selected="${selectedCourse == null}">Select a course</option>
+                        <option th:each="course : ${courses}"
+                                th:value="${course.courseId}"
+                                th:text="${course.courseName}"
+                                th:selected="${selectedCourse != null and course.courseId == selectedCourse.courseId}"></option>
+                    </select>
+                    <noscript>
+                        <button type="submit" class="btn btn-secondary btn-sm mt-2">Load Semesters</button>
+                    </noscript>
+                </form>
+
+                <!-- No semesters for selected course -->
+                <div th:if="${selectedCourse != null and (semesters == null or semesters.empty)}"
+                     class="alert alert-warning">
+                    No semesters defined for
+                    <strong th:text="${selectedCourse.courseName}"></strong> yet.
+                    <a th:href="@{/hod/semesters(courseId=${selectedCourse.courseId})}">Add semesters first.</a>
+                </div>
+
+                <!-- Step 2: Subject form (shown once course + semesters are loaded) -->
+                <form th:if="${selectedCourse != null and semesters != null and not semesters.empty}"
+                      th:action="@{/hod/save-subject}" method="post">
+                    <input type="hidden" name="courseId" th:value="${selectedCourse.courseId}">
                     <div class="mb-3">
                         <label for="semesterId" class="form-label fw-semibold">Semester</label>
                         <select id="semesterId" name="semesterId" class="form-select" required>
@@ -57,6 +77,7 @@
                         <a th:href="@{/hod/manage-subject}" class="btn btn-outline-secondary">Cancel</a>
                     </div>
                 </form>
+
             </div>
 
         </div>

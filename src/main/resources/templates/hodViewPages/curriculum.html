@@ -53,8 +53,8 @@
     <div th:if="${course != null}">
 
         <div th:if="${semesters.empty}" class="alert alert-warning">
-            No semesters have been defined yet.
-            Contact the Admin to add semesters before setting up the curriculum.
+            No semesters defined for this course yet.
+            <a th:href="@{/hod/semesters(courseId=${course.courseId})}">Add semesters first.</a>
         </div>
 
         <div th:each="sem : ${semesters}" class="mb-4">
