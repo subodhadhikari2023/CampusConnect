@@ -665,6 +665,29 @@ public class HodController {
     }
 
     /**
+     * Renders the edit form for a single announcement.
+     * Redirects with an error if the announcement does not exist or belongs to a different department.
+     *
+     * @param id                 primary key of the announcement to edit
+     * @param model              populated with {@code announcement}
+     * @param redirectAttributes used to pass an error flash if the announcement is not found
+     * @return Thymeleaf template {@code hodViewPages/edit-announcement}, or redirect on failure
+     */
+    @GetMapping("/hod/edit-announcement")
+    public String showEditAnnouncementPage(@RequestParam("id") Long id,
+                                           Model model,
+                                           RedirectAttributes redirectAttributes) {
+        User hod = getLoggedInUser();
+        return userService.getAnnouncementById(id)
+                .filter(a -> a.getDeptId().equals(hod.getDeptID()))
+                .map(a -> { model.addAttribute("announcement", a); return "hodViewPages/edit-announcement"; })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Announcement not found.");
+                    return "redirect:/hod/announcements";
+                });
+    }
+
+    /**
      * Saves a new announcement authored by the logged-in HOD.
      *
      * @param title              announcement headline; must not be blank

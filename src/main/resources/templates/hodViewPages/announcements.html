@@ -65,34 +65,14 @@
                            th:text="${#dates.format(ann.createdAt, 'dd MMM yyyy, HH:mm')} + ' · ' + ${ann.author}"></small>
                 </div>
                 <div class="d-flex gap-2 flex-shrink-0">
-                    <button class="btn btn-sm btn-outline-secondary"
-                            type="button"
-                            th:data-bs-target="'#edit-ann-' + ${ann.id}"
-                            data-bs-toggle="collapse"
-                            aria-expanded="false">Edit</button>
+                    <a th:href="@{/hod/edit-announcement(id=${ann.id})}"
+                       class="btn btn-sm btn-outline-secondary">Edit</a>
                     <form th:action="@{/hod/delete-announcement}" method="post"
                           onsubmit="return confirm('Delete this announcement?')">
                         <input type="hidden" name="id" th:value="${ann.id}">
                         <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                     </form>
                 </div>
-            </div>
-            <!-- Inline edit form (collapsed by default) -->
-            <div th:id="'edit-ann-' + ${ann.id}" class="collapse mt-3 pt-3 border-top">
-                <form th:action="@{/hod/update-announcement}" method="post">
-                    <input type="hidden" name="id" th:value="${ann.id}">
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold small">Title</label>
-                        <input type="text" name="title" th:value="${ann.title}"
-                               class="form-control form-control-sm" maxlength="200" required>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label fw-semibold small">Message</label>
-                        <textarea name="body" class="form-control form-control-sm" rows="3"
-                                  required th:text="${ann.body}"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-sm btn-success">Save Changes</button>
-                </form>
             </div>
         </div>
     </div>
