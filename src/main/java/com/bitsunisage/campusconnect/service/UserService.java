@@ -375,6 +375,33 @@ public interface UserService {
      */
     List<TeacherSubject> getAssignmentsByTeacherIds(List<String> teacherIds);
 
+    /**
+     * Returns all subject assignments for a single teacher.
+     * Used on the teacher's My Subjects page.
+     *
+     * @param teacherId login username of the teacher
+     * @return list of assignments; empty if none
+     */
+    List<TeacherSubject> getAssignmentsByTeacherId(String teacherId);
+
+    /**
+     * Returns all semesters whose course ID is in the given list.
+     * Used to populate upload-form dropdowns scoped to a teacher's department.
+     *
+     * @param courseIds list of course primary keys
+     * @return list of matching semesters; empty if none
+     */
+    List<Semester> getSemestersByCourseIds(List<Long> courseIds);
+
+    /**
+     * Returns all subjects whose course ID is in the given list.
+     * Used to populate upload-form dropdowns scoped to a teacher's department.
+     *
+     * @param courseIds list of course primary keys
+     * @return list of matching subjects; empty if none
+     */
+    List<SubjectDetails> getSubjectsByCourseIds(List<Long> courseIds);
+
     // ── Announcements ─────────────────────────────────────────────────────────
 
     /**

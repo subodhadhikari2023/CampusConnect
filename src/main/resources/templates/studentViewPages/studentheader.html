@@ -16,6 +16,10 @@
                style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
                th:classappend="${currentUri == '/student'} ? 'fw-semibold' + ' ' + 'clr-primary' : ''">
                 Dashboard</a>
+            <a th:href="@{/student/profile}"
+               style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
+               th:classappend="${currentUri != null and currentUri.startsWith('/student/profile')} ? 'fw-semibold' : ''">
+                Profile</a>
         </nav>
 
         <span class="student-header__username d-none d-sm-inline">

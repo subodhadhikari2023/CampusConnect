@@ -43,48 +43,9 @@ mysql -u root -p < sql-scripts/databaseScript.sql
 
 ## Architecture
 
-### Layer Structure
+See `ARCHITECTURE.md` for layer diagram, ER diagram, class diagram, and full route map.
 
-```
-controller/  → Spring MVC @Controller classes (one per role)
-service/     → Business logic interfaces + implementations
-repository/  → Spring Data JPA repositories (extend JpaRepository)
-entities/    → JPA @Entity classes mapping to DB tables
-dto/         → DTOs (currently FileUploadDTO for file uploads)
-config/      → Spring Security configuration
-exceptions/  → Custom exceptions and global exception handler
-templates/   → Thymeleaf HTML templates, organized by role subdirectory
-static/      → CSS, JS, images (under loginResources/ for unauthenticated access)
-```
-
-### Role-Based Routing
-
-| Role | URL prefix | Home |
-|------|-----------|------|
-| ROLE_ADMIN | `/admin/**` | `/admin` |
-| ROLE_HOD | `/hod/**` | `/hod` |
-| ROLE_TEACHER | `/teacher/**` | `/teacher` |
-| ROLE_STUDENT | `/student/**` | `/student` |
-
-Authentication uses `JdbcUserDetailsManager` against the `members` table (credentials) and `roles` table (authorities).
-
-### Database Schema
-
-Key tables:
-- `members` — users (PK: `user_id`), with `dept_id` FK to `department`
-- `roles` — one role per user (FK to `members`)
-- `department` — departments
-- `department_details` — maps members to departments with a role label
-- `course_details` — courses per department
-- `semester` — semesters scoped per course
-- `subject_details` — subjects per course+semester
-- `file_data` — uploaded file metadata; files on disk at `{upload-dir}/{departmentId}/{fileRole}/{courseId}/{semesterId}/{subjectId}/`
-- `announcements` — department-scoped notices posted by HODs
-- `teacher_subject` — one-to-one assignment of a teacher to a subject
-
-### Passwords
-
-Stored with Spring Security's `{noop}` prefix (dev/test only). Prepended explicitly in `AdminController.saveUser()`.
+Authentication uses `JdbcUserDetailsManager` against `members` (credentials) and `roles` (authorities). Passwords stored with `{noop}` prefix (dev only); prepended in `AdminController.saveUser()`.
 
 ## Documentation Rules
 

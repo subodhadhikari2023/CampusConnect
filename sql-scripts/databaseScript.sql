@@ -140,6 +140,13 @@ CREATE TABLE IF NOT EXISTS `course_details`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- Seed courses: one per department (HODs can add more at runtime)
+INSERT INTO `course_details` (`course_name`, `department_id`)
+VALUES ('Bachelor of Computer Applications (BCA)', 1001),
+       ('Bachelor of Science in Computer Science (BSc CS)', 1002),
+       ('Bachelor of Science in Physics (BSc Physics)', 1003);
+-- course_id auto-assigned: 1 = BCA, 2 = BSc CS, 3 = BSc Physics
+
 -- Table structure for table `semester`
 -- Semesters are now course-scoped: each HOD defines the semesters for their own courses.
 DROP TABLE IF EXISTS `semester`;
@@ -156,6 +163,19 @@ CREATE TABLE IF NOT EXISTS `semester`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- Seed semesters: 6 per course
+INSERT INTO `semester` (`semester_name`, `course_id`)
+VALUES
+    -- BCA (course_id=1): semester_id 1-6
+    ('Semester I',   1), ('Semester II',  1), ('Semester III', 1),
+    ('Semester IV',  1), ('Semester V',   1), ('Semester VI',  1),
+    -- BSc CS (course_id=2): semester_id 7-12
+    ('Semester I',   2), ('Semester II',  2), ('Semester III', 2),
+    ('Semester IV',  2), ('Semester V',   2), ('Semester VI',  2),
+    -- BSc Physics (course_id=3): semester_id 13-18
+    ('Semester I',   3), ('Semester II',  3), ('Semester III', 3),
+    ('Semester IV',  3), ('Semester V',   3), ('Semester VI',  3);
+
 -- Table structure for table `subject_details`
 DROP TABLE IF EXISTS `subject_details`;
 CREATE TABLE `subject_details`
@@ -171,6 +191,56 @@ CREATE TABLE `subject_details`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+-- Seed subjects
+-- BCA Sem I (course=1, sem=1)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Programming Fundamentals in C', 1, 1),
+       ('Mathematics I',                 1, 1),
+       ('English Communication',         1, 1),
+       ('Computer Fundamentals',         1, 1);
+
+-- BCA Sem II (course=1, sem=2)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Data Structures',       1, 2),
+       ('Mathematics II',        1, 2),
+       ('Database Management',   1, 2),
+       ('Web Technologies',      1, 2);
+
+-- BCA Sem III (course=1, sem=3)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Object-Oriented Programming with Java', 1, 3),
+       ('Operating Systems',                     1, 3),
+       ('Computer Networks',                     1, 3),
+       ('Software Engineering',                  1, 3);
+
+-- BSc CS Sem I (course=2, sem=7)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('C Programming',          2, 7),
+       ('Discrete Mathematics',   2, 7),
+       ('Computer Organization',  2, 7),
+       ('English for Science',    2, 7);
+
+-- BSc CS Sem II (course=2, sem=8)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Data Structures and Algorithms', 2, 8),
+       ('Digital Electronics',            2, 8),
+       ('Probability and Statistics',     2, 8),
+       ('Python Programming',             2, 8);
+
+-- BSc Physics Sem I (course=3, sem=13)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Classical Mechanics',     3, 13),
+       ('Thermodynamics',          3, 13),
+       ('Mathematical Physics',    3, 13),
+       ('Electronics Basics',      3, 13);
+
+-- BSc Physics Sem II (course=3, sem=14)
+INSERT INTO `subject_details` (`subject_name`, `course_id`, `semester_id`)
+VALUES ('Electromagnetism',        3, 14),
+       ('Waves and Optics',        3, 14),
+       ('Quantum Mechanics I',     3, 14),
+       ('Statistical Mechanics',   3, 14);
 
 
 -- Table structure for table `file_data`
@@ -226,6 +296,13 @@ CREATE TABLE IF NOT EXISTS `announcements`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+INSERT INTO `announcements` (`dept_id`, `author`, `title`, `body`)
+VALUES (1001, 'hod1', 'Welcome to the New Academic Year',
+        'Welcome back, everyone! The new academic year begins this Monday. Please ensure all course materials are uploaded to CampusConnect by the end of the first week.'),
+       (1001, 'hod1', 'Internal Examination Schedule',
+        'Internal examinations for BCA Semester I will be held from the 3rd week of this month. Teachers are requested to share question banks with students at least one week before the exam.'),
+       (1002, 'hod2', 'Lab Schedule Update',
+        'The Computer Science lab sessions have been rescheduled. New timetables are available on the notice board. Please check with your faculty for updated slot assignments.');
 
 -- Table structure for table `teacher_subject`
 -- Records which teacher is assigned to teach each subject (at most one teacher per subject).
@@ -244,6 +321,22 @@ CREATE TABLE IF NOT EXISTS `teacher_subject`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
+
+-- teacher1 (Computer Applications) assigned to BCA subjects
+INSERT INTO `teacher_subject` (`teacher_id`, `subject_id`)
+VALUES ('teacher1', 1),   -- Programming Fundamentals in C
+       ('teacher1', 2),   -- Mathematics I
+       ('teacher1', 5),   -- Data Structures
+       ('teacher1', 7),   -- Database Management
+       ('teacher1', 9),   -- Object-Oriented Programming with Java
+       ('teacher1', 11);  -- Computer Networks
+
+-- teacher2 (Physics) assigned to BSc Physics subjects
+INSERT INTO `teacher_subject` (`teacher_id`, `subject_id`)
+VALUES ('teacher2', 21),  -- Classical Mechanics
+       ('teacher2', 22),  -- Thermodynamics
+       ('teacher2', 25),  -- Electromagnetism
+       ('teacher2', 26);  -- Waves and Optics
 
 
 -- Reset the environment variables

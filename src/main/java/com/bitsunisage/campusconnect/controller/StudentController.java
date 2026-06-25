@@ -175,7 +175,7 @@ public class StudentController {
      * @return Thymeleaf template {@code studentViewPages/PPTs}
      */
     @PostMapping("/student/PPTs/fetchData")
-    private String fetchData(@ModelAttribute FileUploadDTO fileUploadDTO, Model model) {
+    public String fetchData(@ModelAttribute FileUploadDTO fileUploadDTO, Model model) {
         List<FileData> fileDataList = storageService.findFilesByFilters(
                 fileUploadDTO.getDepartmentId(),
                 fileUploadDTO.getCourseId(),
@@ -191,16 +191,18 @@ public class StudentController {
 
     /**
      * Streams the original file as an octet-stream download attachment.
-     * Returns 404 if the file no longer exists on disk.
+     * Returns 404 if the record or file on disk does not exist.
      *
      * @param fileId primary key of the {@link FileData} record
-     * @return 200 with the raw file bytes, or 404 if the file is missing from disk
+     * @return 200 with the raw file bytes, or 404 if the record or file is missing
      */
     @GetMapping("/student/download/original/{fileId}")
     public ResponseEntity<Resource> downloadOriginalFile(@PathVariable Long fileId) {
         Optional<FileData> fileData = storageService.getFileById(fileId);
+        if (fileData.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         File file = new File(fileData.get().getFilePath(), fileData.get().getFileName());
-
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -220,7 +222,7 @@ public class StudentController {
     /**
      * Compresses the file with GZIP and streams it as a download attachment.
      * The compressed output is fully buffered in memory before being sent.
-     * Returns 404 if the file is missing from disk, or 500 on compression failure.
+     * Returns 404 if the record or file is missing, or 500 on compression failure.
      *
      * @param fileId primary key of the {@link FileData} record
      * @return 200 with gzip-compressed bytes, 404 if missing, or 500 on error
@@ -228,8 +230,10 @@ public class StudentController {
     @GetMapping("/student/download/gzip/{fileId}")
     public ResponseEntity<Resource> downloadGzipFile(@PathVariable Long fileId) {
         Optional<FileData> fileData = storageService.getFileById(fileId);
+        if (fileData.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         File file = new File(fileData.get().getFilePath(), fileData.get().getFileName());
-
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -253,7 +257,7 @@ public class StudentController {
     /**
      * Compresses the file with ZIP and streams it as a download attachment.
      * The compressed output is fully buffered in memory before being sent.
-     * Returns 404 if the file is missing from disk, or 500 on compression failure.
+     * Returns 404 if the record or file is missing, or 500 on compression failure.
      *
      * @param fileId primary key of the {@link FileData} record
      * @return 200 with zip-compressed bytes, 404 if missing, or 500 on error
@@ -261,8 +265,10 @@ public class StudentController {
     @GetMapping("/student/download/zip/{fileId}")
     public ResponseEntity<Resource> downloadZipFile(@PathVariable Long fileId) {
         Optional<FileData> fileData = storageService.getFileById(fileId);
+        if (fileData.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         File file = new File(fileData.get().getFilePath(), fileData.get().getFileName());
-
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -281,6 +287,45 @@ public class StudentController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    /**
+     * Renders the student's own profile page.
+     *
+     * @param model populated with the current student's {@link User} record
+     * @return Thymeleaf template {@code studentViewPages/profile}
+     */
+    @GetMapping("/student/profile")
+    public String studentProfile(Model model) {
+        model.addAttribute("student", getLoggedInUser());
+        return "studentViewPages/profile";
+    }
+
+    /**
+     * Saves profile edits submitted by the student.
+     * Only allows updating fields that belong to the authenticated user.
+     *
+     * @param updatedUser form-bound user with new field values
+     * @param redirectAttributes carries a success flash on redirect
+     * @return redirect to {@code /student/profile}
+     */
+    @PostMapping("/student/save-profile")
+    public String saveStudentProfile(@ModelAttribute User updatedUser,
+                                     org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        User current = getLoggedInUser();
+        if (!current.getUserId().equals(updatedUser.getUserId())) {
+            return "redirect:/student/profile";
+        }
+        current.setEmail(updatedUser.getEmail());
+        userService.save(current);
+        redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        return "redirect:/student/profile";
+    }
+
+    /** Returns the {@link User} entity for the currently authenticated student. */
+    private User getLoggedInUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findUserByUserId(username);
     }
 
     /** Delegates to the static overload using the injected {@code userService}. */

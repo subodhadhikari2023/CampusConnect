@@ -351,6 +351,27 @@ public class UserServiceImplementation implements UserService {
 
     /** {@inheritDoc} */
     @Override
+    public List<TeacherSubject> getAssignmentsByTeacherId(String teacherId) {
+        return teacherSubjectDAO.findByTeacherId(teacherId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Semester> getSemestersByCourseIds(List<Long> courseIds) {
+        if (courseIds == null || courseIds.isEmpty()) return List.of();
+        return semesterDAO.findByCourseIdIn(courseIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<SubjectDetails> getSubjectsByCourseIds(List<Long> courseIds) {
+        if (courseIds == null || courseIds.isEmpty()) return List.of();
+        List<Integer> intIds = courseIds.stream().map(Long::intValue).toList();
+        return subjectDetailsDAO.findByCourseIdIn(intIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List<Announcement> getAnnouncementsByDeptId(Long deptId) {
         return announcementDAO.findByDeptIdOrderByCreatedAtDesc(deptId);
     }

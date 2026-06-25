@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>My Subjects &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/teacher/portal.css}">
+</head>
+<body>
+<div th:replace="~{teacherViewPages/teachersidebar :: teachersidebar}"></div>
+
+<div class="teacher-page-content">
+<main>
+<div class="teacher-container">
+
+    <div class="teacher-upload-card">
+        <div class="teacher-upload-card__title">&#128218; My Subjects</div>
+
+        <div th:if="${subjects == null or subjects.isEmpty()}" class="text-muted">
+            No subjects have been assigned to you yet.
+        </div>
+
+        <div th:unless="${subjects == null or subjects.isEmpty()}">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="subject : ${subjects}">
+                        <td th:text="${subject.subjectName}"></td>
+                        <td th:text="${courseNames[subject.courseId] ?: '-'}"></td>
+                        <td th:text="${semesterNames[subject.semesterId] ?: '-'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</main>
+<footer class="teacher-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

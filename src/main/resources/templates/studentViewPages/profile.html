@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Profile &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/student/portal.css}">
+</head>
+<body>
+<div th:replace="~{studentViewPages/studentheader :: studentheader}"></div>
+
+<div class="student-page-content">
+<main>
+<div class="student-container">
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card p-4 shadow-sm">
+                <h5 class="mb-4 fw-semibold">My Profile</h5>
+
+                <div th:if="${successMessage}" class="alert alert-success mb-3" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}"   class="alert alert-danger  mb-3" th:text="${errorMessage}"></div>
+
+                <form th:action="@{/student/save-profile}" method="POST">
+                    <input type="hidden" name="userId" th:value="${student.userId}">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input class="form-control" type="text" th:value="${student.userId}" readonly>
+                        <div class="form-text text-muted">Username cannot be changed.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Department</label>
+                        <input class="form-control" type="text" th:value="${student.department}" readonly>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" for="email">Email</label>
+                        <input class="form-control" id="email" name="email" type="email"
+                               required th:value="${student.email}">
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary" type="submit">Save Changes</button>
+                        <a th:href="@{/student}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

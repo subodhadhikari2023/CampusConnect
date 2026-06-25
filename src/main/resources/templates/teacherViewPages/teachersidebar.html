@@ -63,6 +63,21 @@
                th:href="@{/teacher/viewUploadedResources}">
                 <span class="link-icon">&#128449;</span> Uploaded Resources
             </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/browse')} ? ' is-active'"
+               th:href="@{/teacher/browse}">
+                <span class="link-icon">&#128269;</span> Browse Resources
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/my-subjects')} ? ' is-active'"
+               th:href="@{/teacher/my-subjects}">
+                <span class="link-icon">&#128218;</span> My Subjects
+            </a>
+            <a class="teacher-sidebar__link"
+               th:classappend="${currentUri.startsWith('/teacher/profile')} ? ' is-active'"
+               th:href="@{/teacher/profile}">
+                <span class="link-icon">&#128100;</span> Profile
+            </a>
 
         </nav>
 
@@ -138,6 +153,21 @@
                    th:classappend="${currentUri.startsWith('/teacher/viewUploadedResources')} ? ' is-active'"
                    th:href="@{/teacher/viewUploadedResources}">
                     <span class="link-icon">&#128449;</span> Uploaded Resources
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/browse')} ? ' is-active'"
+                   th:href="@{/teacher/browse}">
+                    <span class="link-icon">&#128269;</span> Browse Resources
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/my-subjects')} ? ' is-active'"
+                   th:href="@{/teacher/my-subjects}">
+                    <span class="link-icon">&#128218;</span> My Subjects
+                </a>
+                <a class="teacher-sidebar__link"
+                   th:classappend="${currentUri.startsWith('/teacher/profile')} ? ' is-active'"
+                   th:href="@{/teacher/profile}">
+                    <span class="link-icon">&#128100;</span> Profile
                 </a>
             </nav>
         </div>

@@ -46,4 +46,13 @@ public interface TeacherSubjectDAO extends JpaRepository<TeacherSubject, Long> {
      * @return list of matching assignments; empty if none
      */
     List<TeacherSubject> findByTeacherIdIn(List<String> teacherIds);
+
+    /**
+     * Returns all subject assignments for a single teacher.
+     * Used on the teacher's My Subjects page.
+     *
+     * @param teacherId login username of the teacher
+     * @return list of assignments; empty if the teacher has no subjects assigned
+     */
+    List<TeacherSubject> findByTeacherId(String teacherId);
 }

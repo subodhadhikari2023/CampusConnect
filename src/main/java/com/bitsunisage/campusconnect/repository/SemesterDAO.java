@@ -46,4 +46,13 @@ public interface SemesterDAO extends JpaRepository<Semester, Integer> {
      * @return {@code true} if a matching semester exists
      */
     boolean existsByCourseIdAndSemesterName(Long courseId, String semesterName);
+
+    /**
+     * Returns all semesters whose course ID is in the given list.
+     * Used to populate upload-form dropdowns scoped to a teacher's department.
+     *
+     * @param courseIds list of course primary keys
+     * @return list of matching semesters; empty if the list is empty or no matches
+     */
+    List<Semester> findByCourseIdIn(List<Long> courseIds);
 }
