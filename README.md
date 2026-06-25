@@ -105,11 +105,14 @@
 ## Features
 
 - **Role-Based Access Control** — Distinct roles (Admin, HOD, Teacher, Student) with scoped permissions across all platform actions
-- **Admin Dashboard** — System-wide stats (users by role, inactive accounts, departments, semesters, courses, file storage used) with a recent-uploads activity feed; full CRUD for users, departments, semesters; HOD assignment and file moderation
-- **Course and Subject Management** — HODs manage courses, subjects, and curriculum per semester; curriculum overview page
-- **Resource Library** — Teachers upload lecture slides, videos, notes, programs, audio books, and reference material organized by department / course / semester / subject
-- **File Compression Downloads** — Students download resources in original, GZIP, or ZIP format
-- **Customized Dashboards** — Role-specific dashboards providing immediate access to relevant tools and information
+- **Admin Dashboard** — System-wide stats with full CRUD for users and departments
+- **HOD Module** — Full course / semester / subject / curriculum management; teacher-subject assignment; department announcements; workload view
+- **Resource Library** — Teachers upload lecture slides, videos, notes, programs, audio books, and reference material scoped to their assigned subjects
+- **Dept-Scoped Browse** — Teachers and students browse and download resources filtered to their own department
+- **File Compression Downloads** — Download resources in original, GZIP, or ZIP format
+- **Announcements** — HODs post department notices; visible to all teachers and students in the department
+- **Flyway Migrations** — Versioned schema management; schema and seed data applied automatically on first boot
+- **Health Endpoint** — `/actuator/health` for uptime monitoring and Docker health checks
 
 ---
 
@@ -131,6 +134,8 @@
 [![Docker][DockerBadge.js]][Docker-url]
 [![GitHub Actions][GHA.js]][GHA-url]
 [![GHCR][GHCR.js]][GHCR-url]
+[![Flyway][Flyway.js]][Flyway-url]
+[![Actuator][Actuator.js]][Actuator-url]
 
 **Testing**
 
@@ -149,7 +154,7 @@ Choose the setup method that suits your environment.
 
 ### Option 1: Docker (Recommended)
 
-No manual database setup required. Docker handles everything — the database, schema creation, and the application.
+No manual database setup required. Docker Compose starts MySQL 8.0 and the Spring Boot app; Flyway creates all tables and seeds data automatically on first boot.
 
 **Prerequisites:** Docker and Docker Compose installed.
 
@@ -169,20 +174,18 @@ docker compose up --build
 The application will be available at `http://localhost:8080`.
 
 **What Docker sets up automatically:**
-- MySQL 8.0 container — creates the database and user from your `.env`
-- Runs `sql-scripts/databaseScript.sql` on first startup to create all tables and seed data
-- Spring Boot app container — compiled via multi-stage build, connects to MySQL over Docker's internal network
-- The app container waits for MySQL to pass its health check before starting
+- MySQL 8.0 container — creates the `campusConnect` database from your `.env`
+- Spring Boot app — compiled via multi-stage build, waits for MySQL health check before starting
+- Flyway runs `V1__init_schema.sql` then `V2__seed_data.sql` on first boot — no manual SQL step needed
+- `/actuator/health` is the Docker health check endpoint
 
 ```bash
 # Stop the containers
 docker compose down
 
-# Stop and delete all data (volumes)
+# Stop and delete all data (fresh start)
 docker compose down -v
 ```
-
-> **Note:** `setup.sh` is for the manual setup path only. Do not run it before `docker compose up` — it starts the application directly via Maven and is not needed for Docker.
 
 ---
 
@@ -222,22 +225,23 @@ The application will be available at `http://localhost:8080`.
 
 ## Testing
 
-The project includes **128 tests** covering all application layers.
+The project includes **194 tests** covering all application layers.
 
 | Layer | Tests | Framework | Notes |
 |---|---|---|---|
-| Controllers | 71+ | @WebMvcTest + Mockito | Admin, HOD, Teacher, Student, Master controllers — views, model attributes, redirects, flash messages |
-| Services | 33+ | JUnit 5 + Mockito | UserService — pure unit tests, no Spring context |
-| Repositories | 14+ | @DataJpaTest + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
+| Controllers | 136 | `@WebMvcTest` + Mockito | Admin (42), HOD (41), Teacher (32), Student (17), Master (4) — views, model attributes, redirects, flash messages, ownership guards |
+| Services | 33 | JUnit 5 + Mockito | UserService — pure unit tests, no Spring context |
+| Repositories | 14 | `@DataJpaTest` + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
+| Integration | 1 | `@SpringBootTest` | Full context smoke test |
 
-Tests use an **H2 in-memory database** via `application-test.properties`, ensuring no MySQL dependency in CI or local test runs.
+Tests use an **H2 in-memory database** via `application-test.properties` with `spring.flyway.enabled=false` — no MySQL or schema files needed in CI.
 
 ```bash
 # Run all tests
-./mvnw test
+mvn test
 
 # Run a specific test class
-./mvnw test -Dtest=SecurityIntegrationTest
+mvn test -Dtest=HodControllerTest
 ```
 
 ---
@@ -246,8 +250,9 @@ Tests use an **H2 in-memory database** via `application-test.properties`, ensuri
 
 Every push and pull request targeting `main` triggers the GitHub Actions pipeline:
 
-1. **Test job** — Runs the full 88-test suite against H2 in-memory DB
+1. **Test job** — Runs the full 194-test suite against H2 in-memory DB (no MySQL required)
 2. **Push job** *(main branch only)* — Builds the Docker image and pushes to GitHub Container Registry (GHCR) tagged with `:latest` and the commit SHA
+3. **Railway** — Automatically redeploys on every push to `main`; Flyway applies any new migrations on startup
 
 Pull the latest image:
 
@@ -332,3 +337,7 @@ Distributed under the GNU General Public License. See [LICENSE](LICENSE) for det
 [H2-url]: https://www.h2database.com/
 [SST.js]: https://img.shields.io/badge/Spring_Security_Test-6DB33F?style=for-the-badge&logo=spring&logoColor=white
 [SST-url]: https://docs.spring.io/spring-security/reference/servlet/test/index.html
+[Flyway.js]: https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white
+[Flyway-url]: https://flywaydb.org/
+[Actuator.js]: https://img.shields.io/badge/Spring_Actuator-6DB33F?style=for-the-badge&logo=spring&logoColor=white
+[Actuator-url]: https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html
