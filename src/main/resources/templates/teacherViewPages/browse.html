@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Browse Resources &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/teacher/portal.css}">
+</head>
+<body>
+<div th:replace="~{teacherViewPages/teachersidebar :: teachersidebar}"></div>
+
+<div class="teacher-page-content">
+<main>
+<div class="teacher-container">
+
+    <!-- Search form -->
+    <div class="teacher-upload-card mb-4">
+        <div class="teacher-upload-card__title">&#128269; Browse Department Resources</div>
+
+        <form th:action="@{/teacher/browse/search}" method="POST"
+              th:object="${fileUploadDTO}">
+            <input type="hidden" th:field="*{departmentId}">
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label for="courseId" class="form-label fw-semibold">Course</label>
+                    <select id="courseId" class="form-select" th:field="*{courseId}">
+                        <option value="">All Courses</option>
+                        <option th:each="course : ${courses}"
+                                th:value="${course.courseId}"
+                                th:text="${course.courseName}"></option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label for="semesterId" class="form-label fw-semibold">Semester</label>
+                    <select id="semesterId" class="form-select" th:field="*{semesterId}">
+                        <option value="">All Semesters</option>
+                        <option th:each="sem : ${semesterList}"
+                                th:value="${sem.semesterId}"
+                                th:text="${sem.semesterName}"></option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label for="subjectId" class="form-label fw-semibold">Subject</label>
+                    <select id="subjectId" class="form-select" th:field="*{subjectId}">
+                        <option value="">All Subjects</option>
+                        <option th:each="sub : ${subjectList}"
+                                th:value="${sub.subjectId}"
+                                th:text="${sub.subjectName}"></option>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <label for="fileRole" class="form-label fw-semibold">Category</label>
+                    <select id="fileRole" class="form-select" th:field="*{fileRole}">
+                        <option value="">All Categories</option>
+                        <option value="PPTS">Presentations</option>
+                        <option value="Notes">Lecture Notes</option>
+                        <option value="Programs">Sample Programs</option>
+                        <option value="AudioBooks">Audio Books</option>
+                        <option value="ReferenceBook">Reference Books</option>
+                        <option value="Videos">Videos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap mt-3">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <a th:href="@{/teacher/browse}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div th:if="${results != null}">
+        <div th:if="${results.isEmpty()}" class="alert alert-info">
+            No resources found for the selected filters.
+        </div>
+
+        <div th:unless="${results.isEmpty()}" class="teacher-table-card">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle" style="font-size:0.875rem;">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Category</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Subject</th>
+                        <th>Uploaded By</th>
+                        <th>File Name</th>
+                        <th>Date</th>
+                        <th>Download</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="resource, stat : ${results}">
+                        <td th:text="${stat.count}" class="text-muted"></td>
+                        <td th:text="${resource.fileRole}"></td>
+                        <td>
+                            <span th:each="c : ${courseDetails}"
+                                  th:if="${c.courseId == resource.courseId}"
+                                  th:text="${c.courseName}"></span>
+                        </td>
+                        <td>
+                            <span th:each="s : ${semesterList}"
+                                  th:if="${s.semesterId == resource.semesterId}"
+                                  th:text="${s.semesterName}"></span>
+                        </td>
+                        <td>
+                            <span th:each="sub : ${subjectList}"
+                                  th:if="${sub.subjectId == resource.subjectId}"
+                                  th:text="${sub.subjectName}"></span>
+                        </td>
+                        <td th:text="${resource.ownersName}"></td>
+                        <td th:text="${resource.fileName}"></td>
+                        <td th:text="${resource.uploadDate}"></td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                <a class="btn btn-success btn-sm"
+                                   th:href="@{/teacher/download/original/{id}(id=${resource.id})}" download>Original</a>
+                                <a class="btn btn-outline-secondary btn-sm"
+                                   th:href="@{/teacher/download/gzip/{id}(id=${resource.id})}" download>GZIP</a>
+                                <a class="btn btn-outline-secondary btn-sm"
+                                   th:href="@{/teacher/download/zip/{id}(id=${resource.id})}" download>ZIP</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+<footer class="teacher-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

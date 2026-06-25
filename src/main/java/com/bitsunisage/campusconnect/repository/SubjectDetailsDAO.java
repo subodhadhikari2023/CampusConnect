@@ -70,4 +70,13 @@ public interface SubjectDetailsDAO extends JpaRepository<SubjectDetails, String>
      * @return number of subjects in that course
      */
     int countByCourseId(int courseId);
+
+    /**
+     * Returns all subjects whose course ID is in the given list.
+     * Used to populate upload-form dropdowns scoped to a teacher's department.
+     *
+     * @param courseIds list of course primary keys (as {@code Integer} to match the entity field type)
+     * @return list of matching subjects; empty if the list is empty or no matches
+     */
+    List<SubjectDetails> findByCourseIdIn(List<Integer> courseIds);
 }

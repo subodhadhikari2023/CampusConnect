@@ -25,6 +25,14 @@
         <span th:text="${message}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
     <!-- Upload Resources -->
     <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
@@ -94,6 +102,14 @@
             <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128449;</div>
             <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Uploaded Resources</div>
             <div style="font-size:0.78rem; color:var(--clr-text-muted);">View and delete your uploads</div>
+        </a>
+
+        <a th:href="@{/teacher/browse}" class="hod-action-card"
+           style="border:1px solid var(--clr-border); border-radius:var(--radius-lg); background:var(--clr-surface);
+                  padding:1.5rem; text-decoration:none; color:var(--clr-text); transition:box-shadow 0.18s, transform 0.18s;">
+            <div style="font-size:1.75rem; color:var(--clr-primary); margin-bottom:0.5rem;">&#128269;</div>
+            <div style="font-size:0.95rem; font-weight:600; margin-bottom:0.25rem;">Browse Resources</div>
+            <div style="font-size:0.78rem; color:var(--clr-text-muted);">Search department resources</div>
         </a>
 
     </div>

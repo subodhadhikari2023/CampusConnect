@@ -24,11 +24,9 @@
             <input type="hidden" th:field="*{fileRole}"/>
 
             <div class="mb-3">
-                <label for="departmentId" class="form-label fw-semibold">Department</label>
-                <select id="departmentId" class="form-select" th:field="*{departmentId}" required>
-                    <option value="" disabled selected>Select department</option>
-                    <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}"></option>
-                </select>
+                <label class="form-label fw-semibold">Department</label>
+                <input class="form-control" type="text" th:value="${departmentName}" readonly>
+                <input type="hidden" th:field="*{departmentId}">
             </div>
 
             <div class="mb-3">
