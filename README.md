@@ -170,7 +170,7 @@ The application will be available at `http://localhost:8080`.
 
 **What Docker sets up automatically:**
 - MySQL 8.0 container — creates the database and user from your `.env`
-- Runs `docker/init.sql` on first startup to create all tables and seed data
+- Runs `sql-scripts/databaseScript.sql` on first startup to create all tables and seed data
 - Spring Boot app container — compiled via multi-stage build, connects to MySQL over Docker's internal network
 - The app container waits for MySQL to pass its health check before starting
 

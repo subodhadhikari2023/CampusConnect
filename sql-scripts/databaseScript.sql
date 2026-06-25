@@ -18,10 +18,6 @@
 CREATE DATABASE IF NOT EXISTS `campusConnect`;
 USE `campusConnect`;
 
--- Create MySQL User and Grant Privileges
-CREATE USER IF NOT EXISTS `campusConnect`@`localhost` IDENTIFIED BY '${DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON `campusConnect`.* TO `campusConnect`@`localhost`;
-
 -- Table structure for table `department`
 DROP TABLE IF EXISTS `department`;
 CREATE TABLE `department`
