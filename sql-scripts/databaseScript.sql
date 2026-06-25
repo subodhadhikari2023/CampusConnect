@@ -211,19 +211,20 @@ DROP TABLE IF EXISTS `announcements`;
 
 CREATE TABLE IF NOT EXISTS `announcements`
 (
-    `id`         INT                                                             NOT NULL AUTO_INCREMENT,
-    `dept_id`    INT                                                             NOT NULL,
-    `author`     VARCHAR(50)  CHARACTER SET latin1                               NOT NULL,
-    `title`      VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  NOT NULL,
-    `body`       TEXT         CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci  NOT NULL,
-    `created_at` TIMESTAMP                                                       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `id`         INT           NOT NULL AUTO_INCREMENT,
+    `dept_id`    INT           NOT NULL,
+    `author`     VARCHAR(50)   NOT NULL,
+    `title`      VARCHAR(200)  NOT NULL,
+    `body`       TEXT          NOT NULL,
+    `created_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `dept_id` (`dept_id`),
     CONSTRAINT `fk_dept_announcement`   FOREIGN KEY (`dept_id`) REFERENCES `department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_author_announcement` FOREIGN KEY (`author`)  REFERENCES `members`    (`user_id`)       ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 -- Table structure for table `teacher_subject`
@@ -232,16 +233,17 @@ DROP TABLE IF EXISTS `teacher_subject`;
 
 CREATE TABLE IF NOT EXISTS `teacher_subject`
 (
-    `id`         INT                        NOT NULL AUTO_INCREMENT,
-    `teacher_id` VARCHAR(50) CHARACTER SET latin1 NOT NULL,
-    `subject_id` INT                        NOT NULL,
+    `id`         INT         NOT NULL AUTO_INCREMENT,
+    `teacher_id` VARCHAR(50) NOT NULL,
+    `subject_id` INT         NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_subject` (`subject_id`),
     CONSTRAINT `fk_teacher_ts` FOREIGN KEY (`teacher_id`) REFERENCES `members`         (`user_id`)    ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_subject_ts` FOREIGN KEY (`subject_id`) REFERENCES `subject_details` (`subject_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = latin1;
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
 
 -- Reset the environment variables
