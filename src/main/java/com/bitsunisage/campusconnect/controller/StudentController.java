@@ -4,6 +4,7 @@ import com.bitsunisage.campusconnect.dto.FileUploadDTO;
 import com.bitsunisage.campusconnect.entities.*;
 import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -14,19 +15,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Handles HTTP requests for the Student role.
- * Provides browse and search views for each resource type, a filter POST endpoint,
- * and three download endpoints (original, gzip, zip).
+ * Provides a dept-scoped resource browser, three download endpoints, and a profile page.
  * All routes under {@code /student/**} require {@code ROLE_STUDENT} authority.
  */
 @Controller
@@ -36,165 +37,91 @@ public class StudentController {
     private final StorageService storageService;
 
     /**
-     * @param userService    service for catalogue lookups
+     * @param userService    service for catalogue lookups and user management
      * @param storageService service for file retrieval and compression
      */
+    @Autowired
     public StudentController(UserService userService, StorageService storageService) {
         this.userService = userService;
         this.storageService = storageService;
     }
 
-    /**
-     * Populates the model with all catalogue dropdowns required by search and upload forms.
-     * Shared with {@link TeacherController} via a static call.
-     *
-     * @param model       the Spring MVC model to populate
-     * @param userService service used to fetch catalogue data
-     */
-    static void formModelFeeding(Model model, UserService userService) {
-        model.addAttribute("userList", userService.findAllUsers());
-        model.addAttribute("departments", userService.getAllDepartments());
-        model.addAttribute("courses", userService.getAllCourses());
-        model.addAttribute("semesterList", userService.getAllSemesters());
-        model.addAttribute("subjectList", userService.getAllSubjects());
-    }
+    // ── Dashboard ─────────────────────────────────────────────────────────────
 
     /**
-     * Renders the student dashboard home page, including any announcements posted by the
-     * HOD of the student's department.
+     * Renders the student dashboard with announcements from the student's department HOD.
      *
      * @param model populated with {@code announcements} for the student's department
      * @return Thymeleaf template {@code studentViewPages/indexstudent}
      */
     @GetMapping("/student")
     public String getStudent(Model model) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User student = userService.findUserByUserId(username);
+        User student = getLoggedInUser();
         if (student != null && student.getDeptID() != null) {
-            model.addAttribute("announcements", userService.getAnnouncementsByDeptId(student.getDeptID()));
+            model.addAttribute("announcements",
+                    userService.getAnnouncementsByDeptId(student.getDeptID()));
         }
         return "studentViewPages/indexstudent";
     }
 
+    // ── Browse ────────────────────────────────────────────────────────────────
+
     /**
-     * Renders the PPT search page pre-populated with {@code fileRole = "PPTs"}.
+     * Renders the resource browser pre-scoped to the student's department.
+     * An optional {@code category} query parameter pre-selects the file-role filter.
      *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
+     * @param category optional file-role value to pre-select (e.g. "PPTS", "Notes")
+     * @param model    populated with dept-scoped dropdowns and an empty DTO
+     * @return Thymeleaf template {@code studentViewPages/browse}
      */
-    @GetMapping("student/PPTs")
-    public String PPTs(Model model) {
+    @GetMapping("/student/browse")
+    public String browse(@RequestParam(required = false) String category, Model model) {
+        User student = getLoggedInUser();
         FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("PPTs");
-        formModelFeeding(model);
+        dto.setDepartmentId(student.getDeptID());
+        if (category != null && !category.isBlank()) {
+            dto.setFileRole(category);
+        }
         model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
+        modelFeeding(model, student);
+        return "studentViewPages/browse";
     }
 
     /**
-     * Renders the notes search page pre-populated with {@code fileRole = "Notes"}.
+     * Searches for resources matching the submitted filters.
+     * The department ID is always taken from the authenticated student's profile,
+     * ignoring whatever value was submitted in the form.
      *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
+     * @param fileUploadDTO bound search filters from the form
+     * @param model         populated with dropdowns, the filter DTO, and the result list
+     * @return Thymeleaf template {@code studentViewPages/browse}
      */
-    @GetMapping("/student/notes")
-    public String notes(Model model) {
-        FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("Notes");
-        formModelFeeding(model);
-        model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
-    }
-
-    /**
-     * Renders the programs search page pre-populated with {@code fileRole = "Programs"}.
-     *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
-     */
-    @GetMapping("/student/programs")
-    public String programs(Model model) {
-        FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("Programs");
-        formModelFeeding(model);
-        model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
-    }
-
-    /**
-     * Renders the audiobooks search page pre-populated with {@code fileRole = "AudioBooks"}.
-     *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
-     */
-    @GetMapping("/student/audiobooks")
-    public String audiobooks(Model model) {
-        FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("AudioBooks");
-        formModelFeeding(model);
-        model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
-    }
-
-    /**
-     * Renders the reference books search page pre-populated with {@code fileRole = "ReferenceBook"}.
-     *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
-     */
-    @GetMapping("/student/referencebooks")
-    public String reference(Model model) {
-        FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("ReferenceBook");
-        formModelFeeding(model);
-        model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
-    }
-
-    /**
-     * Renders the videos search page pre-populated with {@code fileRole = "Videos"}.
-     *
-     * @param model populated with catalogue dropdowns and an empty DTO
-     * @return Thymeleaf template {@code studentViewPages/searchppts}
-     */
-    @GetMapping("/student/video")
-    public String video(Model model) {
-        FileUploadDTO dto = new FileUploadDTO();
-        dto.setFileRole("Videos");
-        formModelFeeding(model);
-        model.addAttribute("fileUploadDTO", dto);
-        return "studentViewPages/searchppts";
-    }
-
-    /**
-     * Accepts a filter form submission and renders the matching file list.
-     * All five filter fields are required; partial filtering is not currently supported.
-     *
-     * @param fileUploadDTO bound from the search form; carries all five filter values
-     * @param model         populated with the filtered file list and resolved name lists
-     * @return Thymeleaf template {@code studentViewPages/PPTs}
-     */
-    @PostMapping("/student/PPTs/fetchData")
-    public String fetchData(@ModelAttribute FileUploadDTO fileUploadDTO, Model model) {
-        List<FileData> fileDataList = storageService.findFilesByFilters(
-                fileUploadDTO.getDepartmentId(),
+    @PostMapping("/student/browse/search")
+    public String search(@ModelAttribute FileUploadDTO fileUploadDTO, Model model) {
+        User student = getLoggedInUser();
+        fileUploadDTO.setDepartmentId(student.getDeptID());
+        List<FileData> results = storageService.findFilesByFilters(
+                student.getDeptID(),
                 fileUploadDTO.getCourseId(),
                 fileUploadDTO.getSemesterId(),
                 fileUploadDTO.getSubjectId(),
                 fileUploadDTO.getFileRole()
         );
-        formModelFeeding(model);
-        TeacherController.feedFileDataToModel(model, fileDataList, userService);
-        model.addAttribute("fileDataList", fileDataList);
-        return "studentViewPages/PPTs";
+        TeacherController.feedFileDataToModel(model, results, userService);
+        model.addAttribute("fileUploadDTO", fileUploadDTO);
+        model.addAttribute("results", results);
+        modelFeeding(model, student);
+        return "studentViewPages/browse";
     }
 
+    // ── Downloads ─────────────────────────────────────────────────────────────
+
     /**
-     * Streams the original file as an octet-stream download attachment.
-     * Returns 404 if the record or file on disk does not exist.
+     * Streams the original file as an octet-stream download.
+     * Returns 404 if the record or the file on disk does not exist.
      *
      * @param fileId primary key of the {@link FileData} record
-     * @return 200 with the raw file bytes, or 404 if the record or file is missing
+     * @return 200 with the raw file bytes, or 404 if missing
      */
     @GetMapping("/student/download/original/{fileId}")
     public ResponseEntity<Resource> downloadOriginalFile(@PathVariable Long fileId) {
@@ -206,22 +133,18 @@ public class StudentController {
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
-        Resource resource = new FileSystemResource(file);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + fileData.get().getFileName() + "\"");
-
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(file.length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+                .body(new FileSystemResource(file));
     }
 
     /**
      * Compresses the file with GZIP and streams it as a download attachment.
-     * The compressed output is fully buffered in memory before being sent.
      * Returns 404 if the record or file is missing, or 500 on compression failure.
      *
      * @param fileId primary key of the {@link FileData} record
@@ -237,10 +160,9 @@ public class StudentController {
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
         try {
-            InputStream compressedStream = storageService.compressFileWithGzip(file.getAbsolutePath());
-            ByteArrayResource resource = new ByteArrayResource(compressedStream.readAllBytes());
+            InputStream stream = storageService.compressFileWithGzip(file.getAbsolutePath());
+            ByteArrayResource resource = new ByteArrayResource(stream.readAllBytes());
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + fileData.get().getFileName() + ".gz\"");
@@ -256,7 +178,6 @@ public class StudentController {
 
     /**
      * Compresses the file with ZIP and streams it as a download attachment.
-     * The compressed output is fully buffered in memory before being sent.
      * Returns 404 if the record or file is missing, or 500 on compression failure.
      *
      * @param fileId primary key of the {@link FileData} record
@@ -272,10 +193,9 @@ public class StudentController {
         if (!file.exists()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
         try {
-            InputStream zipStream = storageService.compressFileWithZip(file.getAbsolutePath());
-            ByteArrayResource resource = new ByteArrayResource(zipStream.readAllBytes());
+            InputStream stream = storageService.compressFileWithZip(file.getAbsolutePath());
+            ByteArrayResource resource = new ByteArrayResource(stream.readAllBytes());
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION,
                     "attachment; filename=\"" + fileData.get().getFileName() + ".zip\"");
@@ -289,38 +209,56 @@ public class StudentController {
         }
     }
 
+    // ── Profile ───────────────────────────────────────────────────────────────
+
     /**
-     * Renders the student's own profile page.
+     * Renders the student's profile page.
+     * Clears the stored password so it is never pre-filled in the form.
      *
      * @param model populated with the current student's {@link User} record
      * @return Thymeleaf template {@code studentViewPages/profile}
      */
     @GetMapping("/student/profile")
     public String studentProfile(Model model) {
-        model.addAttribute("student", getLoggedInUser());
+        User student = getLoggedInUser();
+        student.setPassword(null);
+        model.addAttribute("student", student);
         return "studentViewPages/profile";
     }
 
     /**
-     * Saves profile edits submitted by the student.
-     * Only allows updating fields that belong to the authenticated user.
+     * Saves the student's updated email and optional new password.
+     * A blank new-password field preserves the existing password.
      *
-     * @param updatedUser form-bound user with new field values
-     * @param redirectAttributes carries a success flash on redirect
+     * @param updatedUser        form-bound user with updated email
+     * @param newPassword        new password; blank means keep current
+     * @param confirmPassword    must match {@code newPassword} when provided
+     * @param redirectAttributes carries flash messages on redirect
      * @return redirect to {@code /student/profile}
      */
     @PostMapping("/student/save-profile")
     public String saveStudentProfile(@ModelAttribute User updatedUser,
-                                     org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+                                     @RequestParam("newPassword") String newPassword,
+                                     @RequestParam("confirmPassword") String confirmPassword,
+                                     RedirectAttributes redirectAttributes) {
         User current = getLoggedInUser();
         if (!current.getUserId().equals(updatedUser.getUserId())) {
             return "redirect:/student/profile";
         }
+        if (!newPassword.isBlank() && !newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Passwords do not match.");
+            return "redirect:/student/profile";
+        }
         current.setEmail(updatedUser.getEmail());
+        if (!newPassword.isBlank()) {
+            current.setPassword("{noop}" + newPassword);
+        }
         userService.save(current);
         redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
         return "redirect:/student/profile";
     }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     /** Returns the {@link User} entity for the currently authenticated student. */
     private User getLoggedInUser() {
@@ -328,8 +266,24 @@ public class StudentController {
         return userService.findUserByUserId(username);
     }
 
-    /** Delegates to the static overload using the injected {@code userService}. */
-    private void formModelFeeding(Model model) {
-        formModelFeeding(model, userService);
+    /**
+     * Populates the model with dept-scoped catalogue dropdowns.
+     * Only courses, semesters, and subjects belonging to the student's department are loaded.
+     *
+     * @param model   the Spring MVC model to populate
+     * @param student the authenticated student whose department scopes the data
+     */
+    private void modelFeeding(Model model, User student) {
+        List<CourseDetails> courses = userService.getCoursesByDepartmentId(student.getDeptID());
+        List<Long> courseIds = courses.stream().map(CourseDetails::getCourseId).toList();
+        model.addAttribute("courses", courses);
+        model.addAttribute("semesterList", courseIds.isEmpty()
+                ? Collections.emptyList()
+                : userService.getSemestersByCourseIds(courseIds));
+        model.addAttribute("subjectList", courseIds.isEmpty()
+                ? Collections.emptyList()
+                : userService.getSubjectsByCourseIds(courseIds));
+        Department dept = userService.getDepartmentNameByDepartmentId(student.getDeptID().intValue());
+        model.addAttribute("departmentName", dept != null ? dept.getName() : "");
     }
 }

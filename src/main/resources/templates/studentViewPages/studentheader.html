@@ -14,8 +14,12 @@
         <nav class="d-none d-md-flex align-items-center gap-3 ms-4">
             <a th:href="@{/student}"
                style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
-               th:classappend="${currentUri == '/student'} ? 'fw-semibold' + ' ' + 'clr-primary' : ''">
+               th:classappend="${currentUri == '/student'} ? 'fw-semibold clr-primary' : ''">
                 Dashboard</a>
+            <a th:href="@{/student/browse}"
+               style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
+               th:classappend="${currentUri != null and currentUri.startsWith('/student/browse')} ? 'fw-semibold' : ''">
+                Browse Resources</a>
             <a th:href="@{/student/profile}"
                style="font-size:0.85rem; text-decoration:none; color:var(--clr-text-muted);"
                th:classappend="${currentUri != null and currentUri.startsWith('/student/profile')} ? 'fw-semibold' : ''">
