@@ -174,7 +174,8 @@ public class HodController {
             redirectAttributes.addFlashAttribute("errorMessage", "Course name cannot be blank.");
             return "redirect:/hod/manage-course";
         }
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -195,7 +196,8 @@ public class HodController {
     @PostMapping("/hod/delete-course")
     public String deleteCourse(@RequestParam("courseId") Long courseId,
                                RedirectAttributes redirectAttributes) {
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -225,7 +227,7 @@ public class HodController {
         User hod = getLoggedInUser();
         model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
         if (courseId != null) {
-            if (!ownsCourse(courseId)) {
+            if (!ownsCourse(courseId, hod.getDeptID())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
                 return "redirect:/hod/manage-course";
             }
@@ -247,7 +249,8 @@ public class HodController {
     public String saveSemester(@RequestParam("courseId") Long courseId,
                                @RequestParam("semesterName") String semesterName,
                                RedirectAttributes redirectAttributes) {
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied.");
             return "redirect:/hod/manage-course";
         }
@@ -275,7 +278,8 @@ public class HodController {
     public String deleteSemester(@RequestParam("semesterId") Long semesterId,
                                  @RequestParam("courseId") Long courseId,
                                  RedirectAttributes redirectAttributes) {
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied.");
             return "redirect:/hod/manage-course";
         }
@@ -308,7 +312,8 @@ public class HodController {
             redirectAttributes.addFlashAttribute("errorMessage", "Semester name cannot be blank.");
             return "redirect:/hod/semesters?courseId=" + courseId;
         }
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -350,7 +355,7 @@ public class HodController {
         if (courseId == null) {
             return "hodViewPages/curriculum";
         }
-        if (!ownsCourse(courseId)) {
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -409,7 +414,8 @@ public class HodController {
             redirectAttributes.addFlashAttribute("errorMessage", "Subject name cannot be blank.");
             return "redirect:/hod/curriculum?courseId=" + courseId;
         }
-        if (!ownsCourse((long) courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse((long) courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
         }
@@ -469,7 +475,8 @@ public class HodController {
             redirectAttributes.addFlashAttribute("errorMessage", "Subject name cannot be blank.");
             return "redirect:/hod/manage-subject?courseId=" + courseId;
         }
-        if (!ownsCourse((long) courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse((long) courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
         }
@@ -500,7 +507,8 @@ public class HodController {
                                 @RequestParam("courseId") int courseId,
                                 @RequestParam(value = "source", defaultValue = "curriculum") String source,
                                 RedirectAttributes redirectAttributes) {
-        if (!ownsCourse((long) courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse((long) courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
         }
@@ -534,7 +542,7 @@ public class HodController {
         if (courseId == null) {
             return "hodViewPages/assign-teachers";
         }
-        if (!ownsCourse(courseId)) {
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -569,7 +577,8 @@ public class HodController {
                                 @RequestParam(value = "teacherId", required = false) String teacherId,
                                 @RequestParam("courseId") Long courseId,
                                 RedirectAttributes redirectAttributes) {
-        if (!ownsCourse(courseId)) {
+        User hod = getLoggedInUser();
+        if (!ownsCourse(courseId, hod.getDeptID())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-course";
         }
@@ -578,7 +587,7 @@ public class HodController {
             redirectAttributes.addFlashAttribute("successMessage", "Teacher assignment removed.");
         } else {
             User teacher = userService.findUserByUserId(teacherId);
-            if (teacher == null || !teacher.getDeptID().equals(getLoggedInUser().getDeptID())) {
+            if (teacher == null || !teacher.getDeptID().equals(hod.getDeptID())) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Teacher not found or not in your department.");
                 return "redirect:/hod/assign-teachers?courseId=" + courseId;
             }
@@ -785,15 +794,16 @@ public class HodController {
     }
 
     /**
-     * Returns {@code true} if the given course belongs to the logged-in HOD's department.
-     * Used to guard all write operations so a HOD cannot modify another department's data.
+     * Returns {@code true} if the given course belongs to the supplied department.
+     * Callers are expected to resolve the HOD's department once and pass it in,
+     * avoiding a redundant {@code getLoggedInUser()} DB call inside this helper.
      *
-     * @param courseId course to check
-     * @return {@code true} if ownership is confirmed, {@code false} otherwise
+     * @param courseId  course to check
+     * @param hodDeptId the HOD's department ID, obtained from {@link #getLoggedInUser()}
+     * @return {@code true} if the course's department matches {@code hodDeptId}
      */
-    private boolean ownsCourse(Long courseId) {
+    private boolean ownsCourse(Long courseId, Long hodDeptId) {
         CourseDetails course = userService.getCourseById(courseId);
-        if (course == null) return false;
-        return course.getDepartmentId().equals(getLoggedInUser().getDeptID());
+        return course != null && course.getDepartmentId().equals(hodDeptId);
     }
 }
