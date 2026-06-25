@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Teacher Workload &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
+
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
+
+    <div class="hod-page-header">
+        <h2 class="hod-page-header__title">Teacher Workload</h2>
+        <a th:href="@{/hod/assign-teachers}" class="btn btn-primary btn-sm">Assign Teachers</a>
+    </div>
+
+    <div th:if="${teachers.empty}" class="alert alert-info">
+        No teachers are assigned to this department yet.
+    </div>
+
+    <div th:unless="${teachers.empty}" class="hod-table-card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Teacher</th>
+                    <th>Email</th>
+                    <th>Assigned Subjects</th>
+                    <th class="text-center">Count</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="teacher, stat : ${teachers}">
+                    <td th:text="${stat.count}" class="text-muted"></td>
+                    <td th:text="${teacher.userId}"></td>
+                    <td>
+                        <a th:if="${teacher.email != null and not #strings.isEmpty(teacher.email)}"
+                           th:href="'mailto:' + ${teacher.email}"
+                           th:text="${teacher.email}"
+                           style="color:var(--clr-primary);"></a>
+                        <span th:unless="${teacher.email != null and not #strings.isEmpty(teacher.email)}"
+                              class="text-muted">—</span>
+                    </td>
+                    <td>
+                        <th:block th:with="subjects=${assignmentsByTeacher[teacher.userId]}">
+                            <span th:if="${subjects == null or subjects.empty}" class="text-muted small">No subjects assigned</span>
+                            <div th:unless="${subjects == null or subjects.empty}">
+                                <span th:each="s, idx : ${subjects}"
+                                      class="badge bg-secondary me-1 mb-1"
+                                      th:text="${s.subjectName}"></span>
+                            </div>
+                        </th:block>
+                    </td>
+                    <td class="text-center">
+                        <th:block th:with="subjects=${assignmentsByTeacher[teacher.userId]}">
+                            <span th:text="${subjects != null ? subjects.size() : 0}"
+                                  class="badge"
+                                  th:classappend="${(subjects != null ? subjects.size() : 0) == 0} ? 'bg-light text-muted' : 'bg-primary'"></span>
+                        </th:block>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</main>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

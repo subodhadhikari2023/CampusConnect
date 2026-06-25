@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Assign Teachers &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
+
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
+
+    <div class="hod-page-header">
+        <h2 class="hod-page-header__title">Assign Teachers to Subjects</h2>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${courses.empty}" class="alert alert-warning">
+        No courses found. <a th:href="@{/hod/add-course}">Add a course first.</a>
+    </div>
+
+    <!-- Course filter -->
+    <form th:unless="${courses.empty}" th:action="@{/hod/assign-teachers}" method="get"
+          class="d-flex gap-2 align-items-center mb-4 flex-wrap">
+        <select name="courseId" class="form-select" style="max-width:320px;" required>
+            <option value="" disabled th:selected="${selectedCourseId == null}">Select a course</option>
+            <option th:each="course : ${courses}"
+                    th:value="${course.courseId}"
+                    th:text="${course.courseName}"
+                    th:selected="${course.courseId == selectedCourseId}"></option>
+        </select>
+        <button type="submit" class="btn btn-primary">View Subjects</button>
+    </form>
+
+    <div th:if="${teachers != null and teachers.empty and selectedCourseId != null}"
+         class="alert alert-info">
+        No teachers are assigned to this department. Add teachers via the Admin portal first.
+    </div>
+
+    <!-- Subjects grouped by semester -->
+    <div th:if="${subjectsBySemester != null}">
+        <div th:if="${subjectsBySemester.empty}" class="alert alert-info">
+            No subjects found for this course. <a th:href="@{/hod/add-subject}">Add a subject first.</a>
+        </div>
+
+        <div th:unless="${subjectsBySemester.empty}" th:each="sem : ${semesters}">
+            <th:block th:with="semSubjects=${subjectsBySemester[sem.semesterId]}">
+                <div th:unless="${semSubjects == null or semSubjects.empty}" class="mb-4">
+                    <p class="hod-section-label" th:text="${sem.semesterName}">Semester</p>
+                    <div class="hod-table-card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subject</th>
+                                    <th>Assigned Teacher</th>
+                                    <th style="min-width:280px;">Change Assignment</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="subject, stat : ${semSubjects}">
+                                    <td th:text="${stat.count}" class="text-muted"></td>
+                                    <td th:text="${subject.subjectName}"></td>
+                                    <td>
+                                        <span th:if="${assignmentsBySubjectId[subject.subjectId] != null}"
+                                              th:text="${assignmentsBySubjectId[subject.subjectId].teacherId}"
+                                              class="badge bg-success"></span>
+                                        <span th:unless="${assignmentsBySubjectId[subject.subjectId] != null}"
+                                              class="text-muted small">Unassigned</span>
+                                    </td>
+                                    <td>
+                                        <form th:action="@{/hod/assign-teacher}" method="post"
+                                              class="d-flex gap-1 align-items-center">
+                                            <input type="hidden" name="subjectId" th:value="${subject.subjectId}">
+                                            <input type="hidden" name="courseId"  th:value="${selectedCourseId}">
+                                            <select name="teacherId" class="form-select form-select-sm" style="max-width:200px;">
+                                                <option value="">— Unassigned —</option>
+                                                <option th:each="teacher : ${teachers}"
+                                                        th:value="${teacher.userId}"
+                                                        th:text="${teacher.userId}"
+                                                        th:selected="${assignmentsBySubjectId[subject.subjectId] != null
+                                                                       and assignmentsBySubjectId[subject.subjectId].teacherId == teacher.userId}">
+                                                </option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary text-nowrap">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+
+</div>
+</main>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

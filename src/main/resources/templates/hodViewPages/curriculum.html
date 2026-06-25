@@ -71,6 +71,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Subject</th>
+                                <th>Assigned Teacher</th>
                                 <th style="width:90px;"></th>
                             </tr>
                             </thead>
@@ -78,6 +79,13 @@
                             <tr th:each="sub, stat : ${semSubjects}">
                                 <td th:text="${stat.count}" class="text-muted"></td>
                                 <td th:text="${sub.subjectName}"></td>
+                                <td>
+                                    <span th:if="${assignedTeachers != null and assignedTeachers.containsKey(sub.subjectId)}"
+                                          class="badge bg-secondary fw-normal"
+                                          th:text="${assignedTeachers[sub.subjectId]}"></span>
+                                    <span th:unless="${assignedTeachers != null and assignedTeachers.containsKey(sub.subjectId)}"
+                                          class="text-muted small">—</span>
+                                </td>
                                 <td>
                                     <form th:action="@{/hod/delete-subject}" method="post"
                                           th:data-name="${sub.subjectName}"

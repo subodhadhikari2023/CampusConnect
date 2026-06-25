@@ -1,9 +1,6 @@
 package com.bitsunisage.campusconnect.controller;
 
-import com.bitsunisage.campusconnect.entities.CourseDetails;
-import com.bitsunisage.campusconnect.entities.Semester;
-import com.bitsunisage.campusconnect.entities.SubjectDetails;
-import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.entities.*;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -51,9 +48,12 @@ public class HodController {
         User hod = getLoggedInUser();
         Long deptId = hod.getDeptID();
         model.addAttribute("departmentName", hod.getDepartment());
-        model.addAttribute("totalFaculty", userService.countMembersByDepartmentAndRole(deptId, "TEACHER"));
-        model.addAttribute("totalStudents", userService.countMembersByDepartmentAndRole(deptId, "STUDENT"));
-        model.addAttribute("totalCourses", userService.getCoursesByDepartmentId(deptId).size());
+        model.addAttribute("totalFaculty",   userService.countMembersByDepartmentAndRole(deptId, "TEACHER"));
+        model.addAttribute("totalStudents",  userService.countMembersByDepartmentAndRole(deptId, "STUDENT"));
+        model.addAttribute("totalCourses",   userService.getCoursesByDepartmentId(deptId).size());
+        model.addAttribute("totalSubjects",  userService.countSubjectsByDepartmentId(deptId));
+        model.addAttribute("totalFiles",     userService.getFilesByDepartmentId(deptId).size());
+        model.addAttribute("announcementCount", userService.getAnnouncementsByDeptId(deptId).size());
         return "hodViewPages/hod";
     }
 
@@ -132,6 +132,10 @@ public class HodController {
             return "redirect:/hod/add-course";
         }
         User hod = getLoggedInUser();
+        if (userService.courseNameExistsInDepartment(hod.getDeptID(), courseName)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "A course named \"" + courseName + "\" already exists in your department.");
+            return "redirect:/hod/add-course";
+        }
         CourseDetails course = new CourseDetails();
         course.setCourseName(courseName);
         course.setDepartmentId(hod.getDeptID());
@@ -286,6 +290,45 @@ public class HodController {
         return "redirect:/hod/semesters?courseId=" + courseId;
     }
 
+    /**
+     * Renames a semester after verifying its course belongs to the HOD's department.
+     *
+     * @param semesterId         primary key of the semester to rename
+     * @param semesterName       new name; must not be blank or already used in this course
+     * @param courseId           used for ownership check and redirect
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/semesters?courseId=<courseId>}
+     */
+    @PostMapping("/hod/update-semester")
+    public String updateSemester(@RequestParam("semesterId") Long semesterId,
+                                 @RequestParam("semesterName") String semesterName,
+                                 @RequestParam("courseId") Long courseId,
+                                 RedirectAttributes redirectAttributes) {
+        if (semesterName == null || semesterName.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Semester name cannot be blank.");
+            return "redirect:/hod/semesters?courseId=" + courseId;
+        }
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
+        Semester existing = userService.getSemesterById(semesterId);
+        if (existing == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Semester not found.");
+            return "redirect:/hod/semesters?courseId=" + courseId;
+        }
+        if (!existing.getSemesterName().equals(semesterName)
+                && userService.semesterNameExistsInCourse(courseId, semesterName)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "A semester named \"" + semesterName + "\" already exists in this course.");
+            return "redirect:/hod/semesters?courseId=" + courseId;
+        }
+        existing.setSemesterName(semesterName);
+        userService.saveSemester(existing);
+        redirectAttributes.addFlashAttribute("successMessage", "Semester renamed successfully.");
+        return "redirect:/hod/semesters?courseId=" + courseId;
+    }
+
     // ── Curriculum ───────────────────────────────────────────────────────────
 
     /**
@@ -295,7 +338,7 @@ public class HodController {
      *
      * @param courseId optional course ID; when absent only the course selector is shown
      * @param model    populated with {@code courses}, and optionally {@code course},
-     *                 {@code semesters}, and {@code subjectsBySemester}
+     *                 {@code semesters}, {@code subjectsBySemester}, and {@code assignedTeachers}
      * @return Thymeleaf template {@code hodViewPages/curriculum}, or redirect on ownership failure
      */
     @GetMapping("/hod/curriculum")
@@ -315,9 +358,13 @@ public class HodController {
         Map<Long, List<SubjectDetails>> grouped = subjects.stream()
                 .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
                          LinkedHashMap::new, Collectors.toList()));
+        List<Long> subjectIds = subjects.stream().map(SubjectDetails::getSubjectId).toList();
+        Map<Long, String> assignedTeachers = userService.getAssignmentsBySubjectIds(subjectIds).stream()
+                .collect(Collectors.toMap(TeacherSubject::getSubjectId, TeacherSubject::getTeacherId));
         model.addAttribute("course", userService.getCourseById(courseId));
         model.addAttribute("semesters", userService.getSemestersByCourseId(courseId));
         model.addAttribute("subjectsBySemester", grouped);
+        model.addAttribute("assignedTeachers", assignedTeachers);
         return "hodViewPages/curriculum";
     }
 
@@ -365,6 +412,10 @@ public class HodController {
         if (!ownsCourse((long) courseId)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
             return "redirect:/hod/manage-subject";
+        }
+        if (userService.subjectNameExistsInSlot(courseId, semesterId, subjectName)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "A subject named \"" + subjectName + "\" already exists in this semester.");
+            return "redirect:/hod/curriculum?courseId=" + courseId;
         }
         SubjectDetails subject = new SubjectDetails();
         subject.setSubjectName(subjectName);
@@ -461,6 +512,115 @@ public class HodController {
         return "redirect:/hod/curriculum?courseId=" + courseId;
     }
 
+    // ── Teacher-Subject Assignment ───────────────────────────────────────────
+
+    /**
+     * Renders the teacher-assignment page. When {@code courseId} is provided, shows all subjects
+     * for that course grouped by semester, each with their current teacher assignment and
+     * a dropdown to change it. When absent, only the course picker is shown.
+     *
+     * @param courseId optional course filter; when absent only the selector is shown
+     * @param model    populated with courses, teachers, semesters, subjectsBySemester,
+     *                 assignmentsBySubjectId, and optionally course and selectedCourseId
+     * @return Thymeleaf template {@code hodViewPages/assign-teachers}
+     */
+    @GetMapping("/hod/assign-teachers")
+    public String showAssignTeachersPage(@RequestParam(value = "courseId", required = false) Long courseId,
+                                         Model model,
+                                         RedirectAttributes redirectAttributes) {
+        User hod = getLoggedInUser();
+        model.addAttribute("courses", userService.getCoursesByDepartmentId(hod.getDeptID()));
+        model.addAttribute("teachers", userService.getMembersByDepartmentAndRole(hod.getDeptID(), "TEACHER"));
+        if (courseId == null) {
+            return "hodViewPages/assign-teachers";
+        }
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
+        List<SubjectDetails> subjects = userService.getSubjectsByCourseId(courseId.intValue());
+        Map<Long, List<SubjectDetails>> grouped = subjects.stream()
+                .collect(Collectors.groupingBy(s -> (long) s.getSemesterId(),
+                         LinkedHashMap::new, Collectors.toList()));
+        List<Long> subjectIds = subjects.stream().map(SubjectDetails::getSubjectId).toList();
+        Map<Long, TeacherSubject> assignmentsBySubjectId = userService.getAssignmentsBySubjectIds(subjectIds)
+                .stream().collect(Collectors.toMap(TeacherSubject::getSubjectId, a -> a));
+        model.addAttribute("course", userService.getCourseById(courseId));
+        model.addAttribute("semesters", userService.getSemestersByCourseId(courseId));
+        model.addAttribute("subjectsBySemester", grouped);
+        model.addAttribute("assignmentsBySubjectId", assignmentsBySubjectId);
+        model.addAttribute("selectedCourseId", courseId);
+        return "hodViewPages/assign-teachers";
+    }
+
+    /**
+     * Saves or removes a teacher-subject assignment.
+     * When {@code teacherId} is blank or absent, the existing assignment for the subject is removed.
+     * Otherwise the assignment is created or replaced.
+     *
+     * @param subjectId          primary key of the subject being assigned
+     * @param teacherId          login username of the teacher to assign; blank means unassign
+     * @param courseId           used for redirect and ownership check
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/assign-teachers?courseId=<courseId>}
+     */
+    @PostMapping("/hod/assign-teacher")
+    public String assignTeacher(@RequestParam("subjectId") Long subjectId,
+                                @RequestParam(value = "teacherId", required = false) String teacherId,
+                                @RequestParam("courseId") Long courseId,
+                                RedirectAttributes redirectAttributes) {
+        if (!ownsCourse(courseId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Access denied: course does not belong to your department.");
+            return "redirect:/hod/manage-course";
+        }
+        if (teacherId == null || teacherId.isBlank()) {
+            userService.removeTeacherAssignmentBySubjectId(subjectId);
+            redirectAttributes.addFlashAttribute("successMessage", "Teacher assignment removed.");
+        } else {
+            User teacher = userService.findUserByUserId(teacherId);
+            if (teacher == null || !teacher.getDeptID().equals(getLoggedInUser().getDeptID())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Teacher not found or not in your department.");
+                return "redirect:/hod/assign-teachers?courseId=" + courseId;
+            }
+            userService.upsertTeacherAssignment(teacherId, subjectId);
+            redirectAttributes.addFlashAttribute("successMessage", "Teacher assigned successfully.");
+        }
+        return "redirect:/hod/assign-teachers?courseId=" + courseId;
+    }
+
+    // ── Department Files ─────────────────────────────────────────────────────
+
+    /**
+     * Renders the department file overview page showing all uploaded files
+     * in the HOD's department, with resolved course, semester, and subject names.
+     *
+     * @param model populated with {@code files}, {@code courseNames}, {@code semesterNames},
+     *              and {@code subjectNames} lookup maps
+     * @return Thymeleaf template {@code hodViewPages/department-files}
+     */
+    @GetMapping("/hod/department-files")
+    public String showDepartmentFilesPage(Model model) {
+        User hod = getLoggedInUser();
+        List<FileData> files = userService.getFilesByDepartmentId(hod.getDeptID());
+
+        List<Long> courseIds   = files.stream().map(FileData::getCourseId).distinct().toList();
+        List<Long> semIds      = files.stream().map(FileData::getSemesterId).distinct().toList();
+        List<Long> subjectIds  = files.stream().map(FileData::getSubjectId).distinct().toList();
+
+        Map<Long, String> courseNames = userService.getCourseName(courseIds).stream()
+                .collect(Collectors.toMap(CourseDetails::getCourseId, CourseDetails::getCourseName));
+        Map<Long, String> semesterNames = userService.getSemesterName(semIds).stream()
+                .collect(Collectors.toMap(Semester::getSemesterId, Semester::getSemesterName));
+        Map<Long, String> subjectNames = userService.getSubjectName(subjectIds).stream()
+                .collect(Collectors.toMap(SubjectDetails::getSubjectId, SubjectDetails::getSubjectName));
+
+        model.addAttribute("files", files);
+        model.addAttribute("courseNames", courseNames);
+        model.addAttribute("semesterNames", semesterNames);
+        model.addAttribute("subjectNames", subjectNames);
+        return "hodViewPages/department-files";
+    }
+
     // ── Department Members ───────────────────────────────────────────────────
 
     /**
@@ -477,6 +637,139 @@ public class HodController {
         model.addAttribute("faculty",  userService.getMembersByDepartmentAndRole(deptId, "TEACHER"));
         model.addAttribute("students", userService.getMembersByDepartmentAndRole(deptId, "STUDENT"));
         return "hodViewPages/members";
+    }
+
+    // ── Announcements ────────────────────────────────────────────────────────
+
+    /**
+     * Renders the announcements management page, listing all announcements for the HOD's
+     * department and providing a form to create a new one.
+     *
+     * @param model populated with {@code announcements} list
+     * @return Thymeleaf template {@code hodViewPages/announcements}
+     */
+    @GetMapping("/hod/announcements")
+    public String showAnnouncementsPage(Model model) {
+        User hod = getLoggedInUser();
+        model.addAttribute("announcements", userService.getAnnouncementsByDeptId(hod.getDeptID()));
+        return "hodViewPages/announcements";
+    }
+
+    /**
+     * Saves a new announcement authored by the logged-in HOD.
+     *
+     * @param title              announcement headline; must not be blank
+     * @param body               announcement body text; must not be blank
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/announcements}
+     */
+    @PostMapping("/hod/save-announcement")
+    public String saveAnnouncement(@RequestParam("title") String title,
+                                   @RequestParam("body") String body,
+                                   RedirectAttributes redirectAttributes) {
+        if (title.isBlank() || body.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Title and body are required.");
+            return "redirect:/hod/announcements";
+        }
+        User hod = getLoggedInUser();
+        Announcement a = new Announcement();
+        a.setDeptId(hod.getDeptID());
+        a.setAuthor(hod.getUserId());
+        a.setTitle(title.strip());
+        a.setBody(body.strip());
+        userService.saveAnnouncement(a);
+        redirectAttributes.addFlashAttribute("successMessage", "Announcement posted.");
+        return "redirect:/hod/announcements";
+    }
+
+    /**
+     * Deletes an announcement after verifying it belongs to the HOD's department.
+     *
+     * @param id                 primary key of the announcement to delete
+     * @param redirectAttributes used to pass success/error flash messages
+     * @return redirect to {@code /hod/announcements}
+     */
+    @PostMapping("/hod/delete-announcement")
+    public String deleteAnnouncement(@RequestParam("id") Long id,
+                                     RedirectAttributes redirectAttributes) {
+        User hod = getLoggedInUser();
+        userService.getAnnouncementById(id).ifPresent(a -> {
+            if (a.getDeptId().equals(hod.getDeptID())) {
+                userService.deleteAnnouncementById(id);
+            }
+        });
+        redirectAttributes.addFlashAttribute("successMessage", "Announcement deleted.");
+        return "redirect:/hod/announcements";
+    }
+
+    /**
+     * Updates the title and body of an existing announcement.
+     * Only the HOD who owns the department the announcement belongs to may edit it.
+     *
+     * @param id                 primary key of the announcement to update
+     * @param title              new headline; must not be blank
+     * @param body               new body text; must not be blank
+     * @param redirectAttributes flash messages for the next request
+     * @return redirect to {@code /hod/announcements}
+     */
+    @PostMapping("/hod/update-announcement")
+    public String updateAnnouncement(@RequestParam("id") Long id,
+                                     @RequestParam("title") String title,
+                                     @RequestParam("body") String body,
+                                     RedirectAttributes redirectAttributes) {
+        if (title == null || title.isBlank() || body == null || body.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Title and message cannot be blank.");
+            return "redirect:/hod/announcements";
+        }
+        User hod = getLoggedInUser();
+        userService.getAnnouncementById(id).ifPresent(a -> {
+            if (a.getDeptId().equals(hod.getDeptID())) {
+                a.setTitle(title.trim());
+                a.setBody(body.trim());
+                userService.saveAnnouncement(a);
+            }
+        });
+        redirectAttributes.addFlashAttribute("successMessage", "Announcement updated.");
+        return "redirect:/hod/announcements";
+    }
+
+    // ── Teacher Workload ─────────────────────────────────────────────────────
+
+    /**
+     * Renders the teacher workload page showing each teacher in the HOD's department
+     * alongside the subjects they are currently assigned to teach.
+     *
+     * @param model populated with {@code teachers}, {@code assignmentsByTeacher} (Map&lt;String,
+     *              List&lt;SubjectDetails&gt;&gt;), and {@code subjectIndex} (Map&lt;Long, SubjectDetails&gt;)
+     * @return Thymeleaf template {@code hodViewPages/workload}
+     */
+    @GetMapping("/hod/workload")
+    public String showWorkloadPage(Model model) {
+        User hod = getLoggedInUser();
+        Long deptId = hod.getDeptID();
+
+        List<User> teachers = userService.getMembersByDepartmentAndRole(deptId, "TEACHER");
+        List<String> teacherIds = teachers.stream().map(User::getUserId).toList();
+        List<TeacherSubject> assignments = userService.getAssignmentsByTeacherIds(teacherIds);
+
+        List<Long> subjectIds = assignments.stream().map(TeacherSubject::getSubjectId).distinct().toList();
+        Map<Long, SubjectDetails> subjectIndex = userService.getSubjectName(subjectIds).stream()
+                .collect(Collectors.toMap(SubjectDetails::getSubjectId, s -> s));
+
+        Map<String, List<SubjectDetails>> byTeacher = new LinkedHashMap<>();
+        for (User t : teachers) {
+            byTeacher.put(t.getUserId(), new java.util.ArrayList<>());
+        }
+        for (TeacherSubject ts : assignments) {
+            SubjectDetails sd = subjectIndex.get(ts.getSubjectId());
+            if (sd != null) {
+                byTeacher.computeIfAbsent(ts.getTeacherId(), k -> new java.util.ArrayList<>()).add(sd);
+            }
+        }
+
+        model.addAttribute("teachers", teachers);
+        model.addAttribute("assignmentsByTeacher", byTeacher);
+        return "hodViewPages/workload";
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────

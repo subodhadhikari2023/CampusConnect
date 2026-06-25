@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Department Files &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
+
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
+
+    <div class="hod-page-header">
+        <h2 class="hod-page-header__title">Department Files</h2>
+    </div>
+
+    <div th:if="${files.empty}" class="alert alert-info">
+        No files have been uploaded in this department yet.
+    </div>
+
+    <div th:unless="${files.empty}">
+        <input type="search" id="fileSearch" class="form-control mb-3"
+               placeholder="Search by filename, uploader, course, subject&hellip;" style="max-width:420px;">
+
+        <div class="hod-table-card">
+            <div class="table-responsive">
+                <table id="filesTable" class="table table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>File Name</th>
+                        <th>Type</th>
+                        <th>Uploader</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Subject</th>
+                        <th>Category</th>
+                        <th>Size</th>
+                        <th>Uploaded</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="file, stat : ${files}">
+                        <td th:text="${stat.count}" class="text-muted"></td>
+                        <td th:text="${file.fileName}" class="text-truncate" style="max-width:180px;"></td>
+                        <td>
+                            <span class="badge bg-secondary text-uppercase" th:text="${file.fileType}"></span>
+                        </td>
+                        <td th:text="${file.ownersName}"></td>
+                        <td th:text="${courseNames[file.courseId] ?: '—'}"></td>
+                        <td th:text="${semesterNames[file.semesterId] ?: '—'}"></td>
+                        <td th:text="${subjectNames[file.subjectId] ?: '—'}"></td>
+                        <td th:text="${file.fileRole}"></td>
+                        <td class="text-nowrap"
+                            th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 'COMMA', 1, 'POINT')} + ' KB'"></td>
+                        <td class="text-nowrap text-muted"
+                            th:text="${#dates.format(file.uploadDate, 'dd MMM yyyy')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="text-muted small mt-2"
+           th:text="${files.size()} + ' file(s) total'"></p>
+    </div>
+
+</div>
+</main>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+<script>
+    document.getElementById('fileSearch') && document.getElementById('fileSearch').addEventListener('input', function () {
+        const query = this.value.toLowerCase();
+        document.querySelectorAll('#filesTable tbody tr').forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+        });
+    });
+</script>
+</body>
+</html>
