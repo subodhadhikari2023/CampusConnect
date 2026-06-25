@@ -1,10 +1,7 @@
 package com.bitsunisage.campusconnect.controller;
 
 import com.bitsunisage.campusconnect.config.TestWebConfig;
-import com.bitsunisage.campusconnect.entities.CourseDetails;
-import com.bitsunisage.campusconnect.entities.Semester;
-import com.bitsunisage.campusconnect.entities.SubjectDetails;
-import com.bitsunisage.campusconnect.entities.User;
+import com.bitsunisage.campusconnect.entities.*;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +14,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -332,5 +330,315 @@ class HodControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/hod/profile"))
                 .andExpect(flash().attributeExists("successMessage"));
+    }
+
+    // ── Semesters (write) ─────────────────────────────────────────────────────
+
+    @Test
+    void saveSemesterWithBlankNameRedirectsWithError() throws Exception {
+        mockMvc.perform(post("/hod/save-semester").with(csrf())
+                        .param("courseId", "1")
+                        .param("semesterName", "   "))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/semesters?courseId=1"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).saveSemester(any());
+    }
+
+    @Test
+    void saveSemesterSuccessAddsNewSemesterAndRedirects() throws Exception {
+        when(userService.saveSemester(any())).thenReturn(new Semester());
+
+        mockMvc.perform(post("/hod/save-semester").with(csrf())
+                        .param("courseId", "1")
+                        .param("semesterName", "Semester V"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/semesters?courseId=1"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).saveSemester(any(Semester.class));
+    }
+
+    @Test
+    void deleteSemesterWithSubjectsAssignedRedirectsWithError() throws Exception {
+        when(userService.countSubjectsBySemester(1L)).thenReturn(3);
+
+        mockMvc.perform(post("/hod/delete-semester").with(csrf())
+                        .param("semesterId", "1")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/semesters?courseId=1"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).deleteSemester(any());
+    }
+
+    @Test
+    void deleteSemesterSuccessDeletesAndRedirects() throws Exception {
+        Semester sem = new Semester();
+        sem.setSemesterId(1L);
+        when(userService.countSubjectsBySemester(1L)).thenReturn(0);
+        when(userService.getSemesterById(1L)).thenReturn(sem);
+        doNothing().when(userService).deleteSemester(any());
+
+        mockMvc.perform(post("/hod/delete-semester").with(csrf())
+                        .param("semesterId", "1")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/semesters?courseId=1"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).deleteSemester(sem);
+    }
+
+    @Test
+    void updateSemesterSuccessRenamesAndRedirects() throws Exception {
+        Semester existing = new Semester();
+        existing.setSemesterId(1L);
+        existing.setSemesterName("Semester I");
+        existing.setCourseId(1L);
+        when(userService.getSemesterById(1L)).thenReturn(existing);
+        when(userService.semesterNameExistsInCourse(anyLong(), anyString())).thenReturn(false);
+        when(userService.saveSemester(any())).thenReturn(existing);
+
+        mockMvc.perform(post("/hod/update-semester").with(csrf())
+                        .param("semesterId", "1")
+                        .param("semesterName", "Semester One")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/semesters?courseId=1"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).saveSemester(existing);
+    }
+
+    // ── Subjects (write) ──────────────────────────────────────────────────────
+
+    @Test
+    void updateSubjectSuccessRedirectsToManageSubject() throws Exception {
+        SubjectDetails sub = new SubjectDetails();
+        sub.setSubjectId(1L);
+        sub.setSubjectName("Old Name");
+        sub.setCourseId(1);
+        when(userService.getSubjectById(1L)).thenReturn(sub);
+        when(userService.saveSubject(any())).thenReturn(sub);
+
+        mockMvc.perform(post("/hod/update-subject").with(csrf())
+                        .param("subjectId", "1")
+                        .param("subjectName", "Data Structures")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/manage-subject?courseId=1"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).saveSubject(any(SubjectDetails.class));
+    }
+
+    // ── Teacher-Subject Assignment ────────────────────────────────────────────
+
+    @Test
+    void assignTeachersPageWithoutCourseIdShowsCourseSelector() throws Exception {
+        when(userService.getMembersByDepartmentAndRole(1001L, "TEACHER")).thenReturn(List.of());
+
+        mockMvc.perform(get("/hod/assign-teachers"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/assign-teachers"))
+                .andExpect(model().attributeExists("courses", "teachers"))
+                .andExpect(model().attributeDoesNotExist("course"));
+    }
+
+    @Test
+    void assignTeachersPageWithCourseIdShowsSubjectsGroupedBySemester() throws Exception {
+        SubjectDetails sub = new SubjectDetails();
+        sub.setSubjectId(10L);
+        sub.setCourseId(1);
+        sub.setSemesterId(1);
+        when(userService.getMembersByDepartmentAndRole(1001L, "TEACHER")).thenReturn(List.of());
+        when(userService.getSubjectsByCourseId(1)).thenReturn(List.of(sub));
+        when(userService.getAssignmentsBySubjectIds(any())).thenReturn(List.of());
+        when(userService.getSemestersByCourseId(1L)).thenReturn(List.of());
+
+        mockMvc.perform(get("/hod/assign-teachers").param("courseId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/assign-teachers"))
+                .andExpect(model().attributeExists("course", "subjectsBySemester", "assignmentsBySubjectId"));
+    }
+
+    @Test
+    void assignTeacherWithTeacherIdSavesAssignmentAndRedirects() throws Exception {
+        User teacher = new User();
+        teacher.setUserId("teacher1");
+        teacher.setDeptID(1001L);
+        when(userService.findUserByUserId("teacher1")).thenReturn(teacher);
+        doNothing().when(userService).upsertTeacherAssignment(anyString(), anyLong());
+
+        mockMvc.perform(post("/hod/assign-teacher").with(csrf())
+                        .param("subjectId", "10")
+                        .param("teacherId", "teacher1")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/assign-teachers?courseId=1"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).upsertTeacherAssignment("teacher1", 10L);
+    }
+
+    @Test
+    void assignTeacherWithBlankTeacherIdRemovesAssignmentAndRedirects() throws Exception {
+        doNothing().when(userService).removeTeacherAssignmentBySubjectId(anyLong());
+
+        mockMvc.perform(post("/hod/assign-teacher").with(csrf())
+                        .param("subjectId", "10")
+                        .param("courseId", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/assign-teachers?courseId=1"));
+
+        verify(userService).removeTeacherAssignmentBySubjectId(10L);
+    }
+
+    // ── Department Files ──────────────────────────────────────────────────────
+
+    @Test
+    void departmentFilesPagePopulatesFilesAndLookupMaps() throws Exception {
+        FileData file = new FileData();
+        file.setId(1L);
+        file.setCourseId(1L);
+        file.setSemesterId(1L);
+        file.setSubjectId(1L);
+        when(userService.getFilesByDepartmentId(1001L)).thenReturn(List.of(file));
+        when(userService.getCourseName(any())).thenReturn(List.of());
+        when(userService.getSemesterName(any())).thenReturn(List.of());
+        when(userService.getSubjectName(any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/hod/department-files"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/department-files"))
+                .andExpect(model().attributeExists("files", "courseNames", "semesterNames", "subjectNames"));
+    }
+
+    // ── Announcements ─────────────────────────────────────────────────────────
+
+    @Test
+    void announcementsPageListsDeptAnnouncements() throws Exception {
+        Announcement a = new Announcement();
+        a.setId(1L);
+        a.setDeptId(1001L);
+        a.setTitle("Welcome");
+        when(userService.getAnnouncementsByDeptId(1001L)).thenReturn(List.of(a));
+
+        mockMvc.perform(get("/hod/announcements"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/announcements"))
+                .andExpect(model().attributeExists("announcements"));
+    }
+
+    @Test
+    void editAnnouncementPageLoadsForOwnedAnnouncement() throws Exception {
+        Announcement a = new Announcement();
+        a.setId(1L);
+        a.setDeptId(1001L);
+        a.setTitle("Test");
+        a.setBody("Body text");
+        when(userService.getAnnouncementById(1L)).thenReturn(Optional.of(a));
+
+        mockMvc.perform(get("/hod/edit-announcement").param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/edit-announcement"))
+                .andExpect(model().attributeExists("announcement"));
+    }
+
+    @Test
+    void editAnnouncementForUnknownIdRedirectsWithError() throws Exception {
+        when(userService.getAnnouncementById(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/hod/edit-announcement").param("id", "99"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/announcements"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void saveAnnouncementCreatesAndRedirectsWithSuccess() throws Exception {
+        when(userService.saveAnnouncement(any())).thenReturn(new Announcement());
+
+        mockMvc.perform(post("/hod/save-announcement").with(csrf())
+                        .param("title", "Exam Schedule Released")
+                        .param("body", "Please check the notice board."))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/announcements"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).saveAnnouncement(any(Announcement.class));
+    }
+
+    @Test
+    void deleteAnnouncementDeletesOwnedAnnouncementAndRedirects() throws Exception {
+        Announcement a = new Announcement();
+        a.setId(1L);
+        a.setDeptId(1001L);
+        when(userService.getAnnouncementById(1L)).thenReturn(Optional.of(a));
+        doNothing().when(userService).deleteAnnouncementById(1L);
+
+        mockMvc.perform(post("/hod/delete-announcement").with(csrf()).param("id", "1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/announcements"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).deleteAnnouncementById(1L);
+    }
+
+    @Test
+    void updateAnnouncementWithBlankFieldsRedirectsWithError() throws Exception {
+        mockMvc.perform(post("/hod/update-announcement").with(csrf())
+                        .param("id", "1")
+                        .param("title", "")
+                        .param("body", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/announcements"))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(userService, never()).saveAnnouncement(any());
+    }
+
+    @Test
+    void updateAnnouncementSuccessUpdatesAndRedirects() throws Exception {
+        Announcement a = new Announcement();
+        a.setId(1L);
+        a.setDeptId(1001L);
+        a.setTitle("Old Title");
+        a.setBody("Old body");
+        when(userService.getAnnouncementById(1L)).thenReturn(Optional.of(a));
+        when(userService.saveAnnouncement(any())).thenReturn(a);
+
+        mockMvc.perform(post("/hod/update-announcement").with(csrf())
+                        .param("id", "1")
+                        .param("title", "Updated Title")
+                        .param("body", "Updated body text"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/hod/announcements"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        verify(userService).saveAnnouncement(any(Announcement.class));
+    }
+
+    // ── Workload ──────────────────────────────────────────────────────────────
+
+    @Test
+    void workloadPagePopulatesTeachersAndAssignments() throws Exception {
+        User teacher = new User();
+        teacher.setUserId("teacher1");
+        teacher.setDeptID(1001L);
+        TeacherSubject assignment = new TeacherSubject();
+        assignment.setTeacherId("teacher1");
+        assignment.setSubjectId(1L);
+        when(userService.getMembersByDepartmentAndRole(1001L, "TEACHER")).thenReturn(List.of(teacher));
+        when(userService.getAssignmentsByTeacherIds(any())).thenReturn(List.of(assignment));
+        when(userService.getSubjectName(any())).thenReturn(List.of());
+
+        mockMvc.perform(get("/hod/workload"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("hodViewPages/workload"))
+                .andExpect(model().attributeExists("teachers", "assignmentsByTeacher"));
     }
 }

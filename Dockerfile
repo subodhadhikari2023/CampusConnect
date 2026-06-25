@@ -25,4 +25,7 @@ EXPOSE 8080
 
 ENV UPLOAD_DIR=/uploads/
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:8080/actuator/health || exit 1
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
