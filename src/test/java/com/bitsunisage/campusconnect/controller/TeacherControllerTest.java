@@ -47,6 +47,7 @@ class TeacherControllerTest {
     private Semester ownedSemester;
     private SubjectDetails ownedSubject;
     private Department dept;
+    private TeacherSubject teacherAssignment;
 
     @BeforeEach
     void setUp() {
@@ -76,7 +77,12 @@ class TeacherControllerTest {
         dept.setId(1001L);
         dept.setName("Computer Applications");
 
+        teacherAssignment = new TeacherSubject();
+        teacherAssignment.setTeacherId("teacher1");
+        teacherAssignment.setSubjectId(1L);
+
         lenient().when(userService.findUserByUserId("teacher1")).thenReturn(teacherUser);
+        lenient().when(userService.getAssignmentsByTeacherId("teacher1")).thenReturn(List.of(teacherAssignment));
         lenient().when(userService.getCoursesByDepartmentId(1001L)).thenReturn(Collections.emptyList());
         lenient().when(userService.getSemestersByCourseIds(any())).thenReturn(Collections.emptyList());
         lenient().when(userService.getSubjectsByCourseIds(any())).thenReturn(Collections.emptyList());
@@ -257,6 +263,36 @@ class TeacherControllerTest {
                         .param("semesterId", "1")
                         .param("subjectId", "1")
                         .with(csrf()))
+                .andExpect(flash().attributeExists("errorMessage"));
+
+        verify(storageService, never()).uploadToFileSystem(any());
+    }
+
+    @Test
+    void uploadWithUnassignedSubjectRedirectsWithError() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("file", "test.pdf",
+                "application/octet-stream", "data".getBytes());
+
+        SubjectDetails unassignedSubject = new SubjectDetails();
+        unassignedSubject.setSubjectId(99L);
+        unassignedSubject.setCourseId(1);
+        unassignedSubject.setSemesterId(1);
+
+        when(userService.getCourseById(1L)).thenReturn(ownedCourse);
+        when(userService.getSemesterById(1L)).thenReturn(ownedSemester);
+        when(userService.getSubjectById(99L)).thenReturn(unassignedSubject);
+        // teacher1 is only assigned to subjectId=1, not 99
+        when(userService.getAssignmentsByTeacherId("teacher1")).thenReturn(List.of(teacherAssignment));
+
+        mockMvc.perform(multipart("/teacher/upload")
+                        .file(file)
+                        .param("departmentId", "1001")
+                        .param("courseId", "1")
+                        .param("semesterId", "1")
+                        .param("subjectId", "99")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/teacher"))
                 .andExpect(flash().attributeExists("errorMessage"));
 
         verify(storageService, never()).uploadToFileSystem(any());

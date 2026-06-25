@@ -123,6 +123,13 @@ public class TeacherController {
             redirectAttributes.addFlashAttribute("errorMessage", "Invalid subject selection.");
             return "redirect:/teacher";
         }
+        List<TeacherSubject> assignments = userService.getAssignmentsByTeacherId(teacher.getUserId());
+        boolean assigned = assignments.stream()
+                .anyMatch(a -> a.getSubjectId().equals(fileUploadDTO.getSubjectId()));
+        if (!assigned) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You are not assigned to teach this subject.");
+            return "redirect:/teacher";
+        }
 
         storageService.uploadToFileSystem(fileUploadDTO);
         redirectAttributes.addFlashAttribute("successMessage", "File uploaded successfully.");
@@ -142,7 +149,7 @@ public class TeacherController {
         dto.setFileRole("PPTS");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadPPTs";
     }
 
@@ -159,7 +166,7 @@ public class TeacherController {
         dto.setFileRole("Notes");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadNotes";
     }
 
@@ -176,7 +183,7 @@ public class TeacherController {
         dto.setFileRole("Programs");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadsampleprograms";
     }
 
@@ -193,7 +200,7 @@ public class TeacherController {
         dto.setFileRole("AudioBooks");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadaudiobooks";
     }
 
@@ -210,7 +217,7 @@ public class TeacherController {
         dto.setFileRole("ReferenceBook");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadReferenceBooks";
     }
 
@@ -227,7 +234,7 @@ public class TeacherController {
         dto.setFileRole("Videos");
         dto.setDepartmentId(teacher.getDeptID());
         model.addAttribute("fileUploadDTO", dto);
-        modelFeeding(model, teacher);
+        uploadModelFeeding(model, teacher);
         return "teacherViewPages/uploadVideos";
     }
 
@@ -490,8 +497,31 @@ public class TeacherController {
     }
 
     /**
-     * Populates the model with dept-scoped catalogue dropdowns for upload and browse forms.
-     * Only courses, semesters, and subjects belonging to the teacher's department are loaded.
+     * Populates the model for upload forms with only the subjects the teacher is assigned to teach,
+     * along with the courses and semesters that contain those subjects.
+     * Prevents the upload form from offering subjects outside the teacher's assignments.
+     *
+     * @param model   the Spring MVC model to populate
+     * @param teacher the authenticated teacher
+     */
+    private void uploadModelFeeding(Model model, User teacher) {
+        List<TeacherSubject> assignments = userService.getAssignmentsByTeacherId(teacher.getUserId());
+        List<Long> assignedIds = assignments.stream().map(TeacherSubject::getSubjectId).toList();
+        List<SubjectDetails> subjects = assignedIds.isEmpty()
+                ? Collections.emptyList()
+                : userService.getSubjectName(assignedIds);
+        List<Long> courseIds = subjects.stream().map(s -> (long) s.getCourseId()).distinct().toList();
+        List<Long> semesterIds = subjects.stream().map(s -> (long) s.getSemesterId()).distinct().toList();
+        model.addAttribute("courses", courseIds.isEmpty() ? Collections.emptyList() : userService.getCourseName(courseIds));
+        model.addAttribute("semesterList", semesterIds.isEmpty() ? Collections.emptyList() : userService.getSemesterName(semesterIds));
+        model.addAttribute("subjectList", subjects);
+        Department dept = userService.getDepartmentNameByDepartmentId(teacher.getDeptID().intValue());
+        model.addAttribute("departmentName", dept != null ? dept.getName() : "");
+    }
+
+    /**
+     * Populates the model with dept-scoped catalogue dropdowns for browse forms.
+     * Shows all courses, semesters, and subjects in the teacher's department.
      *
      * @param model   the Spring MVC model to populate
      * @param teacher the authenticated teacher whose department scopes the data
