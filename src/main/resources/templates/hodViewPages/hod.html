@@ -41,6 +41,18 @@
             <div class="hod-stat-card__num" th:text="${totalCourses}">0</div>
             <div class="hod-stat-card__label">Courses</div>
         </div>
+        <div class="hod-stat-card">
+            <div class="hod-stat-card__num" th:text="${totalSubjects}">0</div>
+            <div class="hod-stat-card__label">Subjects</div>
+        </div>
+        <div class="hod-stat-card">
+            <div class="hod-stat-card__num" th:text="${totalFiles}">0</div>
+            <div class="hod-stat-card__label">Files Uploaded</div>
+        </div>
+        <div class="hod-stat-card">
+            <div class="hod-stat-card__num" th:text="${announcementCount}">0</div>
+            <div class="hod-stat-card__label">Announcements</div>
+        </div>
     </div>
 
     <!-- Quick Actions -->
@@ -76,10 +88,30 @@
             <div class="hod-action-card__title">Curriculum</div>
             <div class="hod-action-card__desc">View the full subject grid per semester</div>
         </a>
+        <a th:href="@{/hod/assign-teachers}" class="hod-action-card">
+            <div class="hod-action-card__icon">&#128104;&#8203;&#127979;</div>
+            <div class="hod-action-card__title">Assign Teachers</div>
+            <div class="hod-action-card__desc">Designate which teacher teaches each subject</div>
+        </a>
+        <a th:href="@{/hod/workload}" class="hod-action-card">
+            <div class="hod-action-card__icon">&#128203;</div>
+            <div class="hod-action-card__title">Workload</div>
+            <div class="hod-action-card__desc">See subject assignments per teacher</div>
+        </a>
         <a th:href="@{/hod/members}" class="hod-action-card">
             <div class="hod-action-card__icon">&#128101;</div>
             <div class="hod-action-card__title">Members</div>
             <div class="hod-action-card__desc">View faculty and students in your department</div>
+        </a>
+        <a th:href="@{/hod/department-files}" class="hod-action-card">
+            <div class="hod-action-card__icon">&#128449;</div>
+            <div class="hod-action-card__title">Files</div>
+            <div class="hod-action-card__desc">Browse all resources uploaded in your department</div>
+        </a>
+        <a th:href="@{/hod/announcements}" class="hod-action-card">
+            <div class="hod-action-card__icon">&#128226;</div>
+            <div class="hod-action-card__title">Announcements</div>
+            <div class="hod-action-card__desc">Post notices to faculty and students</div>
         </a>
     </div>
 

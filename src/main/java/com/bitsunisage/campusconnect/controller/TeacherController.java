@@ -5,6 +5,7 @@ import com.bitsunisage.campusconnect.entities.*;
 import com.bitsunisage.campusconnect.service.StorageService;
 import com.bitsunisage.campusconnect.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,12 +58,19 @@ public class TeacherController {
     }
 
     /**
-     * Renders the teacher dashboard home page.
+     * Renders the teacher dashboard home page, including any announcements posted by the
+     * HOD of the teacher's department.
      *
+     * @param model populated with {@code announcements} for the teacher's department
      * @return Thymeleaf template {@code teacherViewPages/indexteacher}
      */
     @GetMapping("/teacher")
-    public String homePage() {
+    public String homePage(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User teacher = userService.findUserByUserId(username);
+        if (teacher != null && teacher.getDeptID() != null) {
+            model.addAttribute("announcements", userService.getAnnouncementsByDeptId(teacher.getDeptID()));
+        }
         return "teacherViewPages/indexteacher";
     }
 

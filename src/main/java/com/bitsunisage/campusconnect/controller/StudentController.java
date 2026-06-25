@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,12 +60,19 @@ public class StudentController {
     }
 
     /**
-     * Renders the student dashboard home page.
+     * Renders the student dashboard home page, including any announcements posted by the
+     * HOD of the student's department.
      *
+     * @param model populated with {@code announcements} for the student's department
      * @return Thymeleaf template {@code studentViewPages/indexstudent}
      */
     @GetMapping("/student")
-    public String getStudent() {
+    public String getStudent(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User student = userService.findUserByUserId(username);
+        if (student != null && student.getDeptID() != null) {
+            model.addAttribute("announcements", userService.getAnnouncementsByDeptId(student.getDeptID()));
+        }
         return "studentViewPages/indexstudent";
     }
 

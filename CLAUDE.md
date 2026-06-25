@@ -11,20 +11,11 @@ CampusConnect is a Spring Boot web application — a collaborative learning plat
 All commands run from the repository root.
 
 ```bash
-# Run the application (dev mode with hot reload via spring-boot-devtools)
-mvn spring-boot:run
-
-# Build (skip tests)
-mvn package -DskipTests
-
-# Run all tests
-mvn test
-
-# Run a single test class
-mvn test -Dtest=ClassName
-
-# Clean build
-mvn clean package
+mvn spring-boot:run        # dev mode with hot reload
+mvn package -DskipTests    # build
+mvn test                   # run all tests
+mvn test -Dtest=ClassName  # run single test class
+mvn clean package          # clean build
 ```
 
 The app runs at `http://localhost:8080`.
@@ -37,8 +28,6 @@ Requires MySQL Server 8.0+. Run the full schema and seed data as root:
 mysql -u root -p < sql-scripts/databaseScript.sql
 ```
 
-This creates the `campusConnect` database, the `campusConnect` MySQL user (password from `DB_PASSWORD` in your `.env`), all tables, and dummy users. The `departments.sql` script can be run separately for additional department seed data.
-
 **Dummy credentials** (all use password `password`):
 - Admin: `admin1`, `admin2`
 - HOD: `hod1`, `hod2`
@@ -47,10 +36,10 @@ This creates the `campusConnect` database, the `campusConnect` MySQL user (passw
 
 ## Configuration
 
-`src/main/resources/application.properties` — two values typically need updating per environment:
+`src/main/resources/application.properties`:
 
 - `spring.datasource.url/username/password` — DB connection (defaults to `campusConnect`@`localhost`)
-- `file.upload-dir` — absolute path where uploaded files are stored (default is `D:/Uploads/` — **must be changed on Linux/Mac**)
+- `file.upload-dir` — absolute path for uploaded files (default `D:/Uploads/` — **change on Linux/Mac**)
 
 ## Architecture
 
@@ -70,8 +59,6 @@ static/      → CSS, JS, images (under loginResources/ for unauthenticated acce
 
 ### Role-Based Routing
 
-Spring Security enforces URL-prefix authorization. After login, `CustomAuthenticationSuccessHandler` redirects to the role's home:
-
 | Role | URL prefix | Home |
 |------|-----------|------|
 | ROLE_ADMIN | `/admin/**` | `/admin` |
@@ -79,27 +66,25 @@ Spring Security enforces URL-prefix authorization. After login, `CustomAuthentic
 | ROLE_TEACHER | `/teacher/**` | `/teacher` |
 | ROLE_STUDENT | `/student/**` | `/student` |
 
-Authentication uses `JdbcUserDetailsManager` with custom queries against the `members` table (credentials) and `roles` table (authorities).
+Authentication uses `JdbcUserDetailsManager` against the `members` table (credentials) and `roles` table (authorities).
 
 ### Database Schema
 
-Key tables and their relationships:
+Key tables:
 - `members` — users (PK: `user_id`), with `dept_id` FK to `department`
 - `roles` — one role per user (FK to `members`)
 - `department` — departments
 - `department_details` — maps members to departments with a role label
 - `course_details` — courses per department
-- `semester` — semesters (global, not per department)
+- `semester` — semesters scoped per course
 - `subject_details` — subjects per course+semester
-- `file_data` — uploaded file metadata; actual files live on disk at `{upload-dir}/{departmentId}/{fileRole}/{courseId}/{semesterId}/{subjectId}/`
-
-### File Storage
-
-`StorageServiceImplementation` handles file upload/download. Files are stored on the local filesystem (not in the database). The `file_data` table stores metadata including the path. Server-level HTTP compression is enabled in `application.properties` for common MIME types.
+- `file_data` — uploaded file metadata; files on disk at `{upload-dir}/{departmentId}/{fileRole}/{courseId}/{semesterId}/{subjectId}/`
+- `announcements` — department-scoped notices posted by HODs
+- `teacher_subject` — one-to-one assignment of a teacher to a subject
 
 ### Passwords
 
-Passwords are stored with Spring Security's `{noop}` prefix for plain-text (dev/test only). The `{noop}` prefix is prepended explicitly in `AdminContoller.saveUser()` when creating new users.
+Stored with Spring Security's `{noop}` prefix (dev/test only). Prepended explicitly in `AdminController.saveUser()`.
 
 ## Documentation Rules
 
@@ -109,31 +94,21 @@ All new code **must** include Javadoc before the PR is opened. No exceptions.
 
 - Every `public` and `protected` class, interface, and enum
 - Every `public` and `protected` method
-- Every `public` and `protected` field (unless it is self-evident from the name alone)
+- Every `public` and `protected` field (unless self-evident from the name alone)
 
-### Format
+### Rules
 
-```java
-/**
- * One-sentence summary of what this does.
- *
- * @param paramName what this parameter represents
- * @return what is returned, and when it may be null
- * @throws SomeException when and why this is thrown
- */
-```
-
-- First sentence is the summary — keep it to one line
-- `@param` / `@return` / `@throws` only when they add information beyond the method signature
-- Do not restate the method name in prose ("This method saves a user" → bad)
+- First sentence is the summary — one line only
+- `@param` / `@return` / `@throws` only when they add information beyond the signature
+- Do not restate the method name in prose
 
 ### Enforcement
 
 - **Within Claude Code sessions:** a `PostToolUse` hook fires after every `.java` edit and warns about missing Javadoc
-- **At commit time:** `.git/hooks/pre-commit` blocks the commit if staged Java files have undocumented public/protected members
+- **At commit time:** `.git/hooks/pre-commit` blocks commits if staged Java files have undocumented public/protected members
 - Hook script: `.claude/hooks/check-javadoc.py`
 
 ## Project Structure
 
 The Maven project (`pom.xml`, `src/`, `Dockerfile`, `sql-scripts/`) lives at the **repository root**.
-The `archive/` directory holds historical files that are no longer part of the active source tree.
+The `archive/` directory holds historical files no longer in the active source tree.

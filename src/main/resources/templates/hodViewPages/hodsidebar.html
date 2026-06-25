@@ -71,7 +71,8 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            th:classappend="${currentUri.startsWith('/hod/add-subject') or
-                                            currentUri.startsWith('/hod/manage-subject')} ? ' is-active'"
+                                            currentUri.startsWith('/hod/manage-subject') or
+                                            currentUri.startsWith('/hod/assign-teachers')} ? ' is-active'"
                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Subjects
                         </a>
@@ -86,6 +87,12 @@
                                    th:classappend="${currentUri.startsWith('/hod/manage-subject')} ? ' is-active'"
                                    th:href="@{/hod/manage-subject}">Manage Subjects</a>
                             </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item"
+                                   th:classappend="${currentUri.startsWith('/hod/assign-teachers')} ? ' is-active'"
+                                   th:href="@{/hod/assign-teachers}">Assign Teachers</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -94,6 +101,27 @@
                         <a class="nav-link"
                            th:classappend="${currentUri.startsWith('/hod/members')} ? ' is-active'"
                            th:href="@{/hod/members}">Members</a>
+                    </li>
+
+                    <!-- Workload link -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/hod/workload')} ? ' is-active'"
+                           th:href="@{/hod/workload}">Workload</a>
+                    </li>
+
+                    <!-- Files link -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/hod/department-files')} ? ' is-active'"
+                           th:href="@{/hod/department-files}">Files</a>
+                    </li>
+
+                    <!-- Announcements link -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${currentUri.startsWith('/hod/announcements')} ? ' is-active'"
+                           th:href="@{/hod/announcements}">Announcements</a>
                     </li>
 
                 </ul>

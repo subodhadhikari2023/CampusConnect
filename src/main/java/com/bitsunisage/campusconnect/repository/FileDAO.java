@@ -57,6 +57,14 @@ public interface FileDAO extends JpaRepository<FileData, Long> {
                                       @Param("fileRole") String fileRole);
 
     /**
+     * Returns all files uploaded within the given department, ordered by upload date descending.
+     *
+     * @param departmentId the department's numeric ID
+     * @return list of matching {@link FileData} records; empty if none
+     */
+    List<FileData> findByFileDepartmentIdOrderByUploadDateDesc(Long departmentId);
+
+    /**
      * Looks up a file by its primary key.
      *
      * @param id file primary key

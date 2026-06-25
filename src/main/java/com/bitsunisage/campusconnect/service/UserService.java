@@ -3,6 +3,7 @@ package com.bitsunisage.campusconnect.service;
 import com.bitsunisage.campusconnect.entities.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for all user and academic-catalogue operations.
@@ -329,4 +330,119 @@ public interface UserService {
      * @return list of matching users; empty if none
      */
     List<User> getMembersByDepartmentAndRole(Long deptId, String role);
+
+    /**
+     * Returns all uploaded files belonging to the given department, newest first.
+     *
+     * @param deptId department primary key
+     * @return list of {@link FileData} records; empty if none
+     */
+    List<FileData> getFilesByDepartmentId(Long deptId);
+
+    // ── Teacher-Subject Assignment ────────────────────────────────────────────
+
+    /**
+     * Returns all teacher-subject assignments for the given list of subject IDs.
+     *
+     * @param subjectIds list of subject primary keys to query
+     * @return list of matching {@link TeacherSubject} records; empty if none
+     */
+    List<TeacherSubject> getAssignmentsBySubjectIds(List<Long> subjectIds);
+
+    /**
+     * Creates or replaces the teacher assignment for a subject.
+     * If the subject already has an assigned teacher, that assignment is overwritten.
+     *
+     * @param teacherId login username of the teacher to assign
+     * @param subjectId primary key of the subject
+     */
+    void upsertTeacherAssignment(String teacherId, Long subjectId);
+
+    /**
+     * Removes the teacher assignment for the given subject, if one exists.
+     * No-op if the subject has no assignment.
+     *
+     * @param subjectId primary key of the subject
+     */
+    void removeTeacherAssignmentBySubjectId(Long subjectId);
+
+    /**
+     * Returns all assignments where the teacher belongs to the given list of usernames.
+     * Used to build the per-teacher workload summary for an HOD.
+     *
+     * @param teacherIds list of teacher login usernames
+     * @return list of matching {@link TeacherSubject} records; empty if none
+     */
+    List<TeacherSubject> getAssignmentsByTeacherIds(List<String> teacherIds);
+
+    // ── Announcements ─────────────────────────────────────────────────────────
+
+    /**
+     * Returns all announcements for the given department, newest first.
+     *
+     * @param deptId department primary key
+     * @return list of {@link Announcement} records; empty if none posted
+     */
+    List<Announcement> getAnnouncementsByDeptId(Long deptId);
+
+    /**
+     * Looks up an announcement by its primary key.
+     *
+     * @param id announcement primary key
+     * @return an {@link Optional} containing the record, or empty if not found
+     */
+    Optional<Announcement> getAnnouncementById(Long id);
+
+    /**
+     * Persists a new or updated announcement record.
+     *
+     * @param announcement the {@link Announcement} to save
+     * @return the saved entity (ID populated for new records)
+     */
+    Announcement saveAnnouncement(Announcement announcement);
+
+    /**
+     * Deletes an announcement by its primary key.
+     *
+     * @param id announcement primary key
+     */
+    void deleteAnnouncementById(Long id);
+
+    // ── Duplicate-name Checks ─────────────────────────────────────────────────
+
+    /**
+     * Returns {@code true} if a course with this name already exists in the given department.
+     *
+     * @param deptId     department primary key
+     * @param courseName course name to test
+     * @return {@code true} if a duplicate exists
+     */
+    boolean courseNameExistsInDepartment(Long deptId, String courseName);
+
+    /**
+     * Returns {@code true} if a semester with this name already exists in the given course.
+     *
+     * @param courseId     course primary key
+     * @param semesterName semester name to test
+     * @return {@code true} if a duplicate exists
+     */
+    boolean semesterNameExistsInCourse(Long courseId, String semesterName);
+
+    /**
+     * Returns {@code true} if a subject with this name already exists in the given course and semester.
+     *
+     * @param courseId    course primary key
+     * @param semesterId  semester primary key
+     * @param subjectName subject name to test
+     * @return {@code true} if a duplicate exists
+     */
+    boolean subjectNameExistsInSlot(int courseId, int semesterId, String subjectName);
+
+    /**
+     * Counts all subjects across all courses belonging to the given department.
+     *
+     * @param deptId department primary key
+     * @return total subject count for the department
+     */
+    int countSubjectsByDepartmentId(Long deptId);
 }

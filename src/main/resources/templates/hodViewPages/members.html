@@ -25,31 +25,34 @@
 
     <div th:if="${faculty.empty}" class="text-muted small mb-4">No faculty assigned to this department yet.</div>
 
-    <div th:unless="${faculty.empty}" class="hod-table-card mb-5">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="member, stat : ${faculty}">
-                    <td th:text="${stat.count}" class="text-muted"></td>
-                    <td th:text="${member.userId}"></td>
-                    <td>
-                        <a th:if="${member.email != null and not #strings.isEmpty(member.email)}"
-                           th:href="'mailto:' + ${member.email}"
-                           th:text="${member.email}"
-                           style="color: var(--clr-primary);"></a>
-                        <span th:unless="${member.email != null and not #strings.isEmpty(member.email)}"
-                              class="text-muted">—</span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <div th:unless="${faculty.empty}" class="mb-5">
+        <input type="search" id="facultySearch" class="form-control mb-2" placeholder="Search faculty by username or email&hellip;" style="max-width:360px;">
+        <div class="hod-table-card">
+            <div class="table-responsive">
+                <table id="facultyTable" class="table table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member, stat : ${faculty}">
+                        <td th:text="${stat.count}" class="text-muted"></td>
+                        <td th:text="${member.userId}"></td>
+                        <td>
+                            <a th:if="${member.email != null and not #strings.isEmpty(member.email)}"
+                               th:href="'mailto:' + ${member.email}"
+                               th:text="${member.email}"
+                               style="color: var(--clr-primary);"></a>
+                            <span th:unless="${member.email != null and not #strings.isEmpty(member.email)}"
+                                  class="text-muted">—</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -58,31 +61,34 @@
 
     <div th:if="${students.empty}" class="text-muted small mb-4">No students assigned to this department yet.</div>
 
-    <div th:unless="${students.empty}" class="hod-table-card mb-5">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="member, stat : ${students}">
-                    <td th:text="${stat.count}" class="text-muted"></td>
-                    <td th:text="${member.userId}"></td>
-                    <td>
-                        <a th:if="${member.email != null and not #strings.isEmpty(member.email)}"
-                           th:href="'mailto:' + ${member.email}"
-                           th:text="${member.email}"
-                           style="color: var(--clr-primary);"></a>
-                        <span th:unless="${member.email != null and not #strings.isEmpty(member.email)}"
-                              class="text-muted">—</span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <div th:unless="${students.empty}" class="mb-5">
+        <input type="search" id="studentSearch" class="form-control mb-2" placeholder="Search students by username or email&hellip;" style="max-width:360px;">
+        <div class="hod-table-card">
+            <div class="table-responsive">
+                <table id="studentTable" class="table table-hover mb-0 align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="member, stat : ${students}">
+                        <td th:text="${stat.count}" class="text-muted"></td>
+                        <td th:text="${member.userId}"></td>
+                        <td>
+                            <a th:if="${member.email != null and not #strings.isEmpty(member.email)}"
+                               th:href="'mailto:' + ${member.email}"
+                               th:text="${member.email}"
+                               style="color: var(--clr-primary);"></a>
+                            <span th:unless="${member.email != null and not #strings.isEmpty(member.email)}"
+                                  class="text-muted">—</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -92,5 +98,18 @@
 </div>
 
 <script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+<script>
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#' + tableId + ' tbody tr').forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+    }
+    filterTable('facultySearch', 'facultyTable');
+    filterTable('studentSearch', 'studentTable');
+</script>
 </body>
 </html>

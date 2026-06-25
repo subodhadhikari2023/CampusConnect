@@ -43,4 +43,14 @@ public interface CourseDetailsDAO extends JpaRepository<CourseDetails, Integer> 
      * @param courseId the course ID to delete
      */
     void deleteByCourseId(Long courseId);
+
+    /**
+     * Returns {@code true} if a course with the given name already exists in the given department.
+     * Used to prevent duplicate course names within a department.
+     *
+     * @param departmentId department to scope the check to
+     * @param courseName   name to test (case-sensitive)
+     * @return {@code true} if a matching course exists
+     */
+    boolean existsByDepartmentIdAndCourseName(Long departmentId, String courseName);
 }

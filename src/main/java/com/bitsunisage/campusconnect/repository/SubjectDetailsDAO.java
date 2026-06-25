@@ -51,4 +51,23 @@ public interface SubjectDetailsDAO extends JpaRepository<SubjectDetails, String>
      * @return count of subjects in that semester
      */
     int countBySemesterId(int semesterId);
+
+    /**
+     * Returns {@code true} if a subject with the given name already exists in the given course and semester.
+     * Used to prevent duplicate subject names within the same course-semester slot.
+     *
+     * @param courseId    course primary key
+     * @param semesterId  semester primary key
+     * @param subjectName name to test (case-sensitive)
+     * @return {@code true} if a matching subject exists
+     */
+    boolean existsByCourseIdAndSemesterIdAndSubjectName(int courseId, int semesterId, String subjectName);
+
+    /**
+     * Counts all subjects belonging to the given course.
+     *
+     * @param courseId course primary key
+     * @return number of subjects in that course
+     */
+    int countByCourseId(int courseId);
 }

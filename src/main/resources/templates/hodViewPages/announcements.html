@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/images/main-logo-black.jpeg}" type="image/png">
+    <title>Announcements &mdash; CampusConnect</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/CSS/theme.css}">
+    <link rel="stylesheet" th:href="@{/CSS/HOD/portal.css}">
+</head>
+<body>
+<div th:replace="~{hodViewPages/hodsidebar :: hodsidebar}"></div>
+
+<div class="hod-page-content">
+<main>
+<div class="hod-container">
+
+    <div class="hod-page-header">
+        <h2 class="hod-page-header__title">Announcements</h2>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Post new announcement -->
+    <p class="hod-section-label">Post New Announcement</p>
+    <div class="hod-form-card mb-5">
+        <form th:action="@{/hod/save-announcement}" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-semibold" for="title">Title</label>
+                <input id="title" type="text" name="title" class="form-control"
+                       placeholder="e.g. Exam schedule update" maxlength="200" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold" for="body">Message</label>
+                <textarea id="body" name="body" class="form-control" rows="4"
+                          placeholder="Write your announcement here…" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Post Announcement</button>
+        </form>
+    </div>
+
+    <!-- Existing announcements -->
+    <p class="hod-section-label">Posted Announcements</p>
+
+    <div th:if="${announcements.empty}" class="text-muted small mb-4">
+        No announcements posted yet.
+    </div>
+
+    <div th:unless="${announcements.empty}">
+        <div th:each="ann : ${announcements}" class="hod-table-card mb-3 p-3">
+            <!-- Read view -->
+            <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                <div class="flex-grow-1">
+                    <h6 class="fw-bold mb-1" th:text="${ann.title}"></h6>
+                    <p class="mb-1 text-muted" style="white-space:pre-wrap;" th:text="${ann.body}"></p>
+                    <small class="text-muted"
+                           th:text="${#dates.format(ann.createdAt, 'dd MMM yyyy, HH:mm')} + ' · ' + ${ann.author}"></small>
+                </div>
+                <div class="d-flex gap-2 flex-shrink-0">
+                    <a th:href="@{/hod/edit-announcement(id=${ann.id})}"
+                       class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <form th:action="@{/hod/delete-announcement}" method="post"
+                          onsubmit="return confirm('Delete this announcement?')">
+                        <input type="hidden" name="id" th:value="${ann.id}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+<div th:replace="~{hodViewPages/hodfooter :: hodfooter}"></div>
+</div>
+
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -36,4 +36,14 @@ public interface SemesterDAO extends JpaRepository<Semester, Integer> {
      * @param semesterId the semester ID to delete
      */
     void deleteBySemesterId(Long semesterId);
+
+    /**
+     * Returns {@code true} if a semester with this name already exists in the given course.
+     * Used to prevent duplicate semester names within the same course.
+     *
+     * @param courseId     course primary key
+     * @param semesterName name to test (case-sensitive)
+     * @return {@code true} if a matching semester exists
+     */
+    boolean existsByCourseIdAndSemesterName(Long courseId, String semesterName);
 }

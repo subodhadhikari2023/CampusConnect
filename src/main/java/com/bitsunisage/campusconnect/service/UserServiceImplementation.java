@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link UserService} implementation backed by Spring Data JPA repositories.
@@ -23,6 +24,9 @@ public class UserServiceImplementation implements UserService {
     private final CourseDetailsDAO courseDetailsDAO;
     private final SemesterDAO semesterDAO;
     private final SubjectDetailsDAO subjectDetailsDAO;
+    private final FileDAO fileDAO;
+    private final TeacherSubjectDAO teacherSubjectDAO;
+    private final AnnouncementDAO announcementDAO;
 
     /**
      * Constructs the service with all required repositories injected by Spring.
@@ -34,6 +38,9 @@ public class UserServiceImplementation implements UserService {
      * @param courseDetailsDAO      repository for {@link CourseDetails}
      * @param semesterDAO           repository for {@link Semester}
      * @param subjectDetailsDAO     repository for {@link SubjectDetails}
+     * @param fileDAO               repository for {@link FileData}
+     * @param teacherSubjectDAO     repository for {@link TeacherSubject}
+     * @param announcementDAO       repository for {@link Announcement}
      */
     @Autowired
     public UserServiceImplementation(UserDAO userDAO, RoleDAO roleDAO,
@@ -41,7 +48,10 @@ public class UserServiceImplementation implements UserService {
                                      DepartmentDetailsDAO departmentDetailsDAO,
                                      CourseDetailsDAO courseDetailsDAO,
                                      SemesterDAO semesterDAO,
-                                     SubjectDetailsDAO subjectDetailsDAO) {
+                                     SubjectDetailsDAO subjectDetailsDAO,
+                                     FileDAO fileDAO,
+                                     TeacherSubjectDAO teacherSubjectDAO,
+                                     AnnouncementDAO announcementDAO) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.departmentDAO = departmentDAO;
@@ -49,6 +59,9 @@ public class UserServiceImplementation implements UserService {
         this.courseDetailsDAO = courseDetailsDAO;
         this.semesterDAO = semesterDAO;
         this.subjectDetailsDAO = subjectDetailsDAO;
+        this.fileDAO = fileDAO;
+        this.teacherSubjectDAO = teacherSubjectDAO;
+        this.announcementDAO = announcementDAO;
     }
 
     /** {@inheritDoc} */
@@ -299,5 +312,91 @@ public class UserServiceImplementation implements UserService {
                 .map(DepartmentDetails::getUserName)
                 .toList();
         return userDAO.findByUserIdIn(userIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<FileData> getFilesByDepartmentId(Long deptId) {
+        return fileDAO.findByFileDepartmentIdOrderByUploadDateDesc(deptId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<TeacherSubject> getAssignmentsBySubjectIds(List<Long> subjectIds) {
+        if (subjectIds == null || subjectIds.isEmpty()) return List.of();
+        return teacherSubjectDAO.findBySubjectIdIn(subjectIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void upsertTeacherAssignment(String teacherId, Long subjectId) {
+        TeacherSubject assignment = teacherSubjectDAO.findBySubjectId(subjectId).orElse(new TeacherSubject());
+        assignment.setTeacherId(teacherId);
+        assignment.setSubjectId(subjectId);
+        teacherSubjectDAO.save(assignment);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void removeTeacherAssignmentBySubjectId(Long subjectId) {
+        teacherSubjectDAO.findBySubjectId(subjectId).ifPresent(teacherSubjectDAO::delete);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<TeacherSubject> getAssignmentsByTeacherIds(List<String> teacherIds) {
+        if (teacherIds == null || teacherIds.isEmpty()) return List.of();
+        return teacherSubjectDAO.findByTeacherIdIn(teacherIds);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<Announcement> getAnnouncementsByDeptId(Long deptId) {
+        return announcementDAO.findByDeptIdOrderByCreatedAtDesc(deptId);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Optional<Announcement> getAnnouncementById(Long id) {
+        return announcementDAO.findById(id);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Announcement saveAnnouncement(Announcement announcement) {
+        return announcementDAO.save(announcement);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void deleteAnnouncementById(Long id) {
+        announcementDAO.deleteById(id);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean courseNameExistsInDepartment(Long deptId, String courseName) {
+        return courseDetailsDAO.existsByDepartmentIdAndCourseName(deptId, courseName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean semesterNameExistsInCourse(Long courseId, String semesterName) {
+        return semesterDAO.existsByCourseIdAndSemesterName(courseId, semesterName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean subjectNameExistsInSlot(int courseId, int semesterId, String subjectName) {
+        return subjectDetailsDAO.existsByCourseIdAndSemesterIdAndSubjectName(courseId, semesterId, subjectName);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int countSubjectsByDepartmentId(Long deptId) {
+        List<CourseDetails> courses = courseDetailsDAO.findByDepartmentId(deptId);
+        return courses.stream()
+                .mapToInt(c -> subjectDetailsDAO.countByCourseId(c.getCourseId().intValue()))
+                .sum();
     }
 }

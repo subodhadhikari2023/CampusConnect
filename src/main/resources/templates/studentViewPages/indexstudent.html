@@ -71,6 +71,22 @@
 
     </div>
 
+    <!-- Department Announcements -->
+    <div th:if="${announcements != null and not announcements.empty}" class="student-container mt-2 mb-4">
+        <h6 style="font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+                   color:var(--clr-text-muted); margin-bottom:1rem; padding-bottom:0.4rem;
+                   border-bottom:1px solid var(--clr-border);">Department Announcements</h6>
+        <div th:each="ann : ${announcements}"
+             style="border:1px solid var(--clr-border); border-radius:var(--radius-md);
+                    background:var(--clr-surface); padding:1rem 1.25rem; margin-bottom:0.75rem;">
+            <div style="font-weight:600; margin-bottom:0.25rem;" th:text="${ann.title}"></div>
+            <div style="font-size:0.88rem; color:var(--clr-text); white-space:pre-wrap; margin-bottom:0.4rem;"
+                 th:text="${ann.body}"></div>
+            <small style="color:var(--clr-text-muted);"
+                   th:text="${#dates.format(ann.createdAt, 'dd MMM yyyy')}"></small>
+        </div>
+    </div>
+
 </div>
 <footer class="student-footer" th:text="'&copy; ' + ${currentYear} + ' CampusConnect'"></footer>
 
