@@ -191,13 +191,13 @@ erDiagram
         int     dept_id          FK
     }
     roles {
-        varchar user_id          PK_FK
+        varchar user_id          PK
         varchar role
     }
     department_details {
         int     department_member_id PK
         int     department_id        FK
-        varchar user_name            FK_UK
+        varchar user_name            UK
         varchar role
     }
     course_details {
@@ -241,7 +241,7 @@ erDiagram
     teacher_subject {
         int     id               PK
         varchar teacher_id       FK
-        int     subject_id       FK_UK
+        int     subject_id       UK
     }
 
     department        ||--o{ members             : "dept_id"
