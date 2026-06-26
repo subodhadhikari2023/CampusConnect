@@ -1,72 +1,48 @@
 <a name="readme-top"></a>
 
+<div align="center">
+
+# CampusConnect
+
+**A role-based academic management and collaborative learning platform for educational institutions.**
+
+[![CI][ci-shield]][ci-url]
 [![Contributors][contributors-shield]][contributors-url]
 [![Issues][issues-shield]][issues-url]
-[![GNU License][license-shield]][license-url]
-[![CI][ci-shield]][ci-url]
+[![License: GPL v3][license-shield]][license-url]
 [![Docker][docker-shield]][docker-url]
 
-<h1 align="center">CampusConnect</h1>
-<p align="center">A role-based academic management and collaborative learning platform for educational institutions.</p>
+[View on GitHub](https://github.com/subodhadhikari2023/CampusConnect) · [Report a Bug][issues-url] · [Request a Feature][issues-url]
 
-<h2>Project Link</h2>
-
-<a href="https://github.com/subodhadhikari2023/CampusConnect">
-  <img src="https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github" alt="GitHub Project Link" />
-</a>
+</div>
 
 ---
 
-<h2 align="center">Contributors</h2>
+<div align="center">
 
-<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+## Contributors
 
-  <div style="text-align: center; flex: 1; min-width: 150px; max-width: 45%;">
-    <h2>Subodh Adhikari</h2>
-    <img src="./readmeImages/Subodh.jpeg" alt="Subodh" style="width: 150px; height: 150px;">
-    <br>
-    <a href="https://www.linkedin.com/in/subodh-adhikari-4b811a296/">
-      <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Subodh" />
-    </a>
-    <a href="mailto:subodhadhikari2023@outlook.com">
-      <img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" alt="Outlook Subodh" />
-    </a>
-    <a href="https://github.com/subodhadhikari2023/">
-      <img src="https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github" alt="GitHub Link" />
-    </a>
-  </div>
-
-  <div style="text-align: center; flex: 1; min-width: 150px; max-width: 45%;">
-    <h2>Manav Agarwal</h2>
-    <img src="./readmeImages/Manav.jpeg" alt="Manav" style="width: 150px; height: 150px;">
-    <br>
-    <a href="https://www.linkedin.com/in/manav-agarwal-8139b92b8/">
-      <img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" alt="LinkedIn Manav" />
-    </a>
-    <a href="mailto:manav9981@outlook.com">
-      <img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" alt="Outlook Manav" />
-    </a>
-    <a href="https://github.com/Manav355">
-      <img src="https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github" alt="GitHub Link" />
-    </a>
-  </div>
+| <img src="./readmeImages/Subodh.jpeg" width="120" height="120" style="border-radius:50%"/> | <img src="./readmeImages/Manav.jpeg" width="120" height="120" style="border-radius:50%"/> |
+|:---:|:---:|
+| **Subodh Adhikari** | **Manav Agarwal** |
+| [![LinkedIn][linkedin-badge]](https://www.linkedin.com/in/subodh-adhikari-4b811a296/) [![GitHub][github-badge]](https://github.com/subodhadhikari2023/) [![Outlook][outlook-badge]](mailto:subodhadhikari2023@outlook.com) | [![LinkedIn][linkedin-badge]](https://www.linkedin.com/in/manav-agarwal-8139b92b8/) [![GitHub][github-badge]](https://github.com/Manav355) [![Outlook][outlook-badge]](mailto:manav9981@outlook.com) |
 
 </div>
 
 ---
 
 <details>
-  <summary>Table of Contents</summary>
+  <summary><b>Table of Contents</b></summary>
   <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#about">About The Project</a></li>
     <li><a href="#screenshots">Screenshots</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#built-with">Built With</a></li>
     <li><a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#option-1-docker-recommended">Option 1: Docker (Recommended)</a></li>
-        <li><a href="#option-2-manual-setup">Option 2: Manual Setup</a></li>
-        <li><a href="#option-3-railway-cloud">Option 3: Railway (Cloud)</a></li>
+        <li><a href="#option-1-docker-recommended">Docker (Recommended)</a></li>
+        <li><a href="#option-2-manual-setup">Manual Setup</a></li>
+        <li><a href="#option-3-railway-cloud">Railway (Cloud)</a></li>
       </ul>
     </li>
     <li><a href="#environment-variables">Environment Variables</a></li>
@@ -81,54 +57,48 @@
 
 ---
 
-## About The Project
+## About
 
-**CampusConnect** is a role-based academic management and collaborative learning platform designed for educational institutions. It provides a centralized hub where administrators, department heads, faculty, and students can manage academic workflows, share resources, and collaborate — all within a structured, permission-driven environment.
+CampusConnect is a **Spring Boot** web application providing a unified academic workspace for four roles — Admin, HOD, Teacher, and Student. Each role has its own dashboard and a permission-scoped set of actions, enforced at every request by Spring Security.
 
-The platform is built with Spring Boot and Thymeleaf, backed by MySQL, and ships as a multi-stage Docker image deployed to Railway via GitHub Actions.
+The application is containerised with Docker, tested with JUnit 5 and Mockito, deployed to Railway via GitHub Actions, and uses Flyway for zero-touch schema management.
 
 ---
 
 ## Screenshots
 
 <div align="center">
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/landing-page.png" alt="Landing Page" width="260"/>
-      <br/><sub><b>Landing Page</b><br/>Hero, feature cards, How It Works</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/login-page.png" alt="Login Page" width="260"/>
-      <br/><sub><b>Login Page</b><br/>Clean sign-in card with password toggle</sub>
-    </td>
-    <td align="center" width="33%">
-      <img src="docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="260"/>
-      <br/><sub><b>Admin Dashboard</b><br/>Live stats, quick actions, recent uploads</sub>
-    </td>
-  </tr>
-</table>
+
+| Landing Page | Login | Admin Dashboard |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/landing-page.png" width="260" alt="Landing Page"/> | <img src="docs/screenshots/login-page.png" width="260" alt="Login Page"/> | <img src="docs/screenshots/admin-dashboard.png" width="260" alt="Admin Dashboard"/> |
+| Hero, feature cards, How It Works | Sign-in card with password toggle | Live stats, quick actions, recent uploads |
+
 </div>
 
 ---
 
 ## Features
 
-- **Role-Based Access Control** — Distinct roles (Admin, HOD, Teacher, Student) with scoped permissions across all platform actions
-- **Admin Dashboard** — System-wide stats with full CRUD for users and departments
-- **HOD Module** — Full course / semester / subject / curriculum management; teacher-subject assignment; department announcements; workload view
-- **Resource Library** — Teachers upload lecture slides, videos, notes, programs, audio books, and reference material scoped to their assigned subjects
-- **Dept-Scoped Browse** — Teachers and students browse and download resources filtered to their own department
-- **File Compression Downloads** — Download resources in original, GZIP, or ZIP format
-- **Announcements** — HODs post department notices; visible to all teachers and students in the department
-- **Flyway Migrations** — Versioned schema management; schema and seed data applied automatically on first boot
-- **Health Endpoint** — `/actuator/health` for uptime monitoring and Docker health checks
+| | Feature | Description |
+|---|---|---|
+| 🔐 | **Role-Based Access Control** | Four distinct roles (Admin, HOD, Teacher, Student) with permission-scoped endpoints enforced by Spring Security |
+| 📊 | **Admin Dashboard** | System-wide user and department CRUD with live statistics |
+| 🏫 | **HOD Module** | Course / semester / subject / curriculum management; teacher assignment; announcements; workload view |
+| 📁 | **Resource Library** | Teachers upload slides, videos, notes, programs, audio books, and reference material scoped to their assigned subjects |
+| 🔍 | **Dept-Scoped Browse** | Teachers and students filter and browse resources within their own department |
+| 📦 | **Compressed Downloads** | Download any resource as original, GZIP, or ZIP |
+| 📢 | **Announcements** | HODs post department notices; visible to all teachers and students in the department |
+| 🛠️ | **Flyway Migrations** | Versioned schema applied automatically on first boot — no manual SQL step |
+| ❤️ | **Health Endpoint** | `/actuator/health` for uptime checks and Docker health probes |
 
 ---
 
 ## Built With
 
-**Application**
+<div align="center">
+
+**Application Stack**
 
 [![Spring Boot][SpringBoot6.js]][SpringBoot6-url]
 [![Spring Security][SpringSecurity.js]][SpringSecurity-url]
@@ -154,291 +124,225 @@ The platform is built with Spring Boot and Thymeleaf, backed by MySQL, and ships
 [![H2][H2.js]][H2-url]
 [![Spring Security Test][SST.js]][SST-url]
 
+</div>
+
 ---
 
 ## Getting Started
-
-Choose the setup method that suits your environment.
 
 ---
 
 ### Option 1: Docker (Recommended)
 
-No manual database setup required. Docker Compose starts MySQL 8.0 and the Spring Boot app; Flyway creates all tables and seeds data automatically on first boot.
+No database setup required. Docker Compose starts MySQL 8.0 and the Spring Boot app; Flyway seeds all tables on first boot.
 
-**Prerequisites:** Docker and Docker Compose installed.
+> **Prerequisites:** Docker and Docker Compose
 
 ```bash
-# 1. Clone the repository
+# Clone
 git clone https://github.com/subodhadhikari2023/CampusConnect.git
 cd CampusConnect
 
-# 2. Create your environment file and set credentials
+# Set credentials
 cp .env.example .env
-# Edit .env and set DB_PASSWORD and MYSQL_ROOT_PASSWORD
+# Edit .env — set DB_PASSWORD and MYSQL_ROOT_PASSWORD
 
-# 3. Build and start both containers (app + MySQL)
+# Start
 docker compose up --build
 ```
 
-The application will be available at `http://localhost:8080`.
+The app is available at **http://localhost:8080**.
 
-**What Docker sets up automatically:**
-- MySQL 8.0 container with the `campusConnect` database
-- Spring Boot app compiled via multi-stage build, waits for MySQL health check before starting
-- Flyway runs `V1__init_schema.sql` then `V2__seed_data.sql` on first boot — no manual SQL step needed
-- `/actuator/health` is the Docker health check endpoint
+**What happens automatically:**
+- MySQL 8.0 container creates the `campusConnect` database
+- Spring Boot waits for MySQL health check, then starts
+- Flyway runs `V1__init_schema.sql` → `V2__seed_data.sql` — all tables and dummy accounts ready on first boot
 
 ```bash
-# Stop containers
-docker compose down
-
-# Stop and delete all data (fresh start)
-docker compose down -v
+docker compose down        # stop containers
+docker compose down -v     # stop and wipe all data (fresh start)
 ```
 
 ---
 
-### Option 2: Manual Setup (No Docker)
+### Option 2: Manual Setup
 
-**Prerequisites**
-
-- Java Development Kit 17
-- MySQL Server 8.0+
-- Maven (or use the included `./mvnw` wrapper)
-- IntelliJ IDEA (recommended) or any IDE
-
-**Steps**
-
-`setup.sh` automates the entire manual setup — checking dependencies, creating `.env`, initialising the database, and starting the application.
+> **Prerequisites:** JDK 17, MySQL 8.0+, Maven (or use `./mvnw`)
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/subodhadhikari2023/CampusConnect.git
 cd CampusConnect
-
-# 2. Run the setup script (handles everything automatically)
 chmod +x setup.sh && ./setup.sh
 ```
 
-On first run, `setup.sh` will:
-1. Verify Java 17+, Maven, and MySQL client are installed
-2. Create `.env` if it does not exist, then exit — fill in `DB_PASSWORD` and re-run
-3. Check whether the database exists — if not, prompt for MySQL root password and run the schema script
-4. Start the application via `./mvnw spring-boot:run`
+`setup.sh` checks dependencies, creates `.env`, initialises the database if needed, and starts the application. On first run it exits after creating `.env` — fill in `DB_PASSWORD`, then run `./setup.sh` again.
 
-The application will be available at `http://localhost:8080`.
+The app is available at **http://localhost:8080**.
 
-**Dummy credentials** (all use password `password`):
+**Dummy credentials** — all accounts use password `password`:
 
 | Username | Role    |
 |----------|---------|
-| admin1   | Admin   |
-| admin2   | Admin   |
-| hod1     | HOD     |
-| hod2     | HOD     |
-| teacher1 | Teacher |
-| teacher2 | Teacher |
-| student1 | Student |
-| student2 | Student |
+| admin1, admin2 | Admin |
+| hod1, hod2     | HOD   |
+| teacher1, teacher2 | Teacher |
+| student1, student2 | Student |
 
 ---
 
 ### Option 3: Railway (Cloud)
 
-The application is continuously deployed to Railway from the `main` branch. No local setup is needed to view the live version.
+The application is continuously deployed to Railway from `main`. No local setup is needed to view the live version.
 
-**How Railway deployment works:**
+**To deploy your own fork:**
 
-1. A push to `main` triggers the GitHub Actions CI pipeline.
-2. CI runs all tests, then builds and pushes a Docker image to GHCR tagged `:latest` and `:<sha>`.
-3. Railway is configured to watch GHCR for new images and redeploys automatically.
-4. On startup, Flyway applies any pending migrations against the Railway-hosted MySQL instance.
+1. Fork the repo and create a Railway project with a **MySQL** plugin.
+2. Railway auto-injects `MYSQL_ROOT_PASSWORD` and `MYSQL_DATABASE` from the plugin.
+3. Add these variables to the CampusConnect service:
 
-**To deploy your own fork to Railway:**
+   | Variable      | Value                    |
+   |---------------|--------------------------|
+   | `MYSQL_HOST`  | `mysql.railway.internal` |
+   | `MYSQL_PORT`  | `3306`                   |
+   | `MYSQL_USER`  | `root`                   |
+   | `UPLOAD_DIR`  | `/uploads/`              |
+   | `SERVER_PORT` | `8080`                   |
 
-1. Fork the repository and create a Railway project.
-2. Add a **MySQL** plugin to your Railway project — Railway provides `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, and `MYSQL_ROOT_PASSWORD` automatically.
-3. In your CampusConnect Railway service, set these variables explicitly (the app reads them from the environment):
-
-   | Variable           | Value                   |
-   |--------------------|-------------------------|
-   | `MYSQL_HOST`       | `mysql.railway.internal`|
-   | `MYSQL_PORT`       | `3306`                  |
-   | `MYSQL_USER`       | `root`                  |
-   | `UPLOAD_DIR`       | `/uploads/`             |
-   | `SERVER_PORT`      | `8080`                  |
-
-   `MYSQL_ROOT_PASSWORD` and `MYSQL_DATABASE` are injected automatically by the Railway MySQL plugin.
-
-4. Connect your GitHub repository to the Railway service and enable **GitHub Actions → GHCR** deployment (see CI/CD section below).
+4. Connect the service to your GitHub fork — Railway redeploys automatically on every push to `main`.
 
 ---
 
 ## Environment Variables
 
-The application reads configuration from environment variables with a layered fallback chain. Each environment resolves differently:
-
-| Variable              | Docker Compose        | Railway (auto)                    | Local Dev (default)    |
-|-----------------------|-----------------------|-----------------------------------|------------------------|
-| `DB_URL`              | `jdbc:mysql://db:3306/campusConnect` | *(not set — Railway path used)* | *(not set — localhost fallback)* |
-| `DB_USERNAME`         | `campusConnect`       | *(falls through to `MYSQL_USER`)* | `campusConnect`        |
-| `DB_PASSWORD`         | set via `.env`        | *(falls through to `MYSQL_ROOT_PASSWORD`)* | `password`  |
-| `MYSQL_HOST`          | *(not needed)*        | `mysql.railway.internal`          | `localhost`            |
-| `MYSQL_PORT`          | *(not needed)*        | `3306`                            | `3306`                 |
-| `MYSQL_DATABASE`      | *(not needed)*        | `railway` *(set by plugin)*       | `campusConnect`        |
-| `MYSQL_USER`          | *(not needed)*        | `root`                            | `campusConnect`        |
-| `MYSQL_ROOT_PASSWORD` | set via `.env`        | set by Railway MySQL plugin       | `password`             |
-| `UPLOAD_DIR`          | `/uploads/`           | `/uploads/`                       | `uploads/`             |
-
-**Fallback chain in `application.properties`:**
+The application uses a layered fallback chain. Docker Compose always sets `DB_URL` / `DB_USERNAME` / `DB_PASSWORD`, so the Railway-native variables are never reached in that environment.
 
 ```
-DB_URL           → MYSQL_HOST:MYSQL_PORT/MYSQL_DATABASE → localhost:3306/campusConnect
-DB_USERNAME      → MYSQL_USER → campusConnect
-DB_PASSWORD      → MYSQL_ROOT_PASSWORD → password
+spring.datasource.url
+  → $DB_URL                        ← Docker always sets this
+  → jdbc:mysql://$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE?...
+                   ↑ Railway sets these three
+
+spring.datasource.username
+  → $DB_USERNAME                   ← Docker always sets this
+  → $MYSQL_USER                    ← Railway sets this
+
+spring.datasource.password
+  → $DB_PASSWORD                   ← Docker / .env always sets this
+  → $MYSQL_ROOT_PASSWORD           ← Railway MySQL plugin sets this
 ```
 
-`DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` take highest priority and are always set by Docker Compose. When they are absent (Railway and local dev), the app falls back to the Railway-native `MYSQL_*` variables, and finally to hardcoded localhost defaults for local development.
+| Variable              | Docker Compose          | Railway                          | Local default      |
+|-----------------------|-------------------------|----------------------------------|--------------------|
+| `DB_URL`              | `jdbc:mysql://db:3306/campusConnect` | *(unset — Railway chain used)* | *(unset — localhost)* |
+| `DB_USERNAME`         | `campusConnect`         | *(unset → `MYSQL_USER`)*         | `campusConnect`    |
+| `DB_PASSWORD`         | from `.env`             | *(unset → `MYSQL_ROOT_PASSWORD`)*| `password`         |
+| `MYSQL_HOST`          | n/a                     | `mysql.railway.internal`         | `localhost`        |
+| `MYSQL_PORT`          | n/a                     | `3306`                           | `3306`             |
+| `MYSQL_DATABASE`      | n/a                     | `railway` *(plugin)*             | `campusConnect`    |
+| `MYSQL_USER`          | n/a                     | `root`                           | `campusConnect`    |
+| `MYSQL_ROOT_PASSWORD` | from `.env`             | *(plugin auto-set)*              | `password`         |
+| `UPLOAD_DIR`          | `/uploads/`             | `/uploads/`                      | `uploads/`         |
 
-**Important:** Spring Boot's `${VAR:fallback}` syntax only activates the fallback when the variable is **undefined**. An empty string is accepted as-is and will cause a broken connection URL. Always verify actual variable values with `railway variables --service <name>` rather than assuming the Railway dashboard shows the effective value.
+> **Important:** `${VAR:fallback}` only activates when `VAR` is **undefined**. An empty string bypasses the fallback and produces a broken JDBC URL. If Railway connections fail, run `railway variables --service <name>` to confirm no variable is set to an empty string.
 
-Copy `.env.example` to `.env` for Docker or local use:
-
-```bash
-cp .env.example .env
-```
-
-`.env` is git-ignored and must never be committed.
+Copy `.env.example` to `.env` for Docker or local use — it is git-ignored and must never be committed.
 
 ---
 
 ## Development Workflow
 
-All feature work follows a **branch → PR → review → merge** cycle. Direct commits to `main` are not permitted.
+`main` is the only protected branch. **Never commit directly to `main`.** All changes arrive via Pull Request.
 
 ```
-main        ──────────────────────────────────────────► production
-               ▲                   ▲
-               │ PR merge          │ PR merge
-dev         ───┼────────────────────┼──────────────────►
-               │                   │
-feature/*   ───┘                   │
-                                   │
-bugfix/*    ───────────────────────┘
+main  ─────────────────────────────────────────► production (Railway)
+        ▲              ▲             ▲
+        │ PR           │ PR          │ PR
+feature/*  ────────────┘             │
+                                     │
+bugfix/*  ───────────────────────────┘
 ```
 
-### Branch Strategy
+| Branch      | Purpose |
+|-------------|---------|
+| `main`      | Production — Railway deploys from here; PR only, no direct commits |
+| `feature/*` | New features |
+| `bugfix/*`  | Bug fixes |
+| `hotfix/*`  | Critical production patches |
+| `docs/*`    | Documentation-only changes |
+| `refactor/*`| Code changes with no behaviour change |
 
-| Branch prefix | Purpose |
-|---------------|---------|
-| `main`        | Production-ready code; every commit triggers Railway deploy |
-| `dev`         | Integration branch; all feature PRs target `dev` first |
-| `feature/*`   | New features — branch from `dev`, PR back to `dev` |
-| `bugfix/*`    | Bug fixes — branch from `dev` (or `main` for hotfixes) |
-
-### Step-by-step
+Any branch opens a PR directly against `main`.
 
 ```bash
-# 1. Start from an up-to-date dev branch
-git checkout dev && git pull origin dev
-
-# 2. Create a feature branch
+# Start a new branch from main
+git checkout main && git pull origin main
 git checkout -b feature/your-feature-name
 
-# 3. Develop with TDD — write tests first, then implementation
+# Write tests first (TDD), then implementation
 mvn test   # must be green before committing
 
-# 4. Commit with a descriptive message
 git add <files>
-git commit -m "feat: describe what this adds and why"
-
-# 5. Push and open a PR targeting dev
+git commit -m "feat: describe the change"
 git push origin feature/your-feature-name
-# Open PR: feature/your-feature-name → dev
-
-# 6. After review and merge into dev, open a PR: dev → main
-# CI runs automatically; Railway deploys on merge to main
+# Open PR → main
 ```
-
-### CI/CD Pipeline
-
-Every push and pull request triggers GitHub Actions:
-
-```
-Push to any branch
-        │
-        ▼
-  ┌─────────────┐
-  │  test job   │  mvn test (194 tests, H2 in-memory)
-  └──────┬──────┘
-         │ pass
-         ▼
-  Is branch == main?
-         │
-    Yes  │
-         ▼
-  ┌──────────────────┐
-  │  push-image job  │  docker build → push to GHCR
-  │                  │  tags: :latest + :<sha>
-  └──────┬───────────┘
-         │
-         ▼
-  Railway watches GHCR
-  → auto-redeploys
-  → Flyway applies migrations
-  → /actuator/health confirms startup
-```
-
-The test job runs on **all branches and all pull requests**. The image-push job runs **only on merges to `main`**.
 
 ---
 
 ## Testing
 
-The project includes **194 tests** covering all application layers.
+The project has **194 tests** covering all layers.
 
-| Layer | Tests | Framework | Notes |
-|---|---|---|---|
+| Layer | Count | Framework | Coverage |
+|---|:---:|---|---|
 | Controllers | 136 | `@WebMvcTest` + Mockito | Admin (42), HOD (41), Teacher (32), Student (17), Master (4) — views, model attributes, redirects, flash messages, ownership guards |
 | Services | 33 | JUnit 5 + Mockito | UserService — pure unit tests, no Spring context |
 | Repositories | 14 | `@DataJpaTest` + H2 | FileDAO, RoleDAO, UserDAO — custom JPQL queries and derived finders |
 | Integration | 1 | `@SpringBootTest` | Full context smoke test |
 
-Tests use an **H2 in-memory database** via `application-test.properties` with `spring.flyway.enabled=false` — no MySQL or schema files needed in CI.
+Tests use **H2 in-memory** via `application-test.properties` with `spring.flyway.enabled=false` — no MySQL required in CI.
 
 ```bash
-# Run all tests
-mvn test
-
-# Run a specific test class
-mvn test -Dtest=HodControllerTest
-
-# Run tests matching a pattern
-mvn test -Dtest="*ControllerTest"
+mvn test                          # run all 194 tests
+mvn test -Dtest=HodControllerTest # run a single class
+mvn test -Dtest="*ControllerTest" # run by pattern
 ```
 
 ---
 
 ## CI/CD Pipeline
 
-The GitHub Actions workflow file is at `.github/workflows/ci.yml`.
+Defined in `.github/workflows/ci.yml`.
 
-### Jobs
+```
+Push / PR to any branch
+         │
+         ▼
+  ┌──────────────┐
+  │  test job    │  mvn test — 194 tests, H2 in-memory
+  └──────┬───────┘
+         │ green
+         ▼
+  branch == main?
+         │ yes
+         ▼
+  ┌────────────────────┐
+  │  push-image job    │  docker build (multi-stage)
+  │                    │  push to GHCR :latest + :<sha>
+  └──────┬─────────────┘
+         │
+         ▼
+  Railway watches GHCR → auto-redeploy
+  → Flyway applies pending migrations
+  → /actuator/health confirms startup
+```
 
-**`test` — Build & Test**
-- Triggers: every push to any branch; every pull request targeting `main`
-- Environment: `ubuntu-latest`, Java 17 Temurin, Maven cache enabled
-- Runs: `mvn test` with `SPRING_PROFILES_ACTIVE=test` (H2 in-memory, Flyway disabled)
-- No MySQL service required — all 194 tests run against H2
+**Jobs:**
 
-**`push-image` — Docker Build & Push to GHCR**
-- Triggers: push to `main` only, after `test` passes
-- Logs in to `ghcr.io` using `GITHUB_TOKEN` (no secret configuration needed)
-- Builds the multi-stage Dockerfile: Maven build stage → JRE 17 Alpine runtime
-- Pushes two tags:
-  - `ghcr.io/subodhadhikari2023/campusconnect:latest`
-  - `ghcr.io/subodhadhikari2023/campusconnect:<commit-sha>`
+| Job | Trigger | What it does |
+|-----|---------|---|
+| `test` | Every push and every PR | `mvn test` with H2 — no MySQL needed |
+| `push-image` | Push to `main` only, after `test` passes | Builds Docker image, pushes to GHCR with `:latest` and `:<sha>` tags |
 
 Pull the latest image:
 
@@ -446,49 +350,35 @@ Pull the latest image:
 docker pull ghcr.io/subodhadhikari2023/campusconnect:latest
 ```
 
-### Railway Auto-Deploy
-
-Railway is connected to the GHCR repository. When a new `:latest` image is pushed, Railway:
-
-1. Pulls the new image
-2. Starts the container with environment variables injected
-3. Spring Boot starts → Flyway checks `flyway_schema_history` → applies any new `V{n}` migrations
-4. `/actuator/health` is polled; traffic is routed only after the health check passes
-
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guide, including branch naming, TDD requirements, Javadoc rules, and commit message conventions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide — branch naming, TDD requirements, Javadoc rules, commit message format, and the PR process.
 
-**Quick reference:**
-
-1. Fork the repository
-2. Branch from `dev`: `git checkout -b feature/your-feature-name`
-3. Write tests first, then implementation (TDD — red → green → commit)
-4. Add Javadoc to all `public` and `protected` members
-5. Commit: `git commit -m 'feat: describe the change'`
-6. Push and open a PR targeting `dev`
-
-Contributions are welcome. Please open an issue first for significant changes.
+Contributions are welcome. Please open an issue before starting significant work.
 
 ---
 
 ## License
 
-Distributed under the GNU General Public License. See [LICENSE](LICENSE) for details.
+Distributed under the **GNU General Public License v3.0**.
+
+> This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+See [LICENSE](LICENSE) for the full text.
 
 ---
 
 ## Contact
 
-**Subodh Adhikari**
-<a href="mailto:subodhadhikari2023@outlook.com"><img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" /></a>
-<a href="https://www.linkedin.com/in/subodh-adhikari-4b811a296/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" /></a>
+<div align="center">
 
-**Manav Agarwal**
-<a href="mailto:manav9981@outlook.com"><img src="https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook" /></a>
-<a href="https://www.linkedin.com/in/manav-agarwal-8139b92b8/"><img src="https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin" /></a>
+| **Subodh Adhikari** | **Manav Agarwal** |
+|:---:|:---:|
+| [![Outlook][outlook-badge]](mailto:subodhadhikari2023@outlook.com) [![LinkedIn][linkedin-badge]](https://www.linkedin.com/in/subodh-adhikari-4b811a296/) | [![Outlook][outlook-badge]](mailto:manav9981@outlook.com) [![LinkedIn][linkedin-badge]](https://www.linkedin.com/in/manav-agarwal-8139b92b8/) |
+
+</div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -498,12 +388,16 @@ Distributed under the GNU General Public License. See [LICENSE](LICENSE) for det
 [contributors-url]: https://github.com/subodhadhikari2023/CampusConnect/graphs/contributors
 [issues-shield]: https://img.shields.io/github/issues/subodhadhikari2023/CampusConnect?style=for-the-badge
 [issues-url]: https://github.com/subodhadhikari2023/CampusConnect/issues
-[license-shield]: https://img.shields.io/badge/License-GPLv3-blue.svg
+[license-shield]: https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge
 [license-url]: https://github.com/subodhadhikari2023/CampusConnect/blob/main/LICENSE
-[ci-shield]: https://github.com/subodhadhikari2023/CampusConnect/actions/workflows/ci.yml/badge.svg
+[ci-shield]: https://github.com/subodhadhikari2023/CampusConnect/actions/workflows/ci.yml/badge.svg?style=for-the-badge
 [ci-url]: https://github.com/subodhadhikari2023/CampusConnect/actions
-[docker-shield]: https://img.shields.io/badge/Docker-available-2496ED?style=flat-square&logo=docker&logoColor=white
+[docker-shield]: https://img.shields.io/badge/Docker-available-2496ED?style=for-the-badge&logo=docker&logoColor=white
 [docker-url]: https://github.com/subodhadhikari2023/CampusConnect/pkgs/container/campusconnect
+
+[linkedin-badge]: https://img.shields.io/badge/LinkedIn-blue?style=flat-square&logo=linkedin
+[github-badge]: https://img.shields.io/badge/GitHub-black?style=flat-square&logo=github
+[outlook-badge]: https://img.shields.io/badge/Outlook-blue?style=flat-square&logo=microsoft-outlook
 
 [HTML.js]: https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white
 [HTML-url]: https://html.com/

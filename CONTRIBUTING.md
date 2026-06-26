@@ -42,21 +42,22 @@ Be respectful and constructive in all interactions. Treat every contributor as a
 
 ## Branch Strategy
 
-| Branch prefix | Purpose | Base branch |
-|---------------|---------|-------------|
-| `main`        | Production — never commit directly | — |
-| `dev`         | Integration — all feature PRs target here | `main` |
-| `feature/*`   | New features | `dev` |
-| `bugfix/*`    | Bug fixes | `dev` |
-| `hotfix/*`    | Critical production fixes | `main` |
-| `docs/*`      | Documentation-only changes | `dev` |
-| `refactor/*`  | Refactoring with no behaviour change | `dev` |
+`main` is the only protected branch — it always reflects production. **Never commit directly to `main`.** All changes reach `main` via a Pull Request.
 
-Always branch from `dev` (or `main` for hotfixes only):
+| Branch       | Purpose |
+|--------------|---------|
+| `main`       | Production — Railway deploys from here; PR only, no direct commits |
+| `feature/*`  | Isolated new features |
+| `bugfix/*`   | Bug fixes |
+| `hotfix/*`   | Critical production patches |
+| `docs/*`     | Documentation-only changes |
+| `refactor/*` | Refactoring with no behaviour change |
+
+Every branch is equal — any branch can open a PR directly against `main`.
 
 ```bash
-git checkout dev
-git pull origin dev
+# Branch from main
+git checkout main && git pull origin main
 git checkout -b feature/your-feature-name
 ```
 
@@ -161,7 +162,7 @@ public void uploadToFileSystem(FileUploadDTO dto) throws IOException { ... }
 
 1. Ensure all tests pass locally: `mvn test`
 2. Push your branch: `git push origin feature/your-feature-name`
-3. Open a PR targeting **`dev`** (not `main`), unless this is a hotfix
+3. Open a PR targeting **`main`**
 4. Fill in the PR template:
    - **What** changed and **why**
    - Test plan — what you tested and how
@@ -170,7 +171,7 @@ public void uploadToFileSystem(FileUploadDTO dto) throws IOException { ... }
 6. All CI checks (test job) must be green
 7. Squash or rebase as needed to keep history clean before merge
 
-After the feature is stable in `dev`, a separate PR from `dev` → `main` is opened. The `push-image` CI job runs only on `main` merges and deploys to Railway automatically.
+On merge to `main` the `push-image` CI job builds and pushes the Docker image to GHCR, and Railway redeploys automatically.
 
 ---
 
