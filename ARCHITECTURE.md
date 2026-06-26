@@ -503,6 +503,47 @@ classDiagram
 
 ---
 
+## Environment Configuration
+
+The application reads datasource configuration from environment variables using a two-level fallback chain. Each deployment environment resolves the chain differently.
+
+### Fallback chain (application.properties)
+
+```
+spring.datasource.url
+  → ${DB_URL}                              # Docker Compose always sets this
+  → jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:campusConnect}?...
+                  └─ Railway sets MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE
+
+spring.datasource.username
+  → ${DB_USERNAME}                         # Docker Compose always sets this
+  → ${MYSQL_USER:campusConnect}            # Railway sets MYSQL_USER
+
+spring.datasource.password
+  → ${DB_PASSWORD}                         # Docker / .env always sets this
+  → ${MYSQL_ROOT_PASSWORD:password}        # Railway MySQL plugin sets this automatically
+```
+
+### Per-environment resolution
+
+| Variable              | Docker Compose        | Railway                                    | Local Dev      |
+|-----------------------|-----------------------|--------------------------------------------|----------------|
+| `DB_URL`              | `jdbc:mysql://db:3306/campusConnect` | not set → MYSQL_* chain used | not set → localhost default |
+| `DB_USERNAME`         | `campusConnect`       | not set → MYSQL_USER                       | not set → `campusConnect` |
+| `DB_PASSWORD`         | from `.env`           | not set → MYSQL_ROOT_PASSWORD              | not set → `password` |
+| `MYSQL_HOST`          | n/a                   | `mysql.railway.internal` (set manually)    | `localhost`    |
+| `MYSQL_PORT`          | n/a                   | `3306` (set manually)                      | `3306`         |
+| `MYSQL_DATABASE`      | n/a                   | `railway` (set by Railway MySQL plugin)    | `campusConnect`|
+| `MYSQL_USER`          | n/a                   | `root` (set manually)                      | `campusConnect`|
+| `MYSQL_ROOT_PASSWORD` | from `.env`           | set by Railway MySQL plugin                | `password`     |
+| `UPLOAD_DIR`          | `/uploads/`           | `/uploads/`                                | `uploads/`     |
+
+### Critical behaviour note
+
+Spring Boot's `${VAR:fallback}` only activates the fallback when `VAR` is **undefined**. An **empty string** is accepted as-is and will produce a broken JDBC URL (e.g., `jdbc:mysql://:3306/railway`). This is the most common source of Railway datasource failures — always verify actual variable values with `railway variables --service <ServiceName>` before deploying.
+
+---
+
 ## Database Migration Strategy
 
 Flyway manages all schema changes. Migrations live in `src/main/resources/db/migration/`.

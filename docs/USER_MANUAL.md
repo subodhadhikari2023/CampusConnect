@@ -72,7 +72,7 @@ Displays the department name, total faculty, total students, and total courses.
 
 ### Courses
 
-**Add a course:** `/admin/add-course` → enter a course name → Save. You are redirected to the semester setup page for the new course.
+**Add a course:** `/hod/add-course` → enter a course name → Save. You are redirected to the semester setup page for the new course.
 
 **Manage courses:** `/hod/manage-course` lists courses. Use **Edit** to rename or **Delete** to remove (deletion blocked if the course has semesters).
 
