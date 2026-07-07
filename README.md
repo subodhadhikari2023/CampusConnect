@@ -65,6 +65,23 @@ The application is containerised with Docker, tested with JUnit 5 and Mockito, d
 
 ---
 
+## Highlight
+
+194 automated tests — deployed to Railway via GitHub Actions CI/CD.
+
+## Tech Stack
+
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=thymeleaf&logoColor=white) ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+
+- Spring Boot
+- Thymeleaf
+- Spring Security
+- Hibernate
+- MySQL
+- Docker
+- GitHub Actions
+- JUnit 5
+
 ## Screenshots
 
 <div align="center">
