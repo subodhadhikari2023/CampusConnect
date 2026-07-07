@@ -67,7 +67,7 @@ The application is containerised with Docker, tested with JUnit 5 and Mockito, d
 
 ## Highlight
 
-194 automated tests — deployed to Railway via GitHub Actions CI/CD.
+194 automated tests — deployed to Oracle Cloud.
 
 ## Tech Stack
 
