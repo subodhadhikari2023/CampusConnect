@@ -81,6 +81,17 @@ The application is containerised with Docker, tested with JUnit 5 and Mockito, d
 - Docker
 - GitHub Actions
 - JUnit 5
+- H2
+- Flyway
+- Docker Compose
+- GHCR
+- Railway
+- Java
+- JavaScript
+- Spring MVC
+- Maven
+- SQL
+- HTML/CSS
 
 ## Screenshots
 
