@@ -65,6 +65,21 @@ The application is containerised with Docker, tested with JUnit 5 and Mockito, d
 
 ---
 
+## Highlight
+
+194 automated tests — deployed to Railway via GitHub Actions CI/CD.
+
+## Tech Stack
+
+- Spring Boot
+- Thymeleaf
+- Spring Security
+- Hibernate
+- MySQL
+- Docker
+- GitHub Actions
+- JUnit 5
+
 ## Screenshots
 
 <div align="center">
